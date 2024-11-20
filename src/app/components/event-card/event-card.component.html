@@ -1,0 +1,16 @@
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+  <img
+    [src]="event.imageUrl"
+    alt="{{ event.title }}"
+    class="w-full h-32 object-cover"
+  />
+  <div class="p-4">
+    <h3 class="text-lg font-semibold">{{ event.title }}</h3>
+    <p class="text-gray-600">{{ event.date | date : "mediumDate" }}</p>
+    <a
+      [routerLink]="['/events', event.id]"
+      class="text-blue-500 hover:underline"
+      >More...</a
+    >
+  </div>
+</div>

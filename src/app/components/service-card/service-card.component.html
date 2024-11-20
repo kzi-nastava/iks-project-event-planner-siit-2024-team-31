@@ -1,0 +1,16 @@
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+  <img
+    [src]="service.imageUrl"
+    alt="{{ service.title }}"
+    class="w-full h-32 object-cover"
+  />
+  <div class="p-4">
+    <h3 class="text-lg font-semibold">{{ service.title }}</h3>
+    <p class="text-gray-600">{{ service.price | currency : "DIN" }}</p>
+    <a
+      [routerLink]="['/services', service.id]"
+      class="text-blue-500 hover:underline"
+      >More...</a
+    >
+  </div>
+</div>

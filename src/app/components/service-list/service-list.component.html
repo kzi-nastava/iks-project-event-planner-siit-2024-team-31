@@ -1,0 +1,15 @@
+<div class="mb-4">
+  <input
+    type="text"
+    placeholder="Search services/products..."
+    [(ngModel)]="searchTerm"
+    (input)="applyFilter()"
+    class="border p-2 rounded w-full"
+  />
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  <app-service-card
+    *ngFor="let service of filteredServices"
+    [service]="service"
+  ></app-service-card>
+</div>

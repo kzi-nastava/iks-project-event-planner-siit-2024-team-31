@@ -1,1 +1,33 @@
-<p>home works!</p>
+<div class="container mx-auto px-4">
+  <section>
+    <h2 class="text-2xl font-bold my-4">Top 5 events in your city</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <app-event-card
+        *ngFor="let event of topEvents"
+        [event]="event"
+      ></app-event-card>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-2xl font-bold my-4">All events</h2>
+    <app-event-list></app-event-list>
+  </section>
+
+  <section>
+    <h2 class="text-2xl font-bold my-4">
+      Top 5 services and products in your city
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <app-service-card
+        *ngFor="let service of topServices"
+        [service]="service"
+      ></app-service-card>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-2xl font-bold my-4">All services and products</h2>
+    <app-service-list></app-service-list>
+  </section>
+</div>
