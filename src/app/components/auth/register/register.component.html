@@ -1,0 +1,179 @@
+<div class="max-w-md mt-10 mx-auto bg-gray-100 p-6 rounded-lg shadow-md">
+  <h1 class="text-2xl font-bold mb-4">Registration page</h1>
+  <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+    <div class="mb-4">
+      <label class="block text-sm font-medium">Choose your status</label>
+      <select
+        [(ngModel)]="user.role"
+        name="role"
+        required
+        class="w-full border px-3 py-2 rounded"
+      >
+        <option value="" disabled selected>Who are you?</option>
+        <option value="AK">Basic user</option>
+        <option value="OD">Organizer</option>
+        <option value="PUP">Provider</option>
+      </select>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-sm font-medium">Email</label>
+      <input
+        type="email"
+        [(ngModel)]="user.email"
+        name="email"
+        required
+        class="w-full border px-3 py-2 rounded"
+      />
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium">Password</label>
+      <input
+        type="password"
+        [(ngModel)]="user.password"
+        name="password"
+        required
+        class="w-full border px-3 py-2 rounded"
+      />
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium">Confirm password</label>
+      <input
+        type="password"
+        [(ngModel)]="confirmPassword"
+        name="confirmPassword"
+        required
+        class="w-full border px-3 py-2 rounded"
+      />
+    </div>
+
+    <div *ngIf="user.role === 'AK'">
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Name</label>
+        <input
+          type="text"
+          [(ngModel)]="user.firstName"
+          name="firstName"
+          required
+          class="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Surname</label>
+        <input
+          type="text"
+          [(ngModel)]="user.lastName"
+          name="lastName"
+          required
+          class="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Phone number</label>
+        <input
+          type="text"
+          [(ngModel)]="user.phoneNumber"
+          name="lastName"
+          required
+          class="w-full border px-3 py-2 rounded"
+        />
+      </div>
+    </div>
+
+    <div *ngIf="user.role === 'OD'">
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Name</label>
+        <input
+          type="text"
+          [(ngModel)]="user.firstName"
+          name="firstName"
+          required
+          class="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Surname</label>
+        <input
+          type="text"
+          [(ngModel)]="user.lastName"
+          name="lastName"
+          required
+          class="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Address</label>
+        <input
+          type="text"
+          [(ngModel)]="user.address"
+          name="address"
+          required
+          class="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Phone number</label>
+        <input
+          type="text"
+          [(ngModel)]="user.phoneNumber"
+          name="lastName"
+          required
+          class="w-full border px-3 py-2 rounded"
+        />
+      </div>
+    </div>
+
+    <div *ngIf="user.role === 'PUP'">
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Company name</label>
+        <input
+          type="text"
+          [(ngModel)]="user.companyName"
+          name="companyName"
+          required
+          class="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Address</label>
+        <input
+          type="text"
+          [(ngModel)]="user.address"
+          name="address"
+          required
+          class="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Phone number</label>
+        <input
+          type="text"
+          [(ngModel)]="user.phoneNumber"
+          name="lastName"
+          required
+          class="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium">Company Description</label>
+        <textarea
+          [(ngModel)]="user.companyDescription"
+          name="companyDescription"
+          required
+          class="w-full border px-3 py-2 rounded"
+        ></textarea>
+      </div>
+    </div>
+
+    <button class="w-full bg-blue-500 text-white px-4 py-2 rounded mt-4">
+      Load avatar (optional)
+    </button>
+
+    <button
+      type="submit"
+      class="w-full bg-blue-500 text-white px-4 py-2 rounded mt-4"
+    >
+      Sign up
+    </button>
+  </form>
+</div>

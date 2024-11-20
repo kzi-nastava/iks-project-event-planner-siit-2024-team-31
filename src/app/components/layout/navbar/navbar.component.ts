@@ -1,0 +1,31 @@
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { Observable } from 'rxjs';
+import { AuthService } from '../../../services/auth.service';
+
+@Component({
+  selector: 'app-navbar',
+  imports: [RouterModule, CommonModule, HttpClientModule],
+  templateUrl: './navbar.component.html',
+})
+export class NavbarComponent {
+  registerButton = { text: 'Sign up', link: '/register' };
+  loginButton = { text: 'Log in', link: '/login' };
+  myProfileButton = { text: 'My profile', link: '/profile' };
+  isAuthenticated$: Observable<boolean>;
+  userRole: string | null = null;
+
+  constructor(public authService: AuthService, private router: Router) {
+    this.authService.userRole$.subscribe((role) => {
+      this.userRole = role;
+    });
+    this.isAuthenticated$ = this.authService.isAuthenticated$;
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+}

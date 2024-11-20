@@ -1,0 +1,49 @@
+<nav class="bg-blue-700 text-white py-4">
+  <div class="container mx-auto flex justify-between items-center px-4">
+    <div class="text-xl font-bold">
+      <a href="/" class="text-white">Event planner</a>
+    </div>
+
+    <div class="flex space-x-6">
+      <a href="/events" class="text-white hover:underline">Events</a>
+      <a href="/services" class="text-white hover:underline"
+        >Services/Products</a
+      >
+      <a href="/about" class="text-white hover:underline">About</a>
+    </div>
+
+    <ng-container *ngIf="!(isAuthenticated$ | async)">
+      <div class="flex space-x-4">
+        <a
+          [routerLink]="registerButton.link"
+          class="bg-black hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+        >
+          {{ registerButton.text }}
+        </a>
+        <a
+          [routerLink]="loginButton.link"
+          class="bg-black hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+        >
+          {{ loginButton.text }}
+        </a>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="isAuthenticated$ | async">
+      <div class="flex space-x-4">
+        <a
+          [routerLink]="myProfileButton.link"
+          class="bg-black hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+        >
+          {{ myProfileButton.text }}
+        </a>
+        <a
+          class="bg-gray hover:bg-red-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
+          (click)="logout()"
+        >
+          Logout
+        </a>
+      </div>
+    </ng-container>
+  </div>
+</nav>
