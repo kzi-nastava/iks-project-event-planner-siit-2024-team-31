@@ -2,6 +2,20 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: 'services',
+    loadComponent: () =>
+      import('./components/service-list/service-list.component').then(
+        (m) => m.ServiceListComponent
+      ),
+  },
+  {
+    path: 'events',
+    loadComponent: () =>
+      import('./components/event-list/event-list.component').then(
+        (m) => m.EventListComponent
+      ),
+  },
+  {
     path: 'services/:id',
     loadComponent: () =>
       import('./components/service-detail/service-detail.component').then(

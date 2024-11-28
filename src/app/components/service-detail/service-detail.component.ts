@@ -1,5 +1,3 @@
-// src/app/components/service-detail/service-detail.component.ts
-
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';

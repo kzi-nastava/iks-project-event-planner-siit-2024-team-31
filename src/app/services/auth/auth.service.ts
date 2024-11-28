@@ -1,4 +1,3 @@
-// src/app/services/auth.service.ts
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -56,7 +55,7 @@ export class AuthService {
           this.currentUser = response.user;
           localStorage.setItem('token', response.token);
           this.userRoleSubject.next(response.user.role);
-          console.log('Успешная регистрация:', response.user);
+          console.log('Successful registration:', response.user);
         }
       })
     );
