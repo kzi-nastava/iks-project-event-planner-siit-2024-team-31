@@ -15,6 +15,12 @@ export class ServiceListComponent implements OnInit {
   services: ServiceProduct[] = [];
   searchTerm: string = '';
   filteredServices: ServiceProduct[] = [];
+  paginatedServices: ServiceProduct[] = [];
+
+  // Pagination properties
+  currentPage: number = 1;
+  pageSize: number = 6; // Number of items per page
+  totalPages: number = 1;
 
   constructor(private serviceProductService: ServiceProductService) {}
 
@@ -23,17 +29,28 @@ export class ServiceListComponent implements OnInit {
   }
 
   loadServices() {
-    this.serviceProductService
-      .getAllServices('New York')
-      .subscribe((services) => {
-        this.services = services;
-        this.applyFilter();
-      });
+    this.serviceProductService.getAllServices().subscribe((services) => {
+      this.services = services;
+      this.applyFilter();
+    });
   }
 
   applyFilter() {
     this.filteredServices = this.services.filter((service) =>
-      service.title.toLowerCase().includes(this.searchTerm.toLowerCase())
+      service.name.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
+    this.calculatePagination();
+  }
+
+  calculatePagination() {
+    this.totalPages = Math.ceil(this.filteredServices.length / this.pageSize);
+    this.changePage(1); // Reset to the first page after filtering
+  }
+
+  changePage(page: number) {
+    this.currentPage = page;
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.paginatedServices = this.filteredServices.slice(startIndex, endIndex);
   }
 }

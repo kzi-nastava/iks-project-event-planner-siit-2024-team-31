@@ -7,7 +7,7 @@ import { ServiceProduct } from '../../models/service-product.model';
   selector: 'app-service-card',
   templateUrl: './service-card.component.html',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink, CommonModule],
 })
 export class ServiceCardComponent {
   @Input() service!: ServiceProduct;
