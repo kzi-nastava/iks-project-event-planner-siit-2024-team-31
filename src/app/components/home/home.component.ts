@@ -25,8 +25,6 @@ export class HomeComponent implements OnInit {
   topEvents: Event[] = [];
   topServices: ServiceProduct[] = [];
 
-  //TODO: PAGINATION!!
-
   constructor(
     private eventService: EventService,
     private serviceProductService: ServiceProductService
@@ -38,16 +36,14 @@ export class HomeComponent implements OnInit {
   }
 
   loadTopEvents() {
-    this.eventService.getTopEvents('New York').subscribe((events) => {
+    this.eventService.getTopEvents().subscribe((events) => {
       this.topEvents = events;
     });
   }
 
   loadTopServices() {
-    this.serviceProductService
-      .getTopServices('New York')
-      .subscribe((services) => {
-        this.topServices = services;
-      });
+    this.serviceProductService.getTopServices().subscribe((services) => {
+      this.topServices = services;
+    });
   }
 }

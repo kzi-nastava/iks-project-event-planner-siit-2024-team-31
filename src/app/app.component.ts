@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NavbarComponent } from './components/layout/navbar/navbar.component';
@@ -10,7 +11,7 @@ import { ServiceProductService } from './services/service-products/service-produ
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   standalone: true,
-  imports: [NavbarComponent, RouterModule],
+  imports: [NavbarComponent, RouterModule, HttpClientModule],
   providers: [AuthService, EventService, ServiceProductService],
 })
 export class AppComponent {

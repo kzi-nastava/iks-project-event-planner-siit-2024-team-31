@@ -1,0 +1,33 @@
+<div class="container mx-auto mt-5 mb-5 flex">
+  <div class="w-1/4 pr-5">
+    <app-event-filter (filtersChange)="applyFilters($event)"></app-event-filter>
+  </div>
+
+  <div class="w-3/4">
+    <div class="grid grid-cols-4 gap-5 items-start">
+      <app-event-card
+        *ngFor="let event of paginatedEvents"
+        [event]="event"
+        class="bg-white shadow-md rounded-lg p-4"
+      ></app-event-card>
+    </div>
+
+    <div class="flex justify-between items-center mt-5">
+      <button
+        class="p-2 bg-gray-200 rounded hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-500"
+        [disabled]="currentPage === 1"
+        (click)="prevPage()"
+      >
+        Previous
+      </button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button
+        class="p-2 bg-gray-200 rounded hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-500"
+        [disabled]="currentPage === totalPages"
+        (click)="nextPage()"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+</div>

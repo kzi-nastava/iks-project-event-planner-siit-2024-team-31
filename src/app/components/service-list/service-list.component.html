@@ -7,9 +7,31 @@
     class="border p-2 rounded w-full"
   />
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+<div
+  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+  style="height: 600px; overflow-y: auto"
+>
   <app-service-card
-    *ngFor="let service of filteredServices"
+    *ngFor="let service of paginatedServices"
     [service]="service"
   ></app-service-card>
+</div>
+
+<div class="flex justify-center items-center mt-4">
+  <button
+    class="px-4 py-2 mx-2 border rounded"
+    [disabled]="currentPage === 1"
+    (click)="changePage(currentPage - 1)"
+  >
+    Previous
+  </button>
+  <span>Page {{ currentPage }} of {{ totalPages }}</span>
+  <button
+    class="px-4 py-2 mx-2 border rounded"
+    [disabled]="currentPage === totalPages"
+    (click)="changePage(currentPage + 1)"
+  >
+    Next
+  </button>
 </div>

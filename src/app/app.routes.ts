@@ -4,16 +4,16 @@ export const routes: Routes = [
   {
     path: 'services',
     loadComponent: () =>
-      import('./components/service-list/service-list.component').then(
-        (m) => m.ServiceListComponent
-      ),
+      import(
+        './components/service-list/service-list-filtered/service-list-filtered.component'
+      ).then((m) => m.ServiceListFilteredComponent),
   },
   {
     path: 'events',
     loadComponent: () =>
-      import('./components/event-list/event-list.component').then(
-        (m) => m.EventListComponent
-      ),
+      import(
+        './components/event-list/event-list-filtered/event-list-filtered.component'
+      ).then((m) => m.EventListFilteredComponent),
   },
   {
     path: 'services/:id',

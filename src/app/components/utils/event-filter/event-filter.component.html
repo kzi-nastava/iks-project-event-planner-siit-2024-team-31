@@ -1,0 +1,119 @@
+<div
+  class="filters p-4 bg-gray-50 shadow-md rounded-lg w-full max-w-md mx-auto"
+>
+  <h3 class="text-lg font-semibold mb-4">Filters</h3>
+
+  <label class="block text-sm font-medium text-gray-700 mb-1"
+    >Event type:</label
+  >
+  <input
+    type="text"
+    [(ngModel)]="filtersForFilters.eventTypeSearch"
+    placeholder="Search event type..."
+    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-2"
+    (input)="filterTypes()"
+  />
+  <div class="h-40 overflow-y-auto border border-gray-300 rounded-lg p-2">
+    <div
+      *ngFor="let type of filteredTypes"
+      class="flex items-center gap-2 mb-2"
+    >
+      <input
+        type="checkbox"
+        [checked]="filters.selectedTypes.includes(type)"
+        (change)="toggleSelection(type, 'selectedTypes')"
+        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+      />
+      <span class="text-sm text-gray-700">{{ type }}</span>
+    </div>
+  </div>
+
+  <label class="block text-sm font-medium text-gray-700 mb-1 mt-1"
+    >Date period:</label
+  >
+  <div class="flex gap-2 mb-4">
+    <input
+      type="date"
+      [(ngModel)]="filters.fromDate"
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    />
+    <input
+      type="date"
+      [(ngModel)]="filters.toDate"
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    />
+  </div>
+
+  <label class="block text-sm font-medium text-gray-700 mb-1">City:</label>
+  <input
+    type="text"
+    [(ngModel)]="filtersForFilters.citySearch"
+    placeholder="Search city..."
+    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-2"
+    (input)="filterCities()"
+  />
+  <div class="h-40 overflow-y-auto border border-gray-300 rounded-lg p-2">
+    <div
+      *ngFor="let city of filteredCities"
+      class="flex items-center gap-2 mb-2"
+    >
+      <input
+        type="checkbox"
+        [checked]="filters.selectedCities.includes(city)"
+        (change)="toggleSelection(city, 'selectedCities')"
+        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+      />
+      <span class="text-sm text-gray-700">{{ city }}</span>
+    </div>
+  </div>
+
+  <label class="block text-sm font-medium text-gray-700 mb-1 mt-2"
+    >Location:</label
+  >
+  <input
+    type="text"
+    [(ngModel)]="filtersForFilters.objectSearch"
+    placeholder="Search location..."
+    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-2"
+    (input)="filterLocations()"
+  />
+  <div class="h-40 overflow-y-auto border border-gray-300 rounded-lg p-2">
+    <div
+      *ngFor="let location of filteredObject"
+      class="flex items-center gap-2 mb-2"
+    >
+      <input
+        type="checkbox"
+        [checked]="filters.selectedLocations.includes(location)"
+        (change)="toggleSelection(location, 'selectedLocations')"
+        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+      />
+      <span class="text-sm text-gray-700">{{ location }}</span>
+    </div>
+  </div>
+
+  <label class="block text-sm font-medium text-gray-700 mb-1 mt-1">
+    The number of guests:
+  </label>
+  <div class="flex gap-2 mb-4">
+    <input
+      type="number"
+      [(ngModel)]="filters.minGuests"
+      placeholder="From"
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    />
+    <input
+      type="number"
+      [(ngModel)]="filters.maxGuests"
+      placeholder="To"
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    />
+  </div>
+
+  <button
+    (click)="applyFilters()"
+    class="w-full bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+  >
+    Apply
+  </button>
+</div>

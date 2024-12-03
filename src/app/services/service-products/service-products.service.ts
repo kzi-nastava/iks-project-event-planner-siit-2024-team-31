@@ -11,108 +11,71 @@ export class ServiceProductService {
 
   constructor(private http: HttpClient) {}
 
-  private services: ServiceProduct[] = [
-    {
-      id: '1',
-      title: 'Catering Service',
-      description: 'Professional catering for events of any scale.',
-      price: 5000,
-      imageUrl: 'assets/images/service1.jpg',
-      city: 'New York',
-    },
-    {
-      id: '2',
-      title: 'Photographer',
-      description: 'Capture the best moments of your event.',
-      price: 2000,
-      imageUrl: 'assets/images/service2.jpg',
-      city: 'New York',
-    },
-    {
-      id: '3',
-      title: 'Live Band',
-      description: 'Live music for any occasion.',
-      price: 7000,
-      imageUrl: 'assets/images/service3.jpg',
-      city: 'New York',
-    },
-    {
-      id: '4',
-      title: 'Decorator',
-      description: 'Venue and event decoration services.',
-      price: 3000,
-      imageUrl: 'assets/images/service4.jpg',
-      city: 'New York',
-    },
-    {
-      id: '5',
-      title: 'Event Host',
-      description: 'Professional host for your celebration.',
-      price: 2500,
-      imageUrl: 'assets/images/service5.jpg',
-      city: 'New York',
-    },
-    {
-      id: '6',
-      title: 'Security Service',
-      description: 'Ensure safety and security at your event.',
-      price: 4000,
-      imageUrl: 'assets/images/service6.jpg',
-      city: 'New York',
-    },
-    {
-      id: '7',
-      title: 'DJ Services',
-      description: 'Professional DJ to keep the party going.',
-      price: 3500,
-      imageUrl: 'assets/images/service7.jpg',
-      city: 'New York',
-    },
-    {
-      id: '8',
-      title: 'Lighting and Sound',
-      description: 'High-quality lighting and sound equipment.',
-      price: 6000,
-      imageUrl: 'assets/images/service8.jpg',
-      city: 'New York',
-    },
-    {
-      id: '9',
-      title: 'Transportation',
-      description: 'Luxury transportation for your guests.',
-      price: 8000,
-      imageUrl: 'assets/images/service9.jpg',
-      city: 'New York',
-    },
-    {
-      id: '10',
-      title: 'Florist',
-      description: 'Beautiful floral arrangements for your event.',
-      price: 1500,
-      imageUrl: 'assets/images/service10.jpg',
-      city: 'New York',
-    },
-  ];
+  private services: ServiceProduct[] = Array.from(
+    { length: 50 },
+    (_, index) => {
+      const availableFrom = new Date();
+      const availableTo = new Date();
+      availableTo.setDate(availableTo.getDate() + (index % 30));
 
-  getTopServices(city: string): Observable<ServiceProduct[]> {
-    //return this.http.get<ServiceProduct[]>(`${this.apiUrl}/top?city=${city}`);
+      return {
+        id: `service-${index + 1}`,
+        name: `Service Product ${index + 1}`,
+        description: `This is a detailed description of Service Product ${
+          index + 1
+        }. It is designed to provide exceptional value to customers.`,
+        price: 50 + index * 10,
+        categories: [
+          'Photography',
+          'Catering',
+          'Decoration',
+          'Entertainment',
+          'Logistics',
+        ].slice(0, (index % 5) + 1),
+        isAvailable: index % 3 !== 0,
+        imageUrls: Array.from(
+          { length: 3 },
+          (_, imgIndex) =>
+            `https://picsum.photos/300/200?random=${
+              20 + index * 3 + imgIndex + 1
+            }`
+        ),
+        pupInfo: {
+          id: `pup-${index + 1}`,
+          name: `PUP Location ${index + 1}`,
+          city: ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami'][
+            index % 5
+          ],
+          street: `${(index + 1) * 10} Main Street`,
+          phone: `+1-555-00${index + 10}`,
+        },
+        rating: parseFloat((Math.random() * 5).toFixed(1)),
+        timings: {
+          minTimeUsageHours: 2 + (index % 3),
+          maxTimeUsageHours: 8 + (index % 5),
+          bookingDeclineDeadlineHours: 24 - (index % 5),
+        },
+        cancellationPolicy: ['Flexible', 'Moderate', 'Strict'][index % 3],
+        availableFrom: availableFrom,
+        availableTo: availableTo,
+        suitableFor: ['Wedding', 'Conference', 'Party', 'Concert'].slice(
+          0,
+          (index % 4) + 1
+        ),
+      };
+    }
+  );
 
-    const topServices = this.services
-      .filter((service) => service.city === city)
-      .slice(0, 5);
+  getTopServices(): Observable<ServiceProduct[]> {
+    const topServices = this.services.slice(0, 5);
     return of(topServices);
   }
 
-  getAllServices(city: string): Observable<ServiceProduct[]> {
-    //return this.http.get<ServiceProduct[]>(`${this.apiUrl}?city=${city}`);
-
-    const services = this.services.filter((service) => service.city === city);
-    return of(services);
+  getAllServices(): Observable<ServiceProduct[]> {
+    return of(this.services);
   }
 
   getServiceById(id: string): Observable<ServiceProduct> {
-    //return this.http.get<ServiceProduct>(`${this.apiUrl}/${id}`);
-
     const service = this.services.find((service) => service.id === id);
     if (service) {
       return of(service);
