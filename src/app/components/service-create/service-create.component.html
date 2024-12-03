@@ -1,0 +1,233 @@
+<div class="container mx-auto mt-5 mb-5 p-4 bg-gray-50 shadow-md rounded-lg">
+  <h2 class="text-2xl font-semibold mb-4">Create Service/Product</h2>
+
+  <form (ngSubmit)="submitService()" #serviceForm="ngForm">
+    <!-- Service Category -->
+    <label class="block text-sm font-medium text-gray-700 mb-1"
+      >Service Category</label
+    >
+    <div class="flex items-center mb-2">
+      <select
+        [(ngModel)]="service.category"
+        name="category"
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+      >
+        <option *ngFor="let category of categories" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+      <button
+        type="button"
+        (click)="addCategory()"
+        class="ml-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+      >
+        Add Category
+      </button>
+    </div>
+
+    <!-- Service Name -->
+    <label class="block text-sm font-medium text-gray-700 mb-1 mt-4"
+      >Service Name</label
+    >
+    <input
+      type="text"
+      [(ngModel)]="service.name"
+      name="name"
+      required
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+    />
+
+    <!-- Service Description -->
+    <label class="block text-sm font-medium text-gray-700 mb-1 mt-4"
+      >Service Description</label
+    >
+    <textarea
+      [(ngModel)]="service.description"
+      name="description"
+      rows="3"
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+    ></textarea>
+
+    <!-- Service Characteristics -->
+    <label class="block text-sm font-medium text-gray-700 mb-1 mt-4"
+      >Service Characteristics</label
+    >
+    <textarea
+      [(ngModel)]="service.characteristics"
+      name="characteristics"
+      rows="3"
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+    ></textarea>
+
+    <!-- Price -->
+    <label class="block text-sm font-medium text-gray-700 mb-1 mt-4"
+      >Price</label
+    >
+    <input
+      type="number"
+      [(ngModel)]="service.price"
+      name="price"
+      required
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+    />
+
+    <!-- Discount -->
+    <label class="block text-sm font-medium text-gray-700 mb-1 mt-4"
+      >Discount (%)</label
+    >
+    <input
+      type="number"
+      [(ngModel)]="service.discount"
+      name="discount"
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+    />
+
+    <!-- Service Images -->
+    <label class="block text-sm font-medium text-gray-700 mb-1 mt-4"
+      >Service Images</label
+    >
+    <input
+      type="file"
+      (change)="uploadImages($event)"
+      multiple
+      class="w-full text-sm text-gray-700"
+    />
+
+    <!-- Event Types -->
+    <label class="block text-sm font-medium text-gray-700 mb-1 mt-4"
+      >Event Types</label
+    >
+    <div class="border border-gray-300 rounded-lg p-2">
+      <div *ngFor="let type of eventTypes" class="flex items-center mb-2">
+        <input
+          type="checkbox"
+          [value]="type"
+          (change)="toggleEventType(type)"
+          [checked]="service.eventTypes.includes(type)"
+          class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        />
+        <span class="ml-2 text-sm text-gray-700">{{ type }}</span>
+      </div>
+    </div>
+
+    <!-- Visibility -->
+    <div class="flex items-center mt-4">
+      <input
+        type="checkbox"
+        [(ngModel)]="service.isVisible"
+        name="isVisible"
+        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+      />
+      <label class="ml-2 text-sm text-gray-700">Visible to users</label>
+    </div>
+
+    <!-- Availability -->
+    <div class="flex items-center mt-2">
+      <input
+        type="checkbox"
+        [(ngModel)]="service.isAvailable"
+        name="isAvailable"
+        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+      />
+      <label class="ml-2 text-sm text-gray-700">Available for booking</label>
+    </div>
+
+    <!-- Booking Duration -->
+    <label class="block text-sm font-medium text-gray-700 mb-1 mt-4"
+      >Booking Duration (minutes)</label
+    >
+    <input
+      type="number"
+      [(ngModel)]="service.bookingDuration"
+      name="bookingDuration"
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+    />
+
+    <!-- Participation -->
+    <div class="flex gap-4 mt-4">
+      <div class="w-1/2">
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Minimum Participation (hours)</label
+        >
+        <input
+          type="number"
+          [(ngModel)]="service.minParticipation"
+          name="minParticipation"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <div class="w-1/2">
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Maximum Participation (hours)</label
+        >
+        <input
+          type="number"
+          [(ngModel)]="service.maxParticipation"
+          name="maxParticipation"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+    </div>
+
+    <!-- Booking and Cancellation Period -->
+    <div class="flex gap-4 mt-4">
+      <div class="w-1/2">
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Booking Period (days)</label
+        >
+        <input
+          type="number"
+          [(ngModel)]="service.bookingPeriod"
+          name="bookingPeriod"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <div class="w-1/2">
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Cancellation Period (days)</label
+        >
+        <input
+          type="number"
+          [(ngModel)]="service.cancellationPeriod"
+          name="cancellationPeriod"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+    </div>
+
+    <!-- Booking Confirmation Method -->
+    <label class="block text-sm font-medium text-gray-700 mb-1 mt-4"
+      >Booking Confirmation Method</label
+    >
+    <div class="flex items-center mt-2">
+      <label class="flex items-center mr-4">
+        <input
+          type="radio"
+          [(ngModel)]="service.confirmationMethod"
+          name="confirmationMethod"
+          value="Automatic"
+          class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+        />
+        <span class="ml-2 text-sm text-gray-700">Automatic</span>
+      </label>
+      <label class="flex items-center">
+        <input
+          type="radio"
+          [(ngModel)]="service.confirmationMethod"
+          name="confirmationMethod"
+          value="Manual"
+          class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+        />
+        <span class="ml-2 text-sm text-gray-700">Manual</span>
+      </label>
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      class="w-full bg-blue-600 text-white font-medium py-2 mt-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+    >
+      Submit
+    </button>
+  </form>
+</div>
