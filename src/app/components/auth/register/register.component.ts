@@ -31,9 +31,11 @@ export class RegisterComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
-    // if (this.user.password !== this.confirmPassword) {
-    //   return;
-    // }
+    
+    if (this.user.password !== this.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
 
     if (!this.user.role) {
       alert('Please, choose a role');

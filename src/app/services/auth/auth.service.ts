@@ -1,64 +1,41 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { User } from '../../models/user.model';
+import { CurrentUser } from '../../types/currentUser';
+import { LoginResponse } from '../../types/dto/responses/loginResponse';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = ''; // API auth endpoint (empty for mock data)
-  private currentUser: User | null = null;
+  private baseApiUrl = 'http://localhost:3308/auth/';
+
+  public currentUser: CurrentUser | null = null;
 
   private userRoleSubject = new BehaviorSubject<string | null>(null);
-  userRole$ = this.userRoleSubject.asObservable();
 
+  userRole$ = this.userRoleSubject.asObservable();
   isAuthenticated$ = this.userRole$.pipe(map((role) => !!role));
 
   constructor(private http: HttpClient) {}
 
-  login(email: string, password: string): Observable<any> {
-    const fakeResponse = {
-      token: 'fake-jwt-token',
-      user: {
-        id: 1,
-        firstName: 'Test',
-        lastName: 'User',
-        email: 'test@example.com',
-        role: 'AK',
-      },
-    };
-    return of(fakeResponse).pipe(
-      tap((response) => {
-        this.currentUser = response.user;
-        localStorage.setItem('token', response.token);
-        this.userRoleSubject.next(response.user.role);
-      })
-    );
+  login(email: string, password: string): Observable<void> {
+    return this.http
+      .post<LoginResponse>(`${this.baseApiUrl}login`, { email, password })
+      .pipe(
+        map((response) => {
+          document.cookie = `token=${response.token}`;
+          localStorage.setItem('token', response.token);
+          this.userRoleSubject.next('ROLE_PUP');
+        })
+      );
   }
 
   register(user: User): Observable<any> {
-    const fakeRegisterResponse = {
-      token: 'fake-jwt-token-register',
-      user: {
-        id: 2,
-        firstName: user.firstName || 'New',
-        lastName: user.lastName || 'User',
-        email: user.email,
-        role: user.role || 'PUP',
-      },
-    };
-    return of(fakeRegisterResponse).pipe(
-      tap((response) => {
-        if (response) {
-          this.currentUser = response.user;
-          localStorage.setItem('token', response.token);
-          this.userRoleSubject.next(response.user.role);
-          console.log('Successful registration:', response.user);
-        }
-      })
-    );
+    return this.http.post(`${this.baseApiUrl}signup`, user);
+    //add activation link message
   }
 
   logout() {
@@ -69,9 +46,5 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return !!localStorage.getItem('token');
-  }
-
-  getUserRole(): string | null {
-    return this.userRoleSubject.getValue();
   }
 }
