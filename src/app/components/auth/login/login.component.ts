@@ -22,13 +22,13 @@ export class LoginComponent {
   onSubmit() {
     this.authService.login(this.user.email, this.user.password).subscribe({
       next: () => {
+        console.log('Login successful');
         this.router.navigate(['/']);
       },
       error: (error: any) => {
         console.error(error);
       },
     });
-
     console.log('Login attempted:', this.user);
   }
 }

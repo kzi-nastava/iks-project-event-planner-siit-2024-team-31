@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Event } from '../../../models/event.model';
 import { EventService } from '../../../services/events/event.service';
+import { Event } from '../../../types/models/event.model';
 import { EventCardComponent } from '../../event-card/event-card.component';
 import { EventFilterComponent } from '../../utils/event-filter/event-filter.component';
 

@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Event } from '../../models/event.model';
 import { EventService } from '../../services/events/event.service';
+import { Event } from '../../types/models/event.model';
 
 @Component({
   selector: 'app-event-detail',
   templateUrl: './event-detail.component.html',
-  standalone: true
+  standalone: true,
 })
 export class EventDetailComponent implements OnInit {
   event!: Event;

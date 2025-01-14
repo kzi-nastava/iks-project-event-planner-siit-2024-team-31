@@ -1,0 +1,347 @@
+<form
+  (ngSubmit)="onSubmit()"
+  #myForm="ngForm"
+  class="max-w-2xl mx-auto bg-white p-6 rounded shadow"
+>
+  <h2 class="text-2xl font-bold mb-4">
+    Create new service / product
+    <hr class="bg-black h-1" />
+  </h2>
+
+  <!-- Main section-->
+  <section class="mb-8">
+    <h3 class="text-xl font-bold mb-2">
+      Main information section
+      <p class="text-gray-600 text-sm">
+        Fill in the basic information about the service or product you are
+        creating.
+      </p>
+    </h3>
+
+    <!-- Service name -->
+    <div class="mb-4">
+      <label for="name" class="block mb-1 font-bold">Service Name</label>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        [(ngModel)]="serviceData.name"
+        required
+        class="border border-gray-300 rounded px-2 py-1 w-full"
+        placeholder="e.g. Catering Package"
+      />
+    </div>
+
+    <!-- Description -->
+    <div class="mb-4">
+      <label for="description" class="block mb-1 font-bold">Description</label>
+      <textarea
+        id="description"
+        name="description"
+        [(ngModel)]="serviceData.description"
+        class="border border-gray-300 rounded px-2 py-1 w-full"
+        placeholder="Describe the service"
+      ></textarea>
+    </div>
+
+    <!-- Peculiarities -->
+    <div class="mb-4">
+      <label for="peculiarities" class="block mb-1 font-bold"
+        >Peculiarities</label
+      >
+      <textarea
+        id="peculiarities"
+        name="peculiarities"
+        [(ngModel)]="serviceData.peculiarities"
+        class="border border-gray-300 rounded px-2 py-1 w-full"
+        placeholder="Any special details or features"
+      ></textarea>
+    </div>
+
+    <!-- Price & Discount in one row -->
+    <div class="flex flex-row justify-between gap-4 mb-4">
+      <!-- Price -->
+      <div class="w-1/2">
+        <label for="price" class="block mb-1 font-bold">
+          Price per hour (DIN)
+        </label>
+        <input
+          id="price"
+          name="price"
+          type="number"
+          [(ngModel)]="serviceData.price"
+          required
+          min="0"
+          class="border border-gray-300 rounded px-2 py-1 w-full"
+          placeholder="0"
+        />
+      </div>
+
+      <!-- Discount -->
+      <div class="w-1/2">
+        <label for="discount" class="block mb-1 font-bold">Discount (%)</label>
+        <input
+          id="discount"
+          name="discount"
+          type="number"
+          [(ngModel)]="serviceData.discount"
+          min="0"
+          class="border border-gray-300 rounded px-2 py-1 w-full"
+          placeholder="0"
+        />
+      </div>
+    </div>
+
+    <!-- Upload Photo(s) + hidden file input -->
+    <button
+      type="button"
+      (click)="fileInput.click()"
+      class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mb-4"
+    >
+      Upload Photo(s)
+    </button>
+    <input
+      #fileInput
+      type="file"
+      class="hidden"
+      multiple
+      accept="image/*"
+      (change)="onPhotosSelected($event)"
+    />
+
+    <!-- photo preview -->
+    <div class="mt-4">
+      <div class="flex flex-wrap gap-4">
+        <div
+          *ngFor="let photoUrl of photoPreviews; let i = index"
+          class="relative"
+        >
+          <img
+            [src]="photoUrl"
+            alt="Photo Preview"
+            class="w-32 h-32 object-cover border rounded"
+          />
+          <button
+            type="button"
+            (click)="removePreview(i)"
+            class="absolute top-0 right-0 bg-red-500 text-white p-1 rounded"
+          >
+            ×
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SuitableEventTypes -->
+    <div class="my-4">
+      <label class="block mb-1 font-bold">Suitable Event Types</label>
+      <div
+        *ngFor="let et of serviceData.suitableEventTypes; let i = index"
+        class="flex items-center gap-2 mb-2"
+      >
+        <!-- Отображаем name, так как et = {id, name} -->
+        <input
+          type="text"
+          [(ngModel)]="et.name"
+          [name]="'eventTypeName' + i"
+          class="border border-gray-300 rounded px-2 py-1 flex-grow"
+        />
+        <button
+          type="button"
+          (click)="removeSuitableEventType(i)"
+          class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+        >
+          Remove
+        </button>
+      </div>
+
+      <button
+        type="button"
+        (click)="openEventTypePopup()"
+        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+      >
+        Add Event Type
+      </button>
+
+      <!-- Modal -->
+      <div
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+        *ngIf="showEventTypeModal"
+      >
+        <div class="bg-white p-6 rounded shadow-lg w-80">
+          <h3 class="text-lg font-bold mb-4">Choose an Event Type</h3>
+
+          <!-- Список eventTypes$ (id, name) -->
+          <ng-container *ngIf="eventTypes$ | async as eventTypes">
+            <label class="block mb-2" *ngFor="let type of eventTypes">
+              <input
+                type="radio"
+                name="radioEventType"
+                [value]="type"
+                [(ngModel)]="selectedEventType"
+              />
+              {{ type.name }}
+            </label>
+          </ng-container>
+
+          <div class="flex justify-end gap-2 mt-4">
+            <button
+              type="button"
+              class="bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400"
+              (click)="closeEventTypePopup()"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+              (click)="confirmAddEventType()"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visibility section -->
+  <section class="mb-8">
+    <h3 class="text-xl font-bold mb-2">
+      Visibility section
+      <p class="text-gray-600 text-sm">
+        Choose the visibility and availability of the service.
+      </p>
+    </h3>
+
+    <div class="mb-4">
+      <label class="inline-flex items-center">
+        <input
+          type="checkbox"
+          name="isVisible"
+          [(ngModel)]="serviceData.isVisible"
+          class="mr-2"
+        />
+        Make it visible for organizers right after creation.
+      </label>
+    </div>
+
+    <div>
+      <label class="inline-flex items-center">
+        <input
+          type="checkbox"
+          name="isAvailable"
+          [(ngModel)]="serviceData.isAvailable"
+          class="mr-2"
+        />
+        Make it available for booking right after creation
+      </label>
+    </div>
+  </section>
+
+  <!-- Time management section -->
+  <section class="mb-8">
+    <h3 class="text-xl font-bold mb-2">
+      Time management section
+      <p class="text-gray-600 text-sm">
+        Set the time information of the service.
+      </p>
+    </h3>
+
+    <div class="mb-4">
+      <label class="inline-flex items-center">
+        <input
+          type="checkbox"
+          name="noTimeSelectionRequired"
+          [(ngModel)]="serviceData.noTimeSelectionRequired"
+          (change)="onNoTimeSelectionChange($event)"
+          class="mr-2"
+        />
+        No Time Selection Required
+      </label>
+    </div>
+
+    <div class="mb-4">
+      <label class="inline-flex items-center">
+        <input
+          type="checkbox"
+          name="manualTimeSelection"
+          [(ngModel)]="serviceData.manualTimeSelection"
+          (change)="onManualTimeSelectionChange($event)"
+          [disabled]="serviceData.noTimeSelectionRequired"
+          class="mr-2"
+        />
+        Manual time selection for organizer
+      </label>
+    </div>
+
+    <div class="mb-4">
+      <label
+        for="serviceDurationMin"
+        class="block mb-1 font-bold"
+        [class.text-gray-500]="disableMinField"
+      >
+        Minimum Duration (minutes)
+      </label>
+      <input
+        id="serviceDurationMin"
+        name="serviceDurationMin"
+        type="number"
+        [(ngModel)]="serviceData.serviceDurationMin"
+        min="0"
+        class="border border-gray-300 rounded px-2 py-1 w-full disabled:bg-gray-100 disabled:text-gray-500"
+        placeholder="0"
+        [disabled]="disableMinField"
+      />
+    </div>
+
+    <div class="mb-4">
+      <label
+        for="serviceDurationMax"
+        class="block mb-1 font-bold"
+        [class.text-gray-500]="disableMaxField"
+      >
+        Maximum Duration (minutes)
+      </label>
+      <input
+        id="serviceDurationMax"
+        name="serviceDurationMax"
+        type="number"
+        [(ngModel)]="serviceData.serviceDurationMax"
+        min="0"
+        class="border border-gray-300 rounded px-2 py-1 w-full disabled:bg-gray-100 disabled:text-gray-500"
+        placeholder="0"
+        [disabled]="disableMaxField"
+      />
+    </div>
+
+    <div class="mb-4">
+      <label
+        for="bookingDeclineDeadline"
+        class="block mb-1 font-bold"
+        [class.text-gray-500]="disableBookingDeadline"
+      >
+        Cancellation Deadline (hours before start)
+      </label>
+      <input
+        id="bookingDeclineDeadline"
+        name="bookingDeclineDeadline"
+        type="number"
+        [(ngModel)]="serviceData.bookingDeclineDeadline"
+        min="0"
+        class="border border-gray-300 rounded px-2 py-1 w-full disabled:bg-gray-100 disabled:text-gray-500"
+        placeholder="0"
+        [disabled]="disableBookingDeadline"
+      />
+    </div>
+  </section>
+
+  <!-- Submit Button -->
+  <button
+    type="submit"
+    [disabled]="!myForm.form.valid"
+    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:bg-gray-300"
+  >
+    Create Service
+  </button>
+</form>

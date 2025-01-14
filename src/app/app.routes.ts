@@ -2,6 +2,13 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: 'create-service',
+    loadComponent: () =>
+      import(
+        './components/create-service-component/create-service-component.component'
+      ).then((m) => m.CreateServiceComponent),
+  },
+  {
     path: 'services',
     loadComponent: () =>
       import(

@@ -8,6 +8,7 @@ export interface User {
   profilePicture?: string;
   address?: string;
   phoneNumber?: string;
+  
   // (PUP)
   companyName?: string;
   companyDescription?: string;

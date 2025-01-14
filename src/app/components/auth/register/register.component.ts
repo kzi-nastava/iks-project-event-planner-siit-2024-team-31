@@ -4,8 +4,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { User } from '../../../models/user.model';
 import { AuthService } from '../../../services/auth/auth.service';
+import { User } from '../../../types/models/user.model';
 
 @Component({
   selector: 'app-register',
@@ -31,9 +31,10 @@ export class RegisterComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
-    // if (this.user.password !== this.confirmPassword) {
-    //   return;
-    // }
+    if (this.user.password !== this.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
 
     if (!this.user.role) {
       alert('Please, choose a role');

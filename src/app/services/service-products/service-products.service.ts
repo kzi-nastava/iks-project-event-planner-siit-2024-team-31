@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
-import { ServiceProduct } from '../../models/service-product.model';
+import { CreateServiceRequest } from '../../types/dto/requests/createServiceRequest';
+import { ServiceProduct } from '../../types/models/service-product.model';
 
 @Injectable({
   providedIn: 'root',
@@ -65,6 +66,16 @@ export class ServiceProductService {
       };
     }
   );
+
+  public createNewService(request: CreateServiceRequest): Observable<any> {
+    //return this.http.post(`${this.apiUrl}`, request);
+
+    //test data
+    return of({
+      message: 'Service created successfully',
+      error: null,
+    });
+  }
 
   getTopServices(): Observable<ServiceProduct[]> {
     const topServices = this.services.slice(0, 5);

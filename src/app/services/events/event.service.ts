@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { Event } from '../../models/event.model';
+import { EventType } from '../../types/eventType';
+import { Event } from '../../types/models/event.model';
 
 @Injectable({
   providedIn: 'root',
@@ -90,6 +91,19 @@ export class EventService {
     } else {
       return throwError(() => new Error('Event not found'));
     }
+  }
+
+  public getEventTypes(): Observable<EventType[]> {
+    //return this.http.get<string[]>(`${this.apiUrl}/types`);
+
+    //test data
+    return of([
+      { id: 1, name: 'Conference' },
+      { id: 2, name: 'Exhibition' },
+      { id: 3, name: 'Festival' },
+      { id: 4, name: 'Networking' },
+      { id: 5, name: 'Workshop' },
+    ]);
   }
 
   //filtering
