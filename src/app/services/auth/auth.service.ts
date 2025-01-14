@@ -28,6 +28,7 @@ export class AuthService {
         map((response) => {
           document.cookie = `token=${response.token}`;
           localStorage.setItem('token', response.token);
+          localStorage.setItem('role', response.role);
           this.userRoleSubject.next('ROLE_PUP');
         })
       );
@@ -41,10 +42,24 @@ export class AuthService {
   logout() {
     this.currentUser = null;
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
     this.userRoleSubject.next(null);
   }
 
+  getToken(): string | null {
+    return localStorage.getItem('token'); // Или sessionStorage
+  }
+
+  getRole(): string | null {
+    return localStorage.getItem('role');
+  }
+
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+    return !!this.getToken(); // Проверка наличия токена
+  }
+
+  hasRole(requiredRoles: string[]): boolean {
+    const userRole = this.getRole();
+    return userRole ? requiredRoles.includes(userRole) : false;
   }
 }

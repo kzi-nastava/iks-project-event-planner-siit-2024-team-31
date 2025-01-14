@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './services/auth/auth.guard';
 
 export const routes: Routes = [
   {
@@ -7,6 +8,8 @@ export const routes: Routes = [
       import(
         './components/create-service-component/create-service-component.component'
       ).then((m) => m.CreateServiceComponent),
+    canMatch: [AuthGuard.canMatch],
+    data: { roles: ['admin', 'pup'] },
   },
   {
     path: 'services',
@@ -53,6 +56,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./components/auth/login/login.component').then(
         (m) => m.LoginComponent
+      ),
+  },
+  {
+    path: 'access-denied',
+    loadComponent: () =>
+      import('./components/utils/access-denied/access-denied.component').then(
+        (m) => m.AccessDeniedComponent
       ),
   },
 ];
