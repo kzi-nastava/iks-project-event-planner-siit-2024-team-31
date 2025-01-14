@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
+
 import { EventService } from '../../services/events/event.service';
 import { ServiceProductService } from '../../services/service-products/service-products.service';
 import { CreateServiceRequest } from '../../types/dto/requests/createServiceRequest';
@@ -13,20 +14,28 @@ import { EventType } from '../../types/eventType'; // { id: number; name: string
   standalone: true,
   imports: [CommonModule, FormsModule],
 })
-export class CreateServiceComponent {
+export class CreateServiceComponent implements OnInit {
   eventTypes$: Observable<EventType[]>;
+  categories$: Observable<string[]>;
+
+  showCategoryModal = false;
+  categories: string[] = [];
+  filteredCategories: string[] = [];
+  searchQuery = '';
+
   showEventTypeModal = false;
   selectedEventType: EventType | null = null;
+
   photoPreviews: string[] = [];
 
   serviceData = {
     name: '',
     description: '',
     peculiarities: '',
+    category: '',
     price: 0,
     discount: 0,
     photos: [] as string[],
-    // EventType: { id, name }
     suitableEventTypes: [] as EventType[],
     isVisible: false,
     isAvailable: false,
@@ -43,8 +52,56 @@ export class CreateServiceComponent {
     public eventService: EventService
   ) {
     this.eventTypes$ = this.eventService.getEventTypes();
+    this.categories$ = this.productService.getServiceCategories();
   }
 
+  ngOnInit(): void {
+    this.categories$.subscribe((allCats) => {
+      this.categories = allCats;
+      this.filterCategories();
+    });
+  }
+
+  // --------------------------------
+  // Category Management
+  // --------------------------------
+  openCategoryPopup(): void {
+    this.showCategoryModal = true;
+    this.searchQuery = '';
+    this.filterCategories();
+  }
+
+  closeCategoryPopup(): void {
+    this.showCategoryModal = false;
+  }
+
+  onSearchQueryChange(): void {
+    this.filterCategories();
+  }
+
+  filterCategories(): void {
+    const q = this.searchQuery.trim().toLowerCase();
+    this.filteredCategories = this.categories.filter((cat) =>
+      cat.toLowerCase().includes(q)
+    );
+  }
+
+  selectCategory(cat: string): void {
+    this.serviceData.category = cat;
+    this.closeCategoryPopup();
+  }
+
+  createNewCategory(): void {
+    const newCat = this.searchQuery.trim();
+    if (newCat) {
+      this.serviceData.category = newCat;
+      this.closeCategoryPopup();
+    }
+  }
+
+  // --------------------------------
+  // Photos Management
+  // --------------------------------
   onPhotosSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
@@ -68,6 +125,10 @@ export class CreateServiceComponent {
     this.photoPreviews.splice(index, 1);
     this.serviceData.photos.splice(index, 1);
   }
+
+  // --------------------------------
+  // Event Type Management
+  // --------------------------------
   openEventTypePopup(): void {
     this.showEventTypeModal = true;
     this.selectedEventType = null;
@@ -88,6 +149,9 @@ export class CreateServiceComponent {
     this.serviceData.suitableEventTypes.splice(index, 1);
   }
 
+  // --------------------------------
+  // Time Management
+  // --------------------------------
   get disableMinField(): boolean {
     return this.serviceData.noTimeSelectionRequired;
   }
@@ -124,10 +188,14 @@ export class CreateServiceComponent {
     }
   }
 
+  // --------------------------------
+  // Submit
+  // --------------------------------
   onSubmit(): void {
     const request: CreateServiceRequest = {
       token: localStorage.getItem('token'),
       name: this.serviceData.name,
+      category: this.serviceData.category,
       description: this.serviceData.description,
       peculiarities: this.serviceData.peculiarities,
       price: this.serviceData.price,

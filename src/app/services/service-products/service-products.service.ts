@@ -77,6 +77,24 @@ export class ServiceProductService {
     });
   }
 
+  public getServiceCategories(): Observable<string[]> {
+    return of([
+      'Photography',
+      'Catering',
+      'Decoration',
+      'Entertainment',
+      'Logistics',
+      'Venue',
+      'Music',
+      'Transportation',
+      'Security',
+      'Florist',
+      'Bakery',
+      'Bar',
+      'Restaurant',
+    ]);
+  }
+
   getTopServices(): Observable<ServiceProduct[]> {
     const topServices = this.services.slice(0, 5);
     return of(topServices);
