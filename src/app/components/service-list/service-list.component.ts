@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ServiceProduct } from '../../models/service-product.model';
 import { ServiceProductService } from '../../services/service-products/service-products.service';
+import { ServiceProduct } from '../../types/models/service-product.model';
 import { ServiceCardComponent } from '../service-card/service-card.component';
 
 @Component({

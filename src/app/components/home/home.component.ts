@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Event } from '../../models/event.model';
-import { ServiceProduct } from '../../models/service-product.model';
 import { EventService } from '../../services/events/event.service';
 import { ServiceProductService } from '../../services/service-products/service-products.service';
+import { Event } from '../../types/models/event.model';
+import { ServiceProduct } from '../../types/models/service-product.model';
 import { EventCardComponent } from '../event-card/event-card.component';
 import { EventListComponent } from '../event-list/event-list.component';
 import { ServiceCardComponent } from '../service-card/service-card.component';

@@ -4,9 +4,9 @@ export const routes: Routes = [
   {
     path: 'create-service',
     loadComponent: () =>
-      import('./components/service-create/service-create.component').then(
-        (m) => m.CreateServiceProductComponent
-      ),
+      import(
+        './components/create-service-component/create-service-component.component'
+      ).then((m) => m.CreateServiceComponent),
   },
   {
     path: 'services',

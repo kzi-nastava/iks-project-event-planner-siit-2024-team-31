@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Event } from '../../models/event.model';
+import { Event } from '../../types/models/event.model';
 
 @Component({
   selector: 'app-event-card',
