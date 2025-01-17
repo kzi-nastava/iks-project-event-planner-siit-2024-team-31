@@ -9,7 +9,7 @@ export const routes: Routes = [
         './components/create-service-component/create-service-component.component'
       ).then((m) => m.CreateServiceComponent),
     canMatch: [AuthGuard.canMatch],
-    data: { roles: ['admin', 'pup'] },
+    //data: { roles: ['ROLE_ADMIN', 'ROLE_PUP'] },
   },
   {
     path: 'services',

@@ -192,8 +192,8 @@ export class CreateServiceComponent implements OnInit {
   // Submit
   // --------------------------------
   onSubmit(): void {
+    console.log('Form submitted!', this.serviceData);
     const request: CreateServiceRequest = {
-      token: localStorage.getItem('token'),
       name: this.serviceData.name,
       category: this.serviceData.category,
       description: this.serviceData.description,
@@ -213,7 +213,9 @@ export class CreateServiceComponent implements OnInit {
       manualTimeSelection: this.serviceData.manualTimeSelection,
       bookingConfirmation: this.serviceData.bookingConfirmation,
     };
-
-    this.productService.createNewService(request);
+    this.productService.createNewService(request).subscribe({
+      next: (response) => console.log('Success:', response),
+      error: (err) => console.error('Error:', err),
+    });
   }
 }

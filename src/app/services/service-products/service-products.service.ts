@@ -8,7 +8,7 @@ import { ServiceProduct } from '../../types/models/service-product.model';
   providedIn: 'root',
 })
 export class ServiceProductService {
-  private apiUrl = '';
+  private apiUrl = 'http://localhost:3308/product';
 
   constructor(private http: HttpClient) {}
 
@@ -68,13 +68,10 @@ export class ServiceProductService {
   );
 
   public createNewService(request: CreateServiceRequest): Observable<any> {
-    //return this.http.post(`${this.apiUrl}`, request);
-
-    //test data
-    return of({
-      message: 'Service created successfully',
-      error: null,
-    });
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    };
+    return this.http.post(`${this.apiUrl}`, request, { headers });
   }
 
   public getServiceCategories(): Observable<string[]> {

@@ -1,5 +1,4 @@
 export interface CreateServiceRequest {
-  token: string | null;
   name: string;
   category: string;
   description: string;
