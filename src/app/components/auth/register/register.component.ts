@@ -24,6 +24,7 @@ export class RegisterComponent {
     companyDescription: '',
   };
 
+  
   confirmPassword: string = '';
   isSubmitting: boolean = false;
   registrationError: string = '';
