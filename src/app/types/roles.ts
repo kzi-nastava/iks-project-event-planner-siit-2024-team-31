@@ -1,5 +1,5 @@
 export enum Roles {
-  'ROLE_AK',
+  'ROLE_USER',
   'ROLE_OD',
   'ROLE_PUP',
   'ROLE_ADMIN',
