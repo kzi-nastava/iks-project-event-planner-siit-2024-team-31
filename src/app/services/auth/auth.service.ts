@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CurrentUser } from '../../types/currentUser';
 import { LoginResponse } from '../../types/dto/responses/loginResponse';
-import { User } from '../../types/models/user.model';
+import { RegisterResponse } from '../../types/dto/responses/registerResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -34,9 +34,11 @@ export class AuthService {
       );
   }
 
-  register(user: User): Observable<any> {
-    return this.http.post(`${this.baseApiUrl}signup`, user);
-    //add activation link message
+  register(formData: FormData): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(
+      `${this.baseApiUrl}signup`,
+      formData
+    );
   }
 
   logout() {
