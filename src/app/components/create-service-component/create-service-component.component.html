@@ -237,9 +237,9 @@
         <div class="bg-white p-6 rounded shadow-lg w-80">
           <h3 class="text-lg font-bold mb-4">Choose an Event Type</h3>
 
-          <!-- Список eventTypes$ (id, name) -->
-          <ng-container *ngIf="eventTypes$ | async as eventTypes">
-            <label class="block mb-2" *ngFor="let type of eventTypes">
+          <!-- Список allEventTypes (id, name) -->
+          <ng-container>
+            <label class="block mb-2" *ngFor="let type of allEventTypes">
               <input
                 type="radio"
                 name="radioEventType"

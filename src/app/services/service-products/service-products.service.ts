@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
-import { CreateServiceRequest } from '../../types/dto/requests/createServiceRequest';
 import { ServiceProduct } from '../../types/models/service-product.model';
+import { ProductCategory } from '../../types/productCategory';
 
 @Injectable({
   providedIn: 'root',
@@ -67,29 +67,20 @@ export class ServiceProductService {
     }
   );
 
-  public createNewService(request: CreateServiceRequest): Observable<any> {
+  public createNewService(request: FormData): Observable<any> {
     const headers = {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     };
     return this.http.post(`${this.apiUrl}`, request, { headers });
   }
 
-  public getServiceCategories(): Observable<string[]> {
-    return of([
-      'Photography',
-      'Catering',
-      'Decoration',
-      'Entertainment',
-      'Logistics',
-      'Venue',
-      'Music',
-      'Transportation',
-      'Security',
-      'Florist',
-      'Bakery',
-      'Bar',
-      'Restaurant',
-    ]);
+  public getServiceCategories(): Observable<ProductCategory[]> {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    };
+    return this.http.get<ProductCategory[]>(`${this.apiUrl}/categories`, {
+      headers,
+    });
   }
 
   getTopServices(): Observable<ServiceProduct[]> {
