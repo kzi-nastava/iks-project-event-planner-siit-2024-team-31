@@ -3,13 +3,22 @@ import { AuthGuard } from './services/auth/auth.guard';
 
 export const routes: Routes = [
   {
-    path: 'create-service',
+    path: 'pup/create-service',
     loadComponent: () =>
       import(
         './components/create-service-component/create-service-component.component'
       ).then((m) => m.CreateServiceComponent),
     canMatch: [AuthGuard.canMatch],
-    //data: { roles: ['ROLE_ADMIN', 'ROLE_PUP'] },
+    data: { roles: ['ROLE_PUP'] },
+  },
+  {
+    path: 'pup/my-products-services',
+    loadComponent: () =>
+      import(
+        './components/pup/pup-products-services-component/pup-products-services-component.component'
+      ).then((m) => m.PupProductsServicesComponentComponent),
+      canMatch: [AuthGuard.canMatch],
+      data: { roles: ['ROLE_PUP'] },
   },
   {
     path: 'services',
