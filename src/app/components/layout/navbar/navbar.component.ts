@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../../services/auth/auth.service';
@@ -16,6 +16,7 @@ export class NavbarComponent {
   myProfileButton = { text: 'My profile', link: '/profile' };
   isAuthenticated$: Observable<boolean>;
   userRole: string | null = null;
+  isDropdownOpen = false;
 
   constructor(public authService: AuthService, private router: Router) {
     this.authService.userRole$.subscribe((role) => {
@@ -24,9 +25,18 @@ export class NavbarComponent {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
   }
 
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  closeDropdown(event: MouseEvent) {
+    if (!this.isDropdownOpen) return;
+    this.isDropdownOpen = false;
+  }
+
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
-  
 }
