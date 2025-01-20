@@ -8,7 +8,7 @@ import { Event } from '../../types/models/event.model';
   providedIn: 'root',
 })
 export class EventService {
-  private apiUrl = '';
+  private apiUrl = 'http://localhost:3308/event';
 
   constructor(private http: HttpClient) {}
 
@@ -94,16 +94,12 @@ export class EventService {
   }
 
   public getEventTypes(): Observable<EventType[]> {
-    //return this.http.get<string[]>(`${this.apiUrl}/types`);
-
-    //test data
-    return of([
-      { id: 1, name: 'Conference' },
-      { id: 2, name: 'Exhibition' },
-      { id: 3, name: 'Festival' },
-      { id: 4, name: 'Networking' },
-      { id: 5, name: 'Workshop' },
-    ]);
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    };
+    return this.http.get<EventType[]>(`${this.apiUrl}/event-types`, {
+      headers,
+    });
   }
 
   //filtering
