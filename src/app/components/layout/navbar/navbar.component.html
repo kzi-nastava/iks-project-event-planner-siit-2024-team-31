@@ -56,7 +56,86 @@
         >
           {{ myProfileButton.text }}
         </a>
-        <!-- сделай тут выпадающее меню с опциями-->>
+
+        <div class="relative" (click)="$event.stopPropagation()">
+          <button
+            (click)="toggleDropdown()"
+            class="bg-black hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center space-x-2"
+          >
+            <span>Options</span>
+            <svg class="w-6 h-6 fill-current" viewBox="0 0 20 20">
+              <path d="M5.5 7l4 4 4-4H5.5z" />
+              <!-- ▼ -->>
+            </svg>
+          </button>
+
+          <div
+            *ngIf="isDropdownOpen"
+            class="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg z-10"
+          >
+            <ng-container *ngIf="userRole === 'ROLE_PUP'">
+              <a
+                routerLink="/pup/dashboard"
+                class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+              >
+                My dashboard
+              </a>
+              <a
+                routerLink="/pup/services"
+                class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+              >
+                My services
+              </a>
+            </ng-container>
+
+            <ng-container *ngIf="userRole === 'ROLE_OD'">
+              <a
+                routerLink="/od/events"
+                class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+              >
+                My events
+              </a>
+            </ng-container>
+
+            <ng-container *ngIf="userRole === 'ROLE_ADMIN'">
+              <a
+                routerLink="/admin/users"
+                class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+              >
+                Manage users
+              </a>
+              <a
+                routerLink="/admin/categories"
+                class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+              >
+                Manage categories
+              </a>
+            </ng-container>
+
+            <ng-container *ngIf="userRole === 'ROLE_USER'">
+              <a
+                routerLink="/user/bookings"
+                class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+              >
+                My events
+              </a>
+            </ng-container>
+
+            <a
+              routerLink="/chats"
+              class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+            >
+              My chats
+            </a>
+            <a
+              routerLink="/settings"
+              class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+            >
+              Settings
+            </a>
+          </div>
+        </div>
+
         <a
           class="bg-black hover:bg-red-500 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 cursor-pointer"
           (click)="logout()"
