@@ -13,7 +13,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 export class NavbarComponent {
   registerButton = { text: 'Sign up', link: '/register' };
   loginButton = { text: 'Log in', link: '/login' };
-  myProfileButton = { text: 'My profile', link: '/profile' };
+  myProfileButton = { text: 'My profile', link: '/my-profile' };
   isAuthenticated$: Observable<boolean>;
   userRole: string | null = null;
   isDropdownOpen = false;
