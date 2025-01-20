@@ -64,4 +64,15 @@ export class AuthService {
     const userRole = this.getRole();
     return userRole ? requiredRoles.includes(userRole) : false;
   }
+
+  initializeAuthState(): void {
+    const token = this.getToken();
+    const role = this.getRole();
+
+    if (token && role) {
+      this.userRoleSubject.next(role);
+    } else {
+      this.userRoleSubject.next(null);
+    }
+  }
 }

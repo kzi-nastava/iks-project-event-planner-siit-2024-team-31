@@ -15,5 +15,11 @@ import { ServiceProductService } from './services/service-products/service-produ
   providers: [AuthService, EventService, ServiceProductService],
 })
 export class AppComponent {
-  title = 'ep2024-frontend-angular17-tailwind';
+  title = 'Event Planner';
+
+  constructor(private authService: AuthService) {}
+
+  ngOnInit(): void {
+    this.authService.initializeAuthState();
+  }
 }
