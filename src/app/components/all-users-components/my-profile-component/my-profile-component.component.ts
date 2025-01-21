@@ -4,11 +4,12 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { UserService } from '../../../services/user/user.service';
 import { UserMyProfileResponse } from '../../../types/dto/responses/userMyProfileResponse';
+import { ChangePasswordComponent } from '../change-password-component/change-password-component.component';
 
 @Component({
   selector: 'app-my-profile-component',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ChangePasswordComponent],
   templateUrl: './my-profile-component.component.html',
 })
 export class MyProfileComponent implements OnInit {
@@ -17,7 +18,11 @@ export class MyProfileComponent implements OnInit {
   notificationsEnabled = false;
   selectedPhotoUrl: string | null = null;
 
-  fallbackImage = '../../../../../public/emptyAvatar.png';
+  fallbackImage = 'assets/fallback-image.png';
+  
+  showChangePasswordModal = false;
+
+  //TODO: add user event calendar
 
   constructor(
     private userService: UserService,
@@ -55,7 +60,19 @@ export class MyProfileComponent implements OnInit {
 
   editInformation() {}
 
+  openChangePasswordModal() {
+    this.showChangePasswordModal = true;
+  }
+
+  closeChangePasswordModal() {
+    this.showChangePasswordModal = false;
+  }
+
   changePassword() {}
 
-  deactivateAccount() {}
+  deactivateAccount() {
+    //for PUP account can be deactivated only if there are no booked services
+    //for OD account can be deactivated only if there are no active and upcoming events
+    //for USER account can be deactivated only if there are no active and upcoming events
+  }
 }

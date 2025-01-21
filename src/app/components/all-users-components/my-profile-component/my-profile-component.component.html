@@ -116,7 +116,7 @@
           Edit Information
         </button>
         <button
-          (click)="changePassword()"
+          (click)="openChangePasswordModal()"
           class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
         >
           Change Password
@@ -141,7 +141,7 @@
             [src]="
 				selectedPhotoUrl ||
 				userProfile?.tempPhotoUrlAndIdDTOList?.[0]?.tempPhotoUrl ||
-				fallbackImage
+				this.fallbackImage
 			  "
             alt="Selected Photo"
             class="object-cover w-full h-full"
@@ -170,7 +170,7 @@
 
       <ng-container *ngIf="userRole === 'ROLE_USER'">
         <h2 class="text-xl font-semibold mb-4">Your Avatar</h2>
-        <div class="border rounded w-32 h-32 mx-auto overflow-hidden">
+        <div class="border rounded w-72 h-72 mx-auto overflow-hidden">
           <img
             [src]="userProfile?.tempPhotoUrlAndIdDTOList?.[0]?.tempPhotoUrl || fallbackImage"
             alt="Avatar"
@@ -181,3 +181,9 @@
     </div>
   </div>
 </div>
+
+<app-change-password
+  [showModal]="this.showChangePasswordModal"
+  (closeModal)="closeChangePasswordModal()"
+>
+</app-change-password>
