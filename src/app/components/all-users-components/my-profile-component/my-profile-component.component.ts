@@ -1,18 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { AuthService } from '../../../services/auth/auth.service'
-
+import { Router } from '@angular/router';
+import { UserService } from '../../../services/user/user.service';
 
 @Component({
   selector: 'app-my-profile-component',
   imports: [CommonModule],
-  providers: [AuthService],
   templateUrl: './my-profile-component.component.html',
 })
 export class MyProfileComponent {
-  constructor(private authService: AuthService) {}
+  constructor(private userService: UserService, private router: Router) {}
 
-  logout() {
-    this.authService.logout();
+  getUserProfile() {
+    this.userService.getUserProfile().subscribe({
+      next: (response) => {
+        console.log('User profile:', response);
+      },
+      error: (error) => {
+        console.error(error);
+      },
+    });
   }
 }
