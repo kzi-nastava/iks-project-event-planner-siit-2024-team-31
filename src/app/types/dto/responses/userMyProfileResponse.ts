@@ -8,4 +8,10 @@ export interface UserMyProfileResponse {
   zipCode: string;
   address: string;
   description: string;
+  tempPhotoUrlAndIdDTOList: {
+    photoId: number;
+    tempPhotoUrl: string;
+  }[];
+  error: string;
+  message: string;
 }
