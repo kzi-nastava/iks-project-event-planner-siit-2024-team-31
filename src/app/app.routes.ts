@@ -17,8 +17,17 @@ export const routes: Routes = [
       import(
         './components/pup/pup-products-services-component/pup-products-services-component.component'
       ).then((m) => m.PupProductsServicesComponentComponent),
-      canMatch: [AuthGuard.canMatch],
-      data: { roles: ['ROLE_PUP'] },
+    canMatch: [AuthGuard.canMatch],
+    data: { roles: ['ROLE_PUP'] },
+  },
+  {
+    path: 'my-profile',
+    loadComponent: () =>
+      import(
+        './components/all-users-components/my-profile-component/my-profile-component.component'
+      ).then((m) => m.MyProfileComponent),
+    canMatch: [AuthGuard.canMatch],
+    data: { roles: ['ROLE_USER', 'ROLE_PUP', 'ROLE_ADMIN', 'ROLE_OD'] },
   },
   {
     path: 'services',
