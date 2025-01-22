@@ -19,7 +19,7 @@ export class MyProfileComponent implements OnInit {
   selectedPhotoUrl: string | null = null;
 
   fallbackImage = 'assets/fallback-image.png';
-  
+
   showChangePasswordModal = false;
 
   //TODO: add user event calendar
