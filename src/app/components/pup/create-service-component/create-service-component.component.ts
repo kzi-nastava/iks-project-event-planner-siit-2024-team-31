@@ -3,10 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 
-import { EventService } from '../../services/events/event.service';
-import { ServiceProductService } from '../../services/service-products/service-products.service';
-import { EventType } from '../../types/eventType'; // { id: number; name: string; }
-import { ProductCategory } from '../../types/productCategory';
+import { EventService } from '../../../services/events/event.service';
+import { ServiceProductService } from '../../../services/service-products/service-products.service';
+import { EventType } from '../../../types/eventType'; // { id: number; name: string; }
+import { ProductCategory } from '../../../types/productCategory';
 
 @Component({
   selector: 'app-create-service',

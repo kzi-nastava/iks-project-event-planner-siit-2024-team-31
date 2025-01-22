@@ -7,4 +7,4 @@ import { RouterModule } from '@angular/router';
   imports: [RouterModule, CommonModule],
   templateUrl: './pup-products-services-component.component.html',
 })
-export class PupProductsServicesComponentComponent {}
+export class PupProductsServicesComponent {}
