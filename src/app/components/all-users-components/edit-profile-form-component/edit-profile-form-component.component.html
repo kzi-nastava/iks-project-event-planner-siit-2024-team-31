@@ -139,7 +139,7 @@
               <div class="relative w-24 h-24">
                 <img
                   [src]="
-                    (tempUser.tempPhotoUrlAndIdDTOList?.length ?? 0) > 0
+                    tempUser.tempPhotoUrlAndIdDTOList.length > 0
                       ? tempUser.tempPhotoUrlAndIdDTOList[0].tempPhotoUrl
                       : 'assets/fallback-image.png'
                   "
