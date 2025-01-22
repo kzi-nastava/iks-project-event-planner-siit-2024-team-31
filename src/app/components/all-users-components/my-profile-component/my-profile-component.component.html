@@ -192,5 +192,6 @@
   [showModal]="this.showEditProfileModal"
   [userProfileData]="this.userProfile"
   (closeModal)="closeEditProfileModal()"
+  (profileUpdated)="refreshUserProfile()"
 >
 </app-edit-profile-form-component>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { UserService } from '../../../services/user/user.service';
@@ -13,7 +13,7 @@ import { EditProfileFormComponent } from '../edit-profile-form-component/edit-pr
   imports: [CommonModule, ChangePasswordComponent, EditProfileFormComponent],
   templateUrl: './my-profile-component.component.html',
 })
-export class MyProfileComponent implements OnInit {
+export class MyProfileComponent implements OnInit, OnChanges {
   userProfile: UserMyProfileResponse | null = null;
   userRole: string | null = null;
   notificationsEnabled = false;
@@ -44,10 +44,22 @@ export class MyProfileComponent implements OnInit {
           this.selectedPhotoUrl =
             this.userProfile.tempPhotoUrlAndIdDTOList[0].tempPhotoUrl;
         }
-        console.log('User profile:', response);
       },
       error: (error) => {
         console.error(error);
+      },
+    });
+  }
+
+  ngOnChanges(): void {}
+
+  refreshUserProfile() {
+    this.userService.getUserProfile().subscribe({
+      next: (response) => {
+        this.userProfile = response;
+      },
+      error: (error) => {
+        console.error('Error reloading profile:', error);
       },
     });
   }

@@ -32,4 +32,15 @@ export class UserService {
       { headers }
     );
   }
+
+  updateUserData(formData: FormData): Observable<CommonMessageResponse> {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    };
+    return this.http.post<CommonMessageResponse>(
+      `${this.apiUrlBase}/update-data`,
+      formData,
+      { headers }
+    );
+  }
 }
