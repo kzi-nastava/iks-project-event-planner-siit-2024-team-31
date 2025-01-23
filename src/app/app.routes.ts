@@ -6,19 +6,61 @@ export const routes: Routes = [
     path: 'pup/create-service',
     loadComponent: () =>
       import(
-        './components/create-service-component/create-service-component.component'
+        './components/pup/create-service-component/create-service-component.component'
       ).then((m) => m.CreateServiceComponent),
     canMatch: [AuthGuard.canMatch],
-    data: { roles: ['ROLE_PUP'] },
+    data: {
+      roles: [
+        'ROLE_PUP',
+        //admin for testing purposes!
+        'ROLE_ADMIN',
+      ],
+    },
   },
   {
     path: 'pup/my-products-services',
     loadComponent: () =>
       import(
         './components/pup/pup-products-services-component/pup-products-services-component.component'
-      ).then((m) => m.PupProductsServicesComponentComponent),
+      ).then((m) => m.PupProductsServicesComponent),
     canMatch: [AuthGuard.canMatch],
-    data: { roles: ['ROLE_PUP'] },
+    data: {
+      roles: [
+        'ROLE_PUP',
+        //admin for testing purposes!
+        'ROLE_ADMIN',
+      ],
+    },
+  },
+  {
+    path: 'od/my-events',
+    loadComponent: () =>
+      import(
+        './components/od/od-events-component/od-events-component.component'
+      ).then((m) => m.OdEventsComponent),
+    canMatch: [AuthGuard.canMatch],
+    data: {
+      roles: [
+        'ROLE_OD',
+        //admin for testing purposes!
+        'ROLE_ADMIN',
+      ],
+    },
+  },
+  {
+    path: 'od/create-event',
+    loadComponent: () =>
+      import(
+        './components/od/create-event-component/create-event-component.component'
+      ).then((m) => m.CreateEventComponent),
+    canMatch: [AuthGuard.canMatch],
+    data: {
+      roles: [
+        'ROLE_OD',
+        //admin for testing purposes!
+        'ROLE_ADMIN',
+      ],
+    },
   },
   {
     path: 'my-profile',

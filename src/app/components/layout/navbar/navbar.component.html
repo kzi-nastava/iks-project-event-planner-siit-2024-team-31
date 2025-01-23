@@ -73,7 +73,7 @@
             *ngIf="isDropdownOpen"
             class="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg z-10"
           >
-            <ng-container *ngIf="userRole === 'ROLE_PUP'">
+            <ng-container *ngIf="this.userRole === 'ROLE_PUP'">
               <a
                 routerLink="/pup/my_dashboard"
                 class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
@@ -90,7 +90,7 @@
 
             <ng-container *ngIf="userRole === 'ROLE_OD'">
               <a
-                routerLink="/od/events"
+                routerLink="/od/my-events"
                 class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
               >
                 My events
