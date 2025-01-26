@@ -1,11 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-event-type-page',
-  imports: [],
   templateUrl: './event-type-page.component.html',
-  styleUrl: './event-type-page.component.scss'
 })
-export class EventTypePageComponent {
+export class EventTypePageComponent implements OnInit {
+  id!: number;
 
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    this.id = Number(this.route.snapshot.paramMap.get('id'));
+    console.log('Loaded event type ID:', this.id);
+  }
 }

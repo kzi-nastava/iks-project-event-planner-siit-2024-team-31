@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-event-type-card',
@@ -6,7 +7,13 @@ import { Component } from '@angular/core';
   templateUrl: './event-type-card.component.html',
 })
 export class EventTypeCardComponent {
+  constructor(private router: Router) {}
 
+  @Input() id!: number;
+  @Input() title!: string;
+  @Input() description!: string;
 
-
+  navigateToEventTypePage() {
+    this.router.navigate([`admin/event-types/${this.id}`]);
+  }
 }
