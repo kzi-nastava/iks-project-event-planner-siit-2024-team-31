@@ -88,7 +88,7 @@
               </a>
             </ng-container>
 
-            <ng-container *ngIf="userRole === 'ROLE_OD'">
+            <ng-container *ngIf="this.userRole === 'ROLE_OD'">
               <a
                 routerLink="/od/my-events"
                 class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
@@ -97,12 +97,12 @@
               </a>
             </ng-container>
 
-            <ng-container *ngIf="userRole === 'ROLE_ADMIN'">
+            <ng-container *ngIf="this.userRole === 'ROLE_ADMIN'">
               <a
-                routerLink="/admin/users"
+                routerLink="/admin/event-types"
                 class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
               >
-                Manage users
+                Manage event types
               </a>
               <a
                 routerLink="/admin/categories"
@@ -112,7 +112,7 @@
               </a>
             </ng-container>
 
-            <ng-container *ngIf="userRole === 'ROLE_USER'">
+            <ng-container *ngIf="this.userRole === 'ROLE_USER'">
               <a
                 routerLink="/user/bookings"
                 class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"

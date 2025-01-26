@@ -29,7 +29,7 @@ export class AuthService {
           document.cookie = `token=${response.token}`;
           localStorage.setItem('token', response.token);
           localStorage.setItem('role', response.role);
-          this.userRoleSubject.next('ROLE_PUP');
+          this.userRoleSubject.next(response.role);
         })
       );
   }
