@@ -1,15 +1,33 @@
-import { Injectable } from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {EventTypeDTO} from '../../types/dto/eventTypeDTO';
+import {Page} from "../../types/page";
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class EventTypesService {
+	constructor(private http: HttpClient) {
+	}
 
-  constructor() { }
+	private baseApiUrl = 'http://localhost:3308/event-types';
 
-  private baseApiUrl = 'http://localhost:3308/event-types/';
+	searchEventTypes(keyword: string, page: number, size: number): Observable<Page<EventTypeDTO>> {
 
-  // public getEventTypes(): Observable<EventTypes[]> {
-  // }
+		const headers = {
+			'Authorization': 'Bearer ' + localStorage.getItem('token')
+		};
 
+		const params = {
+			keyword,
+			page: (page - 1).toString(),
+			size: size.toString(),
+		};
+
+		return this.http.get<Page<EventTypeDTO>>(`${this.baseApiUrl}/search`, {
+			params,
+			headers
+		});
+	}
 }

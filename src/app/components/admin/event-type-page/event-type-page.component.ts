@@ -1,17 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
-  selector: 'app-event-type-page',
-  templateUrl: './event-type-page.component.html',
+	selector: 'app-event-type-page',
+	templateUrl: './event-type-page.component.html',
 })
 export class EventTypePageComponent implements OnInit {
-  id!: number;
+	id!: number;
 
-  constructor(private route: ActivatedRoute) {}
+	constructor(private route: ActivatedRoute) {
+	}
 
-  ngOnInit() {
-    this.id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log('Loaded event type ID:', this.id);
-  }
+	ngOnInit() {
+		this.id = Number(this.route.snapshot.paramMap.get('id'));
+	}
 }
