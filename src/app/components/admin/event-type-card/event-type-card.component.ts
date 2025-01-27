@@ -4,6 +4,7 @@ import {Router} from '@angular/router';
 @Component({
 	selector: 'app-event-type-card',
 	imports: [],
+	standalone: true,
 	templateUrl: './event-type-card.component.html',
 })
 export class EventTypeCardComponent {

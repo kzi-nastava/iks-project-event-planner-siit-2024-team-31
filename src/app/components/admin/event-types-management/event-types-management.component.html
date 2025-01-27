@@ -47,9 +47,7 @@
 		*ngIf="showCreateForm"
 >
 	<div
-			class="absolute inset-0 bg-gray-900 opacity-50"
-			(click)="closeCreateForm()"
-	>
+			class="absolute inset-0 bg-gray-900 opacity-50">
 	</div>
 
 	<div class="relative bg-white rounded p-4 shadow-lg w-full max-w-md mx-auto">
@@ -78,13 +76,66 @@
 				></textarea>
 			</div>
 
-			<div>
-				<!-- product categories -->
+			<div class="mb-4">
+				<label class="block font-semibold mb-1">Recommended Product
+					Categories</label>
+
+				<div>
+					<input type="text"
+						   placeholder="Searching in name and description..."
+						   name="formQuery"
+						   [(ngModel)]="keywordForm"
+						   (input)="changePageForm(this.currentPageForm)"
+						   class="border rounded px-2 py-1 w-full"
+					>
+				</div>
+
+				<div class="border rounded p-2">
+					<div
+							*ngFor="let category of recommendedProductCategoriesList"
+							class="flex items-center"
+					>
+						<input
+								type="checkbox"
+								(ngModelChange)="toggleToSelectedList(category.id)"
+								[(ngModel)]="category.selected"
+								name="category-{{ category.id }}"
+								class="mr-2"
+						/>
+						<label
+								[matTooltip]="category.description"
+								matTooltipPosition="right"
+								matTooltipClass="productCategoryTooltip"
+								aria-label="Category description"
+						>{{ category.name }}</label>
+					</div>
+				</div>
+
+				<div class="flex flex-row mt-2">
+					<button
+							type="button"
+							name="formPrevButton"
+							(click)="changePageForm(this.currentPageForm - 1)"
+							class="mr-2 divide-blue-500 hover:bg-blue-500
+							hover:text-white font-bold border py-1 px-4 rounded"
+					>
+						<
+					</button>
+					<button
+							type="button"
+							name="formNextButton"
+							(click)="changePageForm(this.currentPageForm + 1)"
+							class="mr-2 divide-blue-500 hover:bg-blue-500
+							hover:text-white font-bold border py-1 px-4 rounded">
+						>
+					</button>
+				</div>
 			</div>
 
 			<div class="flex justify-end space-x-2">
 				<button
 						type="button"
+						name="formCancelButton"
 						(click)="closeCreateForm()"
 						class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded"
 				>
@@ -92,6 +143,7 @@
 				</button>
 				<button
 						type="submit"
+						name="formSaveButton"
 						class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-4 rounded"
 				>
 					Save

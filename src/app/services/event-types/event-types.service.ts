@@ -3,6 +3,10 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {EventTypeDTO} from '../../types/dto/eventTypeDTO';
 import {Page} from "../../types/page";
+import {
+	CommonMessageResponse
+} from "../../types/dto/responses/commonMessageResponse";
+import {EventTypeFullDTO} from "../../types/dto/eventTypeFullDTO";
 
 @Injectable({
 	providedIn: 'root',
@@ -29,5 +33,13 @@ export class EventTypesService {
 			params,
 			headers
 		});
+	}
+
+	createEventType(eventType: EventTypeFullDTO): Observable<CommonMessageResponse> {
+		const headers = {
+			'Authorization': 'Bearer ' + localStorage.getItem('token')
+		};
+
+		return this.http.post<CommonMessageResponse>(`${this.baseApiUrl}/create`, eventType, {headers});
 	}
 }
