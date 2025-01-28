@@ -42,4 +42,23 @@ export class EventTypesService {
 
 		return this.http.post<CommonMessageResponse>(`${this.baseApiUrl}/create`, eventType, {headers});
 	}
+
+	getEventTypeById(id: number): Observable<EventTypeFullDTO> {
+		const headers = {
+			'Authorization': 'Bearer ' + localStorage.getItem('token')
+		};
+		return this.http.get<EventTypeFullDTO>(`${this.baseApiUrl}/${id}`, {headers});
+	}
+
+	updateEventTypeStatus(id: number, newStatus: string): Observable<CommonMessageResponse> {
+		const headers = {
+			'Authorization': 'Bearer ' + localStorage.getItem('token')
+		};
+		return this.http.patch<CommonMessageResponse>(
+			`${this.baseApiUrl}/${id}/status`,
+			{newStatus},
+			{headers}
+		);
+	}
+
 }
