@@ -1,0 +1,154 @@
+<div class="container mx-auto p-4">
+	<div class="flex flex-row items-center mb-4">
+		<h1 class="text-2xl font-bold">Event Types
+			Management</h1>
+		<button
+				(click)="openCreateForm()"
+				class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-auto"
+		>
+			Create new
+		</button>
+	</div>
+
+	<div class="mb-4">
+		<input
+				type="text"
+				placeholder="Search by name or description..."
+				[(ngModel)]="keyword"
+				(input)="searchEventTypes()"
+				class="border rounded px-2 py-1 w-full"
+		/>
+	</div>
+
+	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+		<app-event-type-card
+				*ngFor="let eventType of eventTypes"
+				[id]="eventType.id"
+				[name]="eventType.name"
+				[description]="eventType.description"
+		></app-event-type-card>
+	</div>
+
+	<div class="flex justify-center mt-4">
+		<button
+				*ngFor="let page of [].constructor(totalPages); let i = index"
+				(click)="changePage(i + 1)"
+				[class.bg-blue-500]="currentPage === i + 1"
+				class="px-4 py-2 mx-1 border rounded-lg"
+		>
+			{{ i + 1 }}
+		</button>
+	</div>
+</div>
+
+<!-- create form -->
+<div
+		class="fixed inset-0 flex items-center justify-center z-50"
+		*ngIf="showCreateForm"
+>
+	<div
+			class="absolute inset-0 bg-gray-900 opacity-50">
+	</div>
+
+	<div class="relative bg-white rounded p-4 shadow-lg w-full max-w-md mx-auto">
+		<h2 class="text-xl font-bold mb-2">Create new Event Type</h2>
+
+		<form (ngSubmit)="createNewEventType()">
+			<div class="mb-4">
+				<label class="block font-semibold mb-1" for="name">Name</label>
+				<input
+						id="name"
+						name="name"
+						[(ngModel)]="newEventType.name"
+						required
+						class="border px-2 py-1 w-full"
+				/>
+			</div>
+
+			<div class="mb-4">
+				<label class="block font-semibold mb-1" for="description">Description</label>
+				<textarea
+						id="description"
+						name="description"
+						[(ngModel)]="newEventType.description"
+						class="border px-2 py-1 w-full"
+						rows="3"
+				></textarea>
+			</div>
+
+			<div class="mb-4">
+				<label class="block font-semibold mb-1">Recommended Product
+					Categories</label>
+
+				<div>
+					<input type="text"
+						   placeholder="Searching in name and description..."
+						   name="formQuery"
+						   [(ngModel)]="keywordForm"
+						   (input)="changePageForm(this.currentPageForm)"
+						   class="border rounded px-2 py-1 w-full"
+					>
+				</div>
+
+				<div class="border rounded p-2">
+					<div
+							*ngFor="let category of recommendedProductCategoriesList"
+							class="flex items-center"
+					>
+						<input
+								type="checkbox"
+								(ngModelChange)="toggleToSelectedList(category.id)"
+								[(ngModel)]="category.selected"
+								name="category-{{ category.id }}"
+								class="mr-2"
+						/>
+						<label
+								[matTooltip]="category.description"
+								matTooltipPosition="right"
+								matTooltipClass="productCategoryTooltip"
+								aria-label="Category description"
+						>{{ category.name }}</label>
+					</div>
+				</div>
+
+				<div class="flex flex-row mt-2">
+					<button
+							type="button"
+							name="formPrevButton"
+							(click)="changePageForm(this.currentPageForm - 1)"
+							class="mr-2 divide-blue-500 hover:bg-blue-500
+							hover:text-white font-bold border py-1 px-4 rounded"
+					>
+						<
+					</button>
+					<button
+							type="button"
+							name="formNextButton"
+							(click)="changePageForm(this.currentPageForm + 1)"
+							class="mr-2 divide-blue-500 hover:bg-blue-500
+							hover:text-white font-bold border py-1 px-4 rounded">
+						>
+					</button>
+				</div>
+			</div>
+
+			<div class="flex justify-end space-x-2">
+				<button
+						type="button"
+						name="formCancelButton"
+						(click)="closeCreateForm()"
+						class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded"
+				>
+					Cancel
+				</button>
+				<button
+						type="submit"
+						name="formSaveButton"
+						class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-4 rounded"
+				>
+					Save
+				</button>
+			</div>
+		</form>
+	</div>
+</div>

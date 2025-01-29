@@ -21,6 +21,7 @@ export class NavbarComponent {
   constructor(public authService: AuthService, private router: Router) {
     this.authService.userRole$.subscribe((role) => {
       this.userRole = role;
+      console.log('User role:', role);
     });
     this.isAuthenticated$ = this.authService.isAuthenticated$;
   }
