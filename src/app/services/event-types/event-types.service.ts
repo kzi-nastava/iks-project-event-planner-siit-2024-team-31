@@ -50,13 +50,25 @@ export class EventTypesService {
 		return this.http.get<EventTypeFullDTO>(`${this.baseApiUrl}/${id}`, {headers});
 	}
 
-	updateEventTypeStatus(id: number, newStatus: string): Observable<CommonMessageResponse> {
+	switchEventTypeStatus(id: number, newStatus: boolean): Observable<CommonMessageResponse> {
 		const headers = {
 			'Authorization': 'Bearer ' + localStorage.getItem('token')
 		};
-		return this.http.patch<CommonMessageResponse>(
-			`${this.baseApiUrl}/${id}/status`,
-			{newStatus},
+
+		return this.http.put<CommonMessageResponse>(
+			`${this.baseApiUrl}/set-status/${id}`,
+			{status: newStatus},
+			{headers}
+		);
+	}
+
+	updateEventType(id: number, eventType: EventTypeFullDTO): Observable<CommonMessageResponse> {
+		const headers = {
+			'Authorization': 'Bearer ' + localStorage.getItem('token')
+		};
+		return this.http.put<CommonMessageResponse>(
+			`${this.baseApiUrl}/update/${id}`,
+			eventType,
 			{headers}
 		);
 	}
