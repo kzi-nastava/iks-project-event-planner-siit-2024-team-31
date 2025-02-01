@@ -6,7 +6,7 @@ import {
 import {EventTypeFullDTO} from '../../../types/dto/eventTypeFullDTO';
 import {
 	ProductCategoriesService
-} from '../../../services/product-categories.service';
+} from '../../../services/product-categories/product-categories.service';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {MatButtonModule} from '@angular/material/button';

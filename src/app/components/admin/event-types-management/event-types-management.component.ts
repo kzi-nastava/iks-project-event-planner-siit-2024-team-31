@@ -12,7 +12,7 @@ import {
 import {EventTypeFullDTO} from '../../../types/dto/eventTypeFullDTO';
 import {
 	ProductCategoriesService
-} from '../../../services/product-categories.service';
+} from '../../../services/product-categories/product-categories.service';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTooltipModule} from '@angular/material/tooltip';
 

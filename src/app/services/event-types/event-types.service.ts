@@ -7,6 +7,7 @@ import {
 	CommonMessageResponse
 } from "../../types/dto/responses/commonMessageResponse";
 import {EventTypeFullDTO} from "../../types/dto/eventTypeFullDTO";
+import {baseUrl} from "../baseUrl";
 
 @Injectable({
 	providedIn: 'root',
@@ -15,7 +16,7 @@ export class EventTypesService {
 	constructor(private http: HttpClient) {
 	}
 
-	private baseApiUrl = 'http://localhost:3308/event-types';
+	private baseApiUrl = baseUrl + 'event-types';
 
 	searchEventTypes(keyword: string, page: number, size: number): Observable<Page<EventTypeDTO>> {
 
