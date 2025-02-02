@@ -6,6 +6,7 @@ import {CurrentUser} from '../../types/currentUser';
 import {LoginResponse} from '../../types/dto/responses/loginResponse';
 import {RegisterResponse} from '../../types/dto/responses/registerResponse';
 import {baseUrl} from "../baseUrl";
+import {Role} from "../../types/roles";
 
 @Injectable({
 	providedIn: 'root',
@@ -15,7 +16,7 @@ export class AuthService {
 
 	public currentUser: CurrentUser | null = null;
 
-	private userRoleSubject = new BehaviorSubject<string | null>(null);
+	private userRoleSubject = new BehaviorSubject<Role | null>(null);
 
 	userRole$ = this.userRoleSubject.asObservable();
 	isAuthenticated$ = this.userRole$.pipe(map((role) => !!role));
@@ -31,7 +32,7 @@ export class AuthService {
 					document.cookie = `token=${response.token}`;
 					localStorage.setItem('token', response.token);
 					localStorage.setItem('role', response.role);
-					this.userRoleSubject.next(response.role);
+					this.userRoleSubject.next(response.role as Role);
 				})
 			);
 	}
@@ -51,7 +52,7 @@ export class AuthService {
 	}
 
 	getToken(): string | null {
-		return localStorage.getItem('token'); // Или sessionStorage
+		return localStorage.getItem('token');
 	}
 
 	getRole(): string | null {
@@ -59,7 +60,7 @@ export class AuthService {
 	}
 
 	isAuthenticated(): boolean {
-		return !!this.getToken(); // Проверка наличия токена
+		return !!this.getToken();
 	}
 
 	hasRole(requiredRoles: string[]): boolean {
@@ -72,7 +73,7 @@ export class AuthService {
 		const role = this.getRole();
 
 		if (token && role) {
-			this.userRoleSubject.next(role);
+			this.userRoleSubject.next(role as Role);
 		} else {
 			this.userRoleSubject.next(null);
 		}
