@@ -1,197 +1,212 @@
 <div class="container mx-auto bg-white shadow-md rounded-lg px-8 py-6 mt-8">
-  <div class="flex justify-between items-center mb-6">
-    <div>
-      <h1 class="text-3xl font-bold">Hello, {{ userProfile?.firstName }}!</h1>
-      <p class="text-lg text-gray-600">
-        Welcome to your profile page! Here you can review and update your
-        personal information.
-      </p>
-    </div>
+	<div class="flex justify-between items-center mb-6">
+		<div>
+			<h1 class="text-3xl font-bold">Hello, {{ userProfile?.firstName }}
+				!</h1>
+			<p class="text-lg text-gray-600">
+				Welcome to your profile page! Here you can review and update
+				your
+				personal information.
+			</p>
+		</div>
 
-    <div class="flex flex-col items-center text-center">
-      <button
-        (click)="toggleNotifications()"
-        class="cursor-pointer p-2 rounded-full focus:outline-none"
-        [ngClass]="notificationsEnabled ? 'bg-blue-100' : 'bg-gray-100'"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-8 h-8"
-          [ngClass]="notificationsEnabled ? 'text-blue-500' : 'text-gray-500'"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            d="M10 2a6 6 0 00-6 6v3.5c0 .27-.11.52-.29.71L3.3 13.7a1 1 0 00-.21 1.09c.14.34.5.54.88.54h12c.38 0 .74-.2.88-.54a1 1 0 00-.21-1.09l-.41-.49a1 1 0 01-.29-.71V8a6 6 0 00-6-6zm-3 16a3 3 0 006 0h-6z"
-          />
-        </svg>
-      </button>
-      <span class="mt-2 w-28 text-center text-sm">
+		<div class="flex flex-col items-center text-center">
+			<button
+					(click)="toggleNotifications()"
+					class="cursor-pointer p-2 rounded-full focus:outline-none"
+					[ngClass]="notificationsEnabled ? 'bg-blue-100' : 'bg-gray-100'"
+			>
+				<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="w-8 h-8"
+						[ngClass]="notificationsEnabled ? 'text-blue-500' : 'text-gray-500'"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+				>
+					<path
+							d="M10 2a6 6 0 00-6 6v3.5c0 .27-.11.52-.29.71L3.3 13.7a1 1 0 00-.21 1.09c.14.34.5.54.88.54h12c.38 0 .74-.2.88-.54a1 1 0 00-.21-1.09l-.41-.49a1 1 0 01-.29-.71V8a6 6 0 00-6-6zm-3 16a3 3 0 006 0h-6z"
+					/>
+				</svg>
+			</button>
+			<span class="mt-2 w-28 text-center text-sm">
         Notifications:
         <span
-          [ngClass]="notificationsEnabled ? 'text-blue-500' : 'text-gray-500'"
-          class="font-semibold"
-        >
+				[ngClass]="notificationsEnabled ? 'text-blue-500' : 'text-gray-500'"
+				class="font-semibold"
+		>
           {{ notificationsEnabled ? "Enabled" : "Disabled" }}
         </span>
       </span>
-    </div>
-  </div>
+		</div>
+	</div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-    <div class="col-span-2">
-      <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
-        <div *ngIf="userRole === 'ROLE_PUP'">
-          <h2 class="text-xl font-semibold mb-4">Company Profile</h2>
-          <p class="mb-2"><strong>Email:</strong> {{ userProfile?.email }}</p>
-          <p class="mb-2">
-            <strong>Company Name:</strong> {{ userProfile?.firstName }}
-          </p>
-          <p class="mb-2">
-            <strong>Phone:</strong> {{ userProfile?.phoneNumber }}
-          </p>
-          <p class="mb-2">
-            <strong>Country:</strong> {{ userProfile?.country }}
-          </p>
-          <p class="mb-2"><strong>City:</strong> {{ userProfile?.city }}</p>
-          <p class="mb-2">
-            <strong>Address:</strong> {{ userProfile?.address }}
-          </p>
-          <p class="mb-2">
-            <strong>Zip Code:</strong> {{ userProfile?.zipCode }}
-          </p>
-          <p><strong>Description:</strong> {{ userProfile?.description }}</p>
-        </div>
+	<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+		<div class="col-span-2">
+			<div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+				<div *ngIf="userRole === Role.ROLE_PUP">
+					<h2 class="text-xl font-semibold mb-4">Company Profile</h2>
+					<p class="mb-2">
+						<strong>Email:</strong> {{ userProfile?.email }}</p>
+					<p class="mb-2">
+						<strong>Company
+							Name:</strong> {{ userProfile?.firstName }}
+					</p>
+					<p class="mb-2">
+						<strong>Phone:</strong> {{ userProfile?.phoneNumber }}
+					</p>
+					<p class="mb-2">
+						<strong>Country:</strong> {{ userProfile?.country }}
+					</p>
+					<p class="mb-2">
+						<strong>City:</strong> {{ userProfile?.city }}</p>
+					<p class="mb-2">
+						<strong>Address:</strong> {{ userProfile?.address }}
+					</p>
+					<p class="mb-2">
+						<strong>Zip Code:</strong> {{ userProfile?.zipCode }}
+					</p>
+					<p>
+						<strong>Description:</strong> {{ userProfile?.description }}
+					</p>
+				</div>
 
-        <div *ngIf="userRole === 'ROLE_OD'">
-          <h2 class="text-xl font-semibold mb-4">Organizer Profile</h2>
-          <p class="mb-2"><strong>Email:</strong> {{ userProfile?.email }}</p>
-          <p class="mb-2">
-            <strong>First Name:</strong> {{ userProfile?.firstName }}
-          </p>
-          <p class="mb-2">
-            <strong>Last Name:</strong> {{ userProfile?.lastName }}
-          </p>
-          <p class="mb-2">
-            <strong>Phone:</strong> {{ userProfile?.phoneNumber }}
-          </p>
-          <p class="mb-2">
-            <strong>Country:</strong> {{ userProfile?.country }}
-          </p>
-          <p class="mb-2"><strong>City:</strong> {{ userProfile?.city }}</p>
-          <p class="mb-2">
-            <strong>Address:</strong> {{ userProfile?.address }}
-          </p>
-          <p><strong>Zip Code:</strong> {{ userProfile?.zipCode }}</p>
-        </div>
+				<div *ngIf="userRole === Role.ROLE_OD">
+					<h2 class="text-xl font-semibold mb-4">Organizer
+						Profile</h2>
+					<p class="mb-2">
+						<strong>Email:</strong> {{ userProfile?.email }}</p>
+					<p class="mb-2">
+						<strong>First
+							Name:</strong> {{ userProfile?.firstName }}
+					</p>
+					<p class="mb-2">
+						<strong>Last Name:</strong> {{ userProfile?.lastName }}
+					</p>
+					<p class="mb-2">
+						<strong>Phone:</strong> {{ userProfile?.phoneNumber }}
+					</p>
+					<p class="mb-2">
+						<strong>Country:</strong> {{ userProfile?.country }}
+					</p>
+					<p class="mb-2">
+						<strong>City:</strong> {{ userProfile?.city }}</p>
+					<p class="mb-2">
+						<strong>Address:</strong> {{ userProfile?.address }}
+					</p>
+					<p><strong>Zip Code:</strong> {{ userProfile?.zipCode }}</p>
+				</div>
 
-        <div *ngIf="userRole === 'ROLE_USER'">
-          <h2 class="text-xl font-semibold mb-4">User Profile</h2>
-          <p class="mb-2"><strong>Email:</strong> {{ userProfile?.email }}</p>
-          <p class="mb-2">
-            <strong>First Name:</strong> {{ userProfile?.firstName }}
-          </p>
-          <p class="mb-2">
-            <strong>Last Name:</strong> {{ userProfile?.lastName }}
-          </p>
-          <p class="mb-2">
-            <strong>Phone:</strong> {{ userProfile?.phoneNumber }}
-          </p>
-          <p class="mb-2">
-            <strong>Country:</strong> {{ userProfile?.country }}
-          </p>
-          <p class="mb-2"><strong>City:</strong> {{ userProfile?.city }}</p>
-          <p class="mb-2">
-            <strong>Address:</strong> {{ userProfile?.address }}
-          </p>
-          <p><strong>Zip Code:</strong> {{ userProfile?.zipCode }}</p>
-        </div>
-      </div>
+				<div *ngIf="userRole === Role.ROLE_USER">
+					<h2 class="text-xl font-semibold mb-4">User Profile</h2>
+					<p class="mb-2">
+						<strong>Email:</strong> {{ userProfile?.email }}</p>
+					<p class="mb-2">
+						<strong>First
+							Name:</strong> {{ userProfile?.firstName }}
+					</p>
+					<p class="mb-2">
+						<strong>Last Name:</strong> {{ userProfile?.lastName }}
+					</p>
+					<p class="mb-2">
+						<strong>Phone:</strong> {{ userProfile?.phoneNumber }}
+					</p>
+					<p class="mb-2">
+						<strong>Country:</strong> {{ userProfile?.country }}
+					</p>
+					<p class="mb-2">
+						<strong>City:</strong> {{ userProfile?.city }}</p>
+					<p class="mb-2">
+						<strong>Address:</strong> {{ userProfile?.address }}
+					</p>
+					<p><strong>Zip Code:</strong> {{ userProfile?.zipCode }}</p>
+				</div>
+			</div>
 
-      <div class="flex justify-start gap-4 mt-6">
-        <button
-          (click)="openEditProfileModal()"
-          class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-        >
-          Edit Information
-        </button>
-        <button
-          (click)="openChangePasswordModal()"
-          class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
-        >
-          Change Password
-        </button>
-        <button
-          (click)="deactivateAccount()"
-          class="px-4 py-2 bg-red-500 text-white rounded shadow hover:bg-red-600"
-        >
-          Deactivate Account
-        </button>
-      </div>
-    </div>
+			<div class="flex justify-start gap-4 mt-6">
+				<button
+						(click)="openEditProfileModal()"
+						class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+				>
+					Edit Information
+				</button>
+				<button
+						(click)="openChangePasswordModal()"
+						class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600"
+				>
+					Change Password
+				</button>
+				<button
+						(click)="deactivateAccount()"
+						class="px-4 py-2 bg-red-500 text-white rounded shadow hover:bg-red-600"
+				>
+					Deactivate Account
+				</button>
+			</div>
+		</div>
 
-    <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
-      <ng-container *ngIf="userRole === 'ROLE_PUP' || userRole === 'ROLE_OD'">
-        <h2 class="text-xl font-semibold mb-4">Photo Preview</h2>
+		<div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+			<ng-container
+					*ngIf="userRole === Role.ROLE_PUP || userRole === Role.ROLE_OD">
+				<h2 class="text-xl font-semibold mb-4">Photo Preview</h2>
 
-        <div
-          class="relative border rounded mb-4 w-64 h-64 mx-auto flex items-center justify-center overflow-hidden"
-        >
-          <img
-            [src]="
+				<div
+						class="relative border rounded mb-4 w-64 h-64 mx-auto flex items-center justify-center overflow-hidden"
+				>
+					<img
+							[src]="
 				selectedPhotoUrl ||
 				userProfile?.tempPhotoUrlAndIdDTOList?.[0]?.tempPhotoUrl ||
 				this.fallbackImage
 			  "
-            alt="Selected Photo"
-            class="object-cover w-full h-full"
-          />
-        </div>
+							alt="Selected Photo"
+							class="object-cover w-full h-full"
+					/>
+				</div>
 
-        <div class="flex gap-2 overflow-x-auto">
-          <div
-            *ngFor="let photo of userProfile?.tempPhotoUrlAndIdDTOList"
-            (click)="selectPhoto(photo.tempPhotoUrl)"
-            class="relative w-16 h-16 overflow-hidden cursor-pointer border-[2px] hover:border-blue-300 rounded transition-colors duration-200"
-            [ngClass]="
+				<div class="flex gap-2 overflow-x-auto">
+					<div
+							*ngFor="let photo of userProfile?.tempPhotoUrlAndIdDTOList"
+							(click)="selectPhoto(photo.tempPhotoUrl)"
+							class="relative w-16 h-16 overflow-hidden cursor-pointer border-[2px] hover:border-blue-300 rounded transition-colors duration-200"
+							[ngClass]="
               selectedPhotoUrl === photo.tempPhotoUrl
                 ? 'border-blue-500'
                 : 'border-gray-300'
             "
-          >
-            <img
-              [src]="photo.tempPhotoUrl || fallbackImage"
-              class="object-cover w-full h-full"
-              alt="Photo"
-            />
-          </div>
-        </div>
-      </ng-container>
+					>
+						<img
+								[src]="photo.tempPhotoUrl || fallbackImage"
+								class="object-cover w-full h-full"
+								alt="Photo"
+						/>
+					</div>
+				</div>
+			</ng-container>
 
-      <ng-container *ngIf="userRole === 'ROLE_USER'">
-        <h2 class="text-xl font-semibold mb-4">Your Avatar</h2>
-        <div class="border rounded w-72 h-72 mx-auto overflow-hidden">
-          <img
-            [src]="userProfile?.tempPhotoUrlAndIdDTOList?.[0]?.tempPhotoUrl || fallbackImage"
-            alt="Avatar"
-            class="object-cover w-full h-full"
-          />
-        </div>
-      </ng-container>
-    </div>
-  </div>
+			<ng-container *ngIf="userRole === Role.ROLE_USER">
+				<h2 class="text-xl font-semibold mb-4">Your Avatar</h2>
+				<div class="border rounded w-72 h-72 mx-auto overflow-hidden">
+					<img
+							[src]="userProfile?.tempPhotoUrlAndIdDTOList?.[0]?.tempPhotoUrl || fallbackImage"
+							alt="Avatar"
+							class="object-cover w-full h-full"
+					/>
+				</div>
+			</ng-container>
+		</div>
+	</div>
 </div>
 
 <app-change-password
-  [showModal]="this.showChangePasswordModal"
-  (closeModal)="closeChangePasswordModal()"
+		[showModal]="this.showChangePasswordModal"
+		(closeModal)="closeChangePasswordModal()"
 >
 </app-change-password>
 
 <app-edit-profile-form-component
-  [showModal]="this.showEditProfileModal"
-  [userProfileData]="this.userProfile"
-  (closeModal)="closeEditProfileModal()"
-  (profileUpdated)="refreshUserProfile()"
+		[showModal]="this.showEditProfileModal"
+		[userProfileData]="this.userProfile"
+		(closeModal)="closeEditProfileModal()"
+		(profileUpdated)="refreshUserProfile()"
 >
 </app-edit-profile-form-component>

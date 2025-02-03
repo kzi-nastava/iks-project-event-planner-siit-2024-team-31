@@ -2,7 +2,6 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {CurrentUser} from '../../types/currentUser';
 import {LoginResponse} from '../../types/dto/responses/loginResponse';
 import {RegisterResponse} from '../../types/dto/responses/registerResponse';
 import {baseUrl} from "../baseUrl";
@@ -14,7 +13,6 @@ import {Role} from "../../types/roles";
 export class AuthService {
 	private baseApiUrl = baseUrl + 'auth';
 
-	public currentUser: CurrentUser | null = null;
 
 	private userRoleSubject = new BehaviorSubject<Role | null>(null);
 
@@ -29,10 +27,14 @@ export class AuthService {
 			.post<LoginResponse>(`${this.baseApiUrl}/login`, {email, password})
 			.pipe(
 				map((response) => {
-					document.cookie = `token=${response.token}`;
-					localStorage.setItem('token', response.token);
-					localStorage.setItem('role', response.role);
-					this.userRoleSubject.next(response.role as Role);
+					if (Object.values(Role).includes(response.role as Role)) {
+						localStorage.setItem('token', response.token);
+						localStorage.setItem('role', response.role);
+						this.userRoleSubject.next(response.role as Role);
+					} else {
+						this.userRoleSubject.next(null);
+						throw new Error('Invalid role');
+					}
 				})
 			);
 	}
@@ -45,7 +47,6 @@ export class AuthService {
 	}
 
 	logout() {
-		this.currentUser = null;
 		localStorage.removeItem('token');
 		localStorage.removeItem('role');
 		this.userRoleSubject.next(null);
@@ -55,15 +56,18 @@ export class AuthService {
 		return localStorage.getItem('token');
 	}
 
-	getRole(): string | null {
-		return localStorage.getItem('role');
+	getRole(): Role | null {
+		const roleStr = localStorage.getItem('role');
+		if (Object.values(Role).includes(roleStr as Role)) {
+			return roleStr as Role;
+		} else return null;
 	}
 
 	isAuthenticated(): boolean {
 		return !!this.getToken();
 	}
 
-	hasRole(requiredRoles: string[]): boolean {
+	hasRole(requiredRoles: Role[]): boolean {
 		const userRole = this.getRole();
 		return userRole ? requiredRoles.includes(userRole) : false;
 	}
@@ -72,7 +76,7 @@ export class AuthService {
 		const token = this.getToken();
 		const role = this.getRole();
 
-		if (token && role) {
+		if (token && role && Object.values(Role).includes(role as Role)) {
 			this.userRoleSubject.next(role as Role);
 		} else {
 			this.userRoleSubject.next(null);

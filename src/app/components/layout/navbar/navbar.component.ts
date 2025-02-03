@@ -4,6 +4,7 @@ import {Component, HostListener} from '@angular/core';
 import {Router, RouterModule} from '@angular/router';
 import {Observable} from 'rxjs';
 import {AuthService} from '../../../services/auth/auth.service';
+import {Role} from "../../../types/roles";
 
 @Component({
 	selector: 'app-navbar',
@@ -16,13 +17,12 @@ export class NavbarComponent {
 	loginButton = {text: 'Log in', link: '/login'};
 	myProfileButton = {text: 'My profile', link: '/my-profile'};
 	isAuthenticated$: Observable<boolean>;
-	userRole: string | null = null;
+	userRole: Role | null = null;
 	isDropdownOpen = false;
 
 	constructor(public authService: AuthService, private router: Router) {
 		this.authService.userRole$.subscribe((role) => {
 			this.userRole = role;
-			console.log('User role:', role);
 		});
 		this.isAuthenticated$ = this.authService.isAuthenticated$;
 	}
@@ -41,4 +41,6 @@ export class NavbarComponent {
 		this.authService.logout();
 		this.router.navigate(['/login']);
 	}
+
+	protected readonly Role = Role;
 }

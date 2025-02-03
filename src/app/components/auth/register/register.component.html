@@ -13,9 +13,9 @@
 					class="w-full border px-3 py-2 rounded"
 			>
 				<option value="" disabled selected>Who are you?</option>
-				<option value="USER">Basic user</option>
-				<option value="OD">Organizer</option>
-				<option value="PUP">Provider</option>
+				<option value="{{Role.ROLE_USER}}">Basic user</option>
+				<option value="{{Role.ROLE_OD}}">Organizer</option>
+				<option value="{{Role.ROLE_PUP}}">Provider</option>
 			</select>
 		</div>
 
@@ -56,7 +56,7 @@
 		</div>
 
 		<!-- ROLE_USER-specific fields -->
-		<div *ngIf="user.role === 'USER'">
+		<div *ngIf="user.role === Role.ROLE_USER">
 			<div class="mb-4">
 				<label class="block text-sm font-medium">First Name</label>
 				<input
@@ -142,7 +142,7 @@
 		</div>
 
 		<!-- ROLE_OD-specific fields -->
-		<div *ngIf="user.role === 'OD'">
+		<div *ngIf="user.role === Role.ROLE_OD">
 			<div class="mb-4">
 				<label class="block text-sm font-medium">First Name</label>
 				<input
@@ -227,7 +227,7 @@
 		</div>
 
 		<!-- ROLE_PUP-specific fields -->
-		<div *ngIf="user.role === 'PUP'">
+		<div *ngIf="user.role === Role.ROLE_PUP">
 			<div class="mb-4">
 				<label class="block text-sm font-medium">Company Name</label>
 				<input
