@@ -1,278 +1,289 @@
 <div
-  class="fixed inset-0 flex items-center justify-center z-50"
-  *ngIf="showModal"
+		class="fixed inset-0 flex items-center justify-center z-50"
+		*ngIf="showModal"
 >
-  <div
-    class="absolute inset-0 bg-black opacity-50"
-    (click)="closeModalWindow()"
-  ></div>
+	<div
+			class="absolute inset-0 bg-black opacity-50"
+			(click)="closeModalWindow()"
+	></div>
 
-  <div
-    class="relative bg-white p-8 w-full max-w-3xl mx-auto rounded shadow-lg z-10"
-  >
-    <h2 class="text-xl font-bold mb-4">Edit profile information</h2>
+	<div
+			class="relative bg-white p-8 w-full max-w-3xl mx-auto rounded shadow-lg z-10"
+	>
+		<h2 class="text-xl font-bold mb-4">Edit profile information</h2>
 
-    <form (ngSubmit)="onSubmit()" *ngIf="this.userProfileData && this.tempUser">
-      <div class="flex flex-col md:flex-row gap-8">
-        <div class="md:w-1/2">
-          <div class="mb-4">
-            <label for="email" class="block font-semibold mb-1"
-              >Email (can not be changed):</label
-            >
-            <input
-              type="email"
-              id="email"
-              class="w-full px-3 py-2 border border-gray-300 rounded"
-              [ngModel]="this.tempUser.email"
-              name="email"
-              disabled
-            />
-          </div>
+		<form (ngSubmit)="onSubmit()"
+			  *ngIf="this.userProfileData && this.tempUser">
+			<div class="flex flex-col md:flex-row gap-8">
+				<div class="md:w-1/2">
+					<div class="mb-4">
+						<label for="email" class="block font-semibold mb-1"
+						>Email (can not be changed):</label
+						>
+						<input
+								type="email"
+								id="email"
+								class="w-full px-3 py-2 border border-gray-300 rounded"
+								[ngModel]="this.tempUser.email"
+								name="email"
+								disabled
+						/>
+					</div>
 
-          <div class="mb-4">
-            <label for="firstName" class="block font-semibold mb-1">
-              {{ role === "ROLE_PUP" ? "Company name:" : "First Name:" }}
-            </label>
-            <input
-              type="text"
-              id="firstName"
-              name="firstName"
-              class="w-full px-3 py-2 border border-gray-300 rounded"
-              [(ngModel)]="this.tempUser.firstName"
-            />
-          </div>
+					<div class="mb-4">
+						<label for="firstName" class="block font-semibold mb-1">
+							{{ role === Role.ROLE_PUP ? "Company name:" : "First Name:" }}
+						</label>
+						<input
+								type="text"
+								id="firstName"
+								name="firstName"
+								class="w-full px-3 py-2 border border-gray-300 rounded"
+								[(ngModel)]="this.tempUser.firstName"
+						/>
+					</div>
 
-          <div *ngIf="role !== 'ROLE_PUP'" class="mb-4">
-            <label for="lastName" class="block font-semibold mb-1">
-              Last Name:
-            </label>
-            <input
-              type="text"
-              id="lastName"
-              class="w-full px-3 py-2 border border-gray-300 rounded"
-              [(ngModel)]="this.tempUser.lastName"
-              name="lastName"
-            />
-          </div>
+					<div *ngIf="role !== Role.ROLE_PUP" class="mb-4">
+						<label for="lastName" class="block font-semibold mb-1">
+							Last Name:
+						</label>
+						<input
+								type="text"
+								id="lastName"
+								class="w-full px-3 py-2 border border-gray-300 rounded"
+								[(ngModel)]="this.tempUser.lastName"
+								name="lastName"
+						/>
+					</div>
 
-          <div class="mb-4">
-            <label for="phoneNumber" class="block font-semibold mb-1">
-              Phone Number:
-            </label>
-            <input
-              type="text"
-              id="phoneNumber"
-              class="w-full px-3 py-2 border border-gray-300 rounded"
-              [(ngModel)]="this.tempUser.phoneNumber"
-              name="phoneNumber"
-            />
-          </div>
+					<div class="mb-4">
+						<label for="phoneNumber"
+							   class="block font-semibold mb-1">
+							Phone Number:
+						</label>
+						<input
+								type="text"
+								id="phoneNumber"
+								class="w-full px-3 py-2 border border-gray-300 rounded"
+								[(ngModel)]="this.tempUser.phoneNumber"
+								name="phoneNumber"
+						/>
+					</div>
 
-          <div class="mb-4">
-            <label for="country" class="block font-semibold mb-1">
-              Country:
-            </label>
-            <input
-              type="text"
-              id="country"
-              class="w-full px-3 py-2 border border-gray-300 rounded"
-              [(ngModel)]="this.tempUser.country"
-              name="country"
-            />
-          </div>
+					<div class="mb-4">
+						<label for="country" class="block font-semibold mb-1">
+							Country:
+						</label>
+						<input
+								type="text"
+								id="country"
+								class="w-full px-3 py-2 border border-gray-300 rounded"
+								[(ngModel)]="this.tempUser.country"
+								name="country"
+						/>
+					</div>
 
-          <div class="mb-4">
-            <label for="city" class="block font-semibold mb-1">City:</label>
-            <input
-              type="text"
-              id="city"
-              class="w-full px-3 py-2 border border-gray-300 rounded"
-              [(ngModel)]="this.tempUser.city"
-              name="city"
-            />
-          </div>
+					<div class="mb-4">
+						<label for="city"
+							   class="block font-semibold mb-1">City:</label>
+						<input
+								type="text"
+								id="city"
+								class="w-full px-3 py-2 border border-gray-300 rounded"
+								[(ngModel)]="this.tempUser.city"
+								name="city"
+						/>
+					</div>
 
-          <div class="mb-4">
-            <label for="zipCode" class="block font-semibold mb-1">
-              ZIP Code:
-            </label>
-            <input
-              type="text"
-              id="zipCode"
-              class="w-full px-3 py-2 border border-gray-300 rounded"
-              [(ngModel)]="this.tempUser.zipCode"
-              name="zipCode"
-            />
-          </div>
+					<div class="mb-4">
+						<label for="zipCode" class="block font-semibold mb-1">
+							ZIP Code:
+						</label>
+						<input
+								type="text"
+								id="zipCode"
+								class="w-full px-3 py-2 border border-gray-300 rounded"
+								[(ngModel)]="this.tempUser.zipCode"
+								name="zipCode"
+						/>
+					</div>
 
-          <div class="mb-4">
-            <label for="address" class="block font-semibold mb-1">
-              Address:
-            </label>
-            <input
-              type="text"
-              id="address"
-              class="w-full px-3 py-2 border border-gray-300 rounded"
-              [(ngModel)]="this.tempUser.address"
-              name="address"
-            />
-          </div>
+					<div class="mb-4">
+						<label for="address" class="block font-semibold mb-1">
+							Address:
+						</label>
+						<input
+								type="text"
+								id="address"
+								class="w-full px-3 py-2 border border-gray-300 rounded"
+								[(ngModel)]="this.tempUser.address"
+								name="address"
+						/>
+					</div>
 
-          <div *ngIf="role === 'ROLE_PUP'" class="mb-4">
-            <label for="description" class="block font-semibold mb-1">
-              Description:
-            </label>
-            <textarea
-              id="description"
-              class="w-full px-3 py-2 border border-gray-300 rounded"
-              rows="3"
-              [(ngModel)]="this.tempUser.description"
-              name="description"
-            ></textarea>
-          </div>
-        </div>
+					<div *ngIf="role === Role.ROLE_PUP" class="mb-4">
+						<label for="description"
+							   class="block font-semibold mb-1">
+							Description:
+						</label>
+						<textarea
+								id="description"
+								class="w-full px-3 py-2 border border-gray-300 rounded"
+								rows="3"
+								[(ngModel)]="this.tempUser.description"
+								name="description"
+						></textarea>
+					</div>
+				</div>
 
-        <div class="md:w-1/2">
-          <ng-container *ngIf="role === 'ROLE_USER'; else multiplePhotos">
-            <div class="mb-6">
-              <h3 class="text-lg font-semibold mb-2">Your Avatar:</h3>
-              <div class="relative w-24 h-24">
-                <img
-                  [src]="
+				<div class="md:w-1/2">
+					<ng-container
+							*ngIf="role === Role.ROLE_USER; else multiplePhotos">
+						<div class="mb-6">
+							<h3 class="text-lg font-semibold mb-2">Your
+								Avatar:</h3>
+							<div class="relative w-24 h-24">
+								<img
+										[src]="
                     tempUser.tempPhotoUrlAndIdDTOList.length > 0
                       ? tempUser.tempPhotoUrlAndIdDTOList[0].tempPhotoUrl
                       : 'assets/fallback-image.png'
                   "
-                  alt="Avatar"
-                  class="w-full h-full object-cover border border-gray-300 rounded"
-                />
-                <button
-                  *ngIf="(tempUser.tempPhotoUrlAndIdDTOList?.length ?? 0) > 0"
-                  type="button"
-                  class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                  (click)="
+										alt="Avatar"
+										class="w-full h-full object-cover border border-gray-300 rounded"
+								/>
+								<button
+										*ngIf="(tempUser.tempPhotoUrlAndIdDTOList?.length ?? 0) > 0"
+										type="button"
+										class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+										(click)="
                     removePhoto(tempUser.tempPhotoUrlAndIdDTOList[0].photoId)
                   "
-                  title="Remove Avatar"
-                >
-                  &times;
-                </button>
-              </div>
-            </div>
+										title="Remove Avatar"
+								>
+									&times;
+								</button>
+							</div>
+						</div>
 
-            <div class="mb-4">
-              <h3 class="text-lg font-semibold mb-2">Change Avatar:</h3>
-              <input
-                type="file"
-                accept="image/*"
-                (change)="onAvatarUpload($event)"
-                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-              />
+						<div class="mb-4">
+							<h3 class="text-lg font-semibold mb-2">Change
+								Avatar:</h3>
+							<input
+									type="file"
+									accept="image/*"
+									(change)="onAvatarUpload($event)"
+									class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+							/>
 
-              <div
-                *ngIf="newPhotos.length > 0"
-                class="flex flex-wrap gap-4 mt-4"
-              >
-                <div class="relative" *ngFor="let photo of newPhotos">
-                  <img
-                    [src]="photo.preview"
-                    alt="New Avatar"
-                    class="w-24 h-24 object-cover border border-gray-300 rounded"
-                  />
-                  <button
-                    type="button"
-                    class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                    (click)="removeNewPhoto(photo.file)"
-                    title="Remove Avatar"
-                  >
-                    &times;
-                  </button>
-                </div>
-              </div>
-            </div>
-          </ng-container>
+							<div
+									*ngIf="newPhotos.length > 0"
+									class="flex flex-wrap gap-4 mt-4"
+							>
+								<div class="relative"
+									 *ngFor="let photo of newPhotos">
+									<img
+											[src]="photo.preview"
+											alt="New Avatar"
+											class="w-24 h-24 object-cover border border-gray-300 rounded"
+									/>
+									<button
+											type="button"
+											class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+											(click)="removeNewPhoto(photo.file)"
+											title="Remove Avatar"
+									>
+										&times;
+									</button>
+								</div>
+							</div>
+						</div>
+					</ng-container>
 
-          <ng-template #multiplePhotos>
-            <div
-              *ngIf="
+					<ng-template #multiplePhotos>
+						<div
+								*ngIf="
                 tempUser.tempPhotoUrlAndIdDTOList &&
                 tempUser.tempPhotoUrlAndIdDTOList.length > 0
               "
-              class="mb-6"
-            >
-              <h3 class="text-lg font-semibold mb-2">Your Photos:</h3>
-              <div class="flex flex-wrap gap-4">
-                <div
-                  *ngFor="let photo of tempUser.tempPhotoUrlAndIdDTOList"
-                  class="relative"
-                >
-                  <img
-                    [src]="photo.tempPhotoUrl"
-                    alt="Photo"
-                    class="w-24 h-24 object-cover border border-gray-300 rounded"
-                  />
-                  <button
-                    type="button"
-                    class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                    (click)="removePhoto(photo.photoId)"
-                    title="Remove Photo"
-                  >
-                    &times;
-                  </button>
-                </div>
-              </div>
-            </div>
+								class="mb-6"
+						>
+							<h3 class="text-lg font-semibold mb-2">Your
+								Photos:</h3>
+							<div class="flex flex-wrap gap-4">
+								<div
+										*ngFor="let photo of tempUser.tempPhotoUrlAndIdDTOList"
+										class="relative"
+								>
+									<img
+											[src]="photo.tempPhotoUrl"
+											alt="Photo"
+											class="w-24 h-24 object-cover border border-gray-300 rounded"
+									/>
+									<button
+											type="button"
+											class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+											(click)="removePhoto(photo.photoId)"
+											title="Remove Photo"
+									>
+										&times;
+									</button>
+								</div>
+							</div>
+						</div>
 
-            <div class="mb-4">
-              <h3 class="text-lg font-semibold mb-2">Add New Photos:</h3>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                id="newPhotoUploadInput"
-                (change)="onPhotoUpload($event)"
-                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-              />
-              <div
-                *ngIf="newPhotos.length > 0"
-                class="flex flex-wrap gap-4 mt-4"
-              >
-                <div *ngFor="let photo of newPhotos" class="relative">
-                  <img
-                    [src]="photo.preview"
-                    alt="New Photo"
-                    class="w-24 h-24 object-cover border border-gray-300 rounded"
-                  />
-                  <button
-                    type="button"
-                    class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                    (click)="removeNewPhoto(photo.file)"
-                    title="Remove Photo"
-                  >
-                    &times;
-                  </button>
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </div>
-      </div>
+						<div class="mb-4">
+							<h3 class="text-lg font-semibold mb-2">Add New
+								Photos:</h3>
+							<input
+									type="file"
+									accept="image/*"
+									multiple
+									id="newPhotoUploadInput"
+									(change)="onPhotoUpload($event)"
+									class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+							/>
+							<div
+									*ngIf="newPhotos.length > 0"
+									class="flex flex-wrap gap-4 mt-4"
+							>
+								<div *ngFor="let photo of newPhotos"
+									 class="relative">
+									<img
+											[src]="photo.preview"
+											alt="New Photo"
+											class="w-24 h-24 object-cover border border-gray-300 rounded"
+									/>
+									<button
+											type="button"
+											class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+											(click)="removeNewPhoto(photo.file)"
+											title="Remove Photo"
+									>
+										&times;
+									</button>
+								</div>
+							</div>
+						</div>
+					</ng-template>
+				</div>
+			</div>
 
-      <div class="flex justify-end gap-2 mt-4">
-        <button
-          type="button"
-          (click)="closeModalWindow()"
-          class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Save
-        </button>
-      </div>
-    </form>
-  </div>
+			<div class="flex justify-end gap-2 mt-4">
+				<button
+						type="button"
+						(click)="closeModalWindow()"
+						class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+				>
+					Cancel
+				</button>
+				<button
+						type="submit"
+						class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+				>
+					Save
+				</button>
+			</div>
+		</form>
+	</div>
 </div>

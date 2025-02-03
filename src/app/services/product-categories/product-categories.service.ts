@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {ProductCategoryDTO} from "../types/dto/productCategoryDTO";
-import {Page} from "../types/page";
+import {ProductCategoryDTO} from "../../types/dto/productCategoryDTO";
+import {Page} from "../../types/page";
+import {baseUrl} from "../baseUrl";
 
 @Injectable({
 	providedIn: 'root'
@@ -12,7 +13,7 @@ export class ProductCategoriesService {
 	constructor(private http: HttpClient) {
 	}
 
-	baseApiUrl = 'http://localhost:3308/product-categories';
+	baseApiUrl = baseUrl + 'product-categories';
 
 	searchProductCategories(keyword: string, page: number, size: number): Observable<Page<ProductCategoryDTO>> {
 		const headers = {

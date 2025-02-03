@@ -1,348 +1,350 @@
 <div class="max-w-md mt-10 mx-auto bg-gray-100 p-6 rounded-lg shadow-md">
-  <h1 class="text-2xl font-bold mb-1">Registration form</h1>
-  <hr class="mb-4 bg-black h-1" />
+	<h1 class="text-2xl font-bold mb-1">Registration form</h1>
+	<hr class="mb-4 bg-black h-1"/>
 
-  <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
-    <!-- Role selection -->
-    <div class="mb-4">
-      <label class="block text-sm font-medium">Choose your status</label>
-      <select
-        [(ngModel)]="user.role"
-        name="role"
-        required
-        class="w-full border px-3 py-2 rounded"
-      >
-        <option value="" disabled selected>Who are you?</option>
-        <option value="ROLE_USER">Basic user</option>
-        <option value="ROLE_OD">Organizer</option>
-        <option value="ROLE_PUP">Provider</option>
-      </select>
-    </div>
+	<form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+		<!-- Role selection -->
+		<div class="mb-4">
+			<label class="block text-sm font-medium">Choose your status</label>
+			<select
+					[(ngModel)]="user.role"
+					name="role"
+					required
+					class="w-full border px-3 py-2 rounded"
+			>
+				<option value="" disabled selected>Who are you?</option>
+				<option value="{{Role.ROLE_USER}}">Basic user</option>
+				<option value="{{Role.ROLE_OD}}">Organizer</option>
+				<option value="{{Role.ROLE_PUP}}">Provider</option>
+			</select>
+		</div>
 
-    <!-- Email -->
-    <div class="mb-4">
-      <label class="block text-sm font-medium">Email</label>
-      <input
-        type="email"
-        [(ngModel)]="user.email"
-        name="email"
-        required
-        class="w-full border px-3 py-2 rounded"
-      />
-    </div>
+		<!-- Email -->
+		<div class="mb-4">
+			<label class="block text-sm font-medium">Email</label>
+			<input
+					type="email"
+					[(ngModel)]="user.email"
+					name="email"
+					required
+					class="w-full border px-3 py-2 rounded"
+			/>
+		</div>
 
-    <!-- Password -->
-    <div class="mb-4">
-      <label class="block text-sm font-medium">Password</label>
-      <input
-        type="password"
-        [(ngModel)]="user.password"
-        name="password"
-        required
-        class="w-full border px-3 py-2 rounded"
-      />
-    </div>
+		<!-- Password -->
+		<div class="mb-4">
+			<label class="block text-sm font-medium">Password</label>
+			<input
+					type="password"
+					[(ngModel)]="user.password"
+					name="password"
+					required
+					class="w-full border px-3 py-2 rounded"
+			/>
+		</div>
 
-    <!-- Confirm password -->
-    <div class="mb-4">
-      <label class="block text-sm font-medium">Confirm password</label>
-      <input
-        type="password"
-        [(ngModel)]="confirmPassword"
-        name="confirmPassword"
-        required
-        class="w-full border px-3 py-2 rounded"
-      />
-    </div>
+		<!-- Confirm password -->
+		<div class="mb-4">
+			<label class="block text-sm font-medium">Confirm password</label>
+			<input
+					type="password"
+					[(ngModel)]="confirmPassword"
+					name="confirmPassword"
+					required
+					class="w-full border px-3 py-2 rounded"
+			/>
+		</div>
 
-    <!-- ROLE_USER-specific fields -->
-    <div *ngIf="user.role === 'ROLE_USER'">
-      <div class="mb-4">
-        <label class="block text-sm font-medium">First Name</label>
-        <input
-          type="text"
-          [(ngModel)]="user.firstName"
-          name="firstName"
-          required
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
+		<!-- ROLE_USER-specific fields -->
+		<div *ngIf="user.role === Role.ROLE_USER">
+			<div class="mb-4">
+				<label class="block text-sm font-medium">First Name</label>
+				<input
+						type="text"
+						[(ngModel)]="user.firstName"
+						name="firstName"
+						required
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
 
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Last Name</label>
-        <input
-          type="text"
-          [(ngModel)]="user.lastName"
-          name="lastName"
-          required
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Last Name</label>
+				<input
+						type="text"
+						[(ngModel)]="user.lastName"
+						name="lastName"
+						required
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
 
-      <!-- Address fields (country, city, street, zipCode) -->
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Country</label>
-        <input
-          type="text"
-          [(ngModel)]="user.address.country"
-          name="countryUser"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium">City</label>
-        <input
-          type="text"
-          [(ngModel)]="user.address.city"
-          name="cityUser"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Street</label>
-        <input
-          type="text"
-          [(ngModel)]="user.address.street"
-          name="streetUser"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Zip Code</label>
-        <input
-          type="text"
-          [(ngModel)]="user.address.zipCode"
-          name="zipCodeUser"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
+			<!-- Address fields (country, city, street, zipCode) -->
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Country</label>
+				<input
+						type="text"
+						[(ngModel)]="user.address.country"
+						name="countryUser"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">City</label>
+				<input
+						type="text"
+						[(ngModel)]="user.address.city"
+						name="cityUser"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Street</label>
+				<input
+						type="text"
+						[(ngModel)]="user.address.street"
+						name="streetUser"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Zip Code</label>
+				<input
+						type="text"
+						[(ngModel)]="user.address.zipCode"
+						name="zipCodeUser"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
 
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Phone number</label>
-        <input
-          type="text"
-          [(ngModel)]="user.phoneNumber"
-          name="phoneNumberUser"
-          required
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Phone number</label>
+				<input
+						type="text"
+						[(ngModel)]="user.phoneNumber"
+						name="phoneNumberUser"
+						required
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
 
-      <!-- Single file input for avatar -->
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Load avatar (optional)</label>
-        <input
-          type="file"
-          accept="image/*"
-          (change)="onFileSelectedSingle($event)"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-    </div>
+			<!-- Single file input for avatar -->
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Load avatar
+					(optional)</label>
+				<input
+						type="file"
+						accept="image/*"
+						(change)="onFileSelectedSingle($event)"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+		</div>
 
-    <!-- ROLE_OD-specific fields -->
-    <div *ngIf="user.role === 'ROLE_OD'">
-      <div class="mb-4">
-        <label class="block text-sm font-medium">First Name</label>
-        <input
-          type="text"
-          [(ngModel)]="user.firstName"
-          name="firstNameOD"
-          required
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Last Name</label>
-        <input
-          type="text"
-          [(ngModel)]="user.lastName"
-          name="lastNameOD"
-          required
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
+		<!-- ROLE_OD-specific fields -->
+		<div *ngIf="user.role === Role.ROLE_OD">
+			<div class="mb-4">
+				<label class="block text-sm font-medium">First Name</label>
+				<input
+						type="text"
+						[(ngModel)]="user.firstName"
+						name="firstNameOD"
+						required
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Last Name</label>
+				<input
+						type="text"
+						[(ngModel)]="user.lastName"
+						name="lastNameOD"
+						required
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
 
-      <!-- Address -->
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Country</label>
-        <input
-          type="text"
-          [(ngModel)]="user.address.country"
-          name="countryOD"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium">City</label>
-        <input
-          type="text"
-          [(ngModel)]="user.address.city"
-          name="cityOD"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Street</label>
-        <input
-          type="text"
-          [(ngModel)]="user.address.street"
-          name="streetOD"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Zip Code</label>
-        <input
-          type="text"
-          [(ngModel)]="user.address.zipCode"
-          name="zipCodeOD"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
+			<!-- Address -->
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Country</label>
+				<input
+						type="text"
+						[(ngModel)]="user.address.country"
+						name="countryOD"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">City</label>
+				<input
+						type="text"
+						[(ngModel)]="user.address.city"
+						name="cityOD"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Street</label>
+				<input
+						type="text"
+						[(ngModel)]="user.address.street"
+						name="streetOD"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Zip Code</label>
+				<input
+						type="text"
+						[(ngModel)]="user.address.zipCode"
+						name="zipCodeOD"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
 
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Phone number</label>
-        <input
-          type="text"
-          [(ngModel)]="user.phoneNumber"
-          name="phoneNumberOD"
-          required
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Phone number</label>
+				<input
+						type="text"
+						[(ngModel)]="user.phoneNumber"
+						name="phoneNumberOD"
+						required
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
 
-      <!-- Multiple file input -->
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Load images</label>
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          (change)="onFilesSelectedMultiple($event)"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-    </div>
+			<!-- Multiple file input -->
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Load images</label>
+				<input
+						type="file"
+						multiple
+						accept="image/*"
+						(change)="onFilesSelectedMultiple($event)"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+		</div>
 
-    <!-- ROLE_PUP-specific fields -->
-    <div *ngIf="user.role === 'ROLE_PUP'">
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Company Name</label>
-        <input
-          type="text"
-          [(ngModel)]="user.firstName"
-          name="companyName"
-          required
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Country</label>
-        <input
-          type="text"
-          [(ngModel)]="user.address.country"
-          name="countryPUP"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium">City</label>
-        <input
-          type="text"
-          [(ngModel)]="user.address.city"
-          name="cityPUP"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Street</label>
-        <input
-          type="text"
-          [(ngModel)]="user.address.street"
-          name="streetPUP"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Zip Code</label>
-        <input
-          type="text"
-          [(ngModel)]="user.address.zipCode"
-          name="zipCodePUP"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Phone number</label>
-        <input
-          type="text"
-          [(ngModel)]="user.phoneNumber"
-          name="phoneNumberPUP"
-          required
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Company Description</label>
-        <textarea
-          [(ngModel)]="user.description"
-          name="companyDescription"
-          required
-          class="w-full border px-3 py-2 rounded"
-        ></textarea>
-      </div>
+		<!-- ROLE_PUP-specific fields -->
+		<div *ngIf="user.role === Role.ROLE_PUP">
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Company Name</label>
+				<input
+						type="text"
+						[(ngModel)]="user.firstName"
+						name="companyName"
+						required
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Country</label>
+				<input
+						type="text"
+						[(ngModel)]="user.address.country"
+						name="countryPUP"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">City</label>
+				<input
+						type="text"
+						[(ngModel)]="user.address.city"
+						name="cityPUP"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Street</label>
+				<input
+						type="text"
+						[(ngModel)]="user.address.street"
+						name="streetPUP"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Zip Code</label>
+				<input
+						type="text"
+						[(ngModel)]="user.address.zipCode"
+						name="zipCodePUP"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Phone number</label>
+				<input
+						type="text"
+						[(ngModel)]="user.phoneNumber"
+						name="phoneNumberPUP"
+						required
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Company
+					Description</label>
+				<textarea
+						[(ngModel)]="user.description"
+						name="companyDescription"
+						required
+						class="w-full border px-3 py-2 rounded"
+				></textarea>
+			</div>
 
-      <!-- Multiple file input for provider role -->
-      <div class="mb-4">
-        <label class="block text-sm font-medium">Load images</label>
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          (change)="onFilesSelectedMultiple($event)"
-          class="w-full border px-3 py-2 rounded"
-        />
-      </div>
-    </div>
+			<!-- Multiple file input for provider role -->
+			<div class="mb-4">
+				<label class="block text-sm font-medium">Load images</label>
+				<input
+						type="file"
+						multiple
+						accept="image/*"
+						(change)="onFilesSelectedMultiple($event)"
+						class="w-full border px-3 py-2 rounded"
+				/>
+			</div>
+		</div>
 
-    <!-- Previews (either single or multiple) -->
-    <div class="mb-4" *ngIf="previewUrls && previewUrls.length > 0">
-      <label class="block text-sm font-medium mb-2">Preview:</label>
-      <div class="flex flex-wrap gap-4">
-        <div
-          class="relative border rounded p-1"
-          *ngFor="let url of previewUrls; index as i"
-        >
-          <img
-            [src]="url"
-            [alt]="'Image ' + i"
-            class="w-32 h-32 object-cover border rounded"
-          />
-          <!-- Delete button (X) -->
-          <button
-            type="button"
-            class="absolute top-0 right-0 bg-red-500 text-white p-1 rounded"
-            (click)="removePicture(i)"
-          >
-            ×
-          </button>
-        </div>
-      </div>
-    </div>
+		<!-- Previews (either single or multiple) -->
+		<div class="mb-4" *ngIf="previewUrls && previewUrls.length > 0">
+			<label class="block text-sm font-medium mb-2">Preview:</label>
+			<div class="flex flex-wrap gap-4">
+				<div
+						class="relative border rounded p-1"
+						*ngFor="let url of previewUrls; index as i"
+				>
+					<img
+							[src]="url"
+							[alt]="'Image ' + i"
+							class="w-32 h-32 object-cover border rounded"
+					/>
+					<!-- Delete button (X) -->
+					<button
+							type="button"
+							class="absolute top-0 right-0 bg-red-500 text-white p-1 rounded"
+							(click)="removePicture(i)"
+					>
+						×
+					</button>
+				</div>
+			</div>
+		</div>
 
-    <!-- Submit button -->
-    <button
-      type="submit"
-      [disabled]="isSubmitting"
-      class="w-full bg-blue-500 text-white px-4 py-2 rounded mt-4"
-    >
-      {{ isSubmitting ? "Submitting..." : "Sign up" }}
-    </button>
+		<!-- Submit button -->
+		<button
+				type="submit"
+				[disabled]="isSubmitting"
+				class="w-full bg-blue-500 text-white px-4 py-2 rounded mt-4"
+		>
+			{{ isSubmitting ? "Submitting..." : "Sign up" }}
+		</button>
 
-    <!-- Error message (if any) -->
-    <p class="text-red-500 mt-2" *ngIf="registrationError">
-      {{ registrationError }}
-    </p>
-  </form>
+		<!-- Error message (if any) -->
+		<p class="text-red-500 mt-2" *ngIf="registrationError">
+			{{ registrationError }}
+		</p>
+	</form>
 </div>
