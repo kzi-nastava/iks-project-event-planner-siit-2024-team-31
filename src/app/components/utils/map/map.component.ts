@@ -29,8 +29,8 @@ export class MapComponent implements AfterViewInit {
 			}
 		);
 		tiles.addTo(this.map);
-		//this.registerOnClick()
-		//this.search()
+		this.registerOnClick()
+		this.search()
 	}
 
 	search(): void {
