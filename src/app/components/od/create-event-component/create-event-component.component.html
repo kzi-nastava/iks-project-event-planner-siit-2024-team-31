@@ -1,6 +1,44 @@
-<p>create-event-component works!</p>
+<p>Create new event</p>
 
-<div class="w-[100%]">
-	<app-map></app-map>
+<form (ngSubmit)="onSubmit()" class="w-[80%] m-auto border p-4 rounded shadow">
+	<div class="mb-4">
+		<label for="location" class="block mb-2 font-bold">Location</label>
+		<input
+				id="location"
+				type="text"
+				class="w-full p-2 border rounded"
+				[value]="selectedLocation?.address"
+				readonly
+				placeholder="Location is not selected"
+		/>
+		<button type="button" (click)="openMap()"
+				class="mt-2 px-4 py-1 border rounded">
+			Select Location
+		</button>
+	</div>
+
+	<!--TODO: another form fields-->
+
+	<button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">
+		Create
+	</button>
+</form>
+
+<!--modal map window -->
+<div
+
+		*ngIf="showMap"
+		class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center"
+		(click)="closeMap()"
+>
+	<div class="bg-white p-4 rounded shadow-lg relative w-[80%]"
+		 (click)="$event.stopPropagation()">
+		<app-map></app-map>
+		<div class="mt-4 flex justify-end">
+			<button (click)="onSelectLocation()"
+					class="px-4 py-2 bg-green-500 text-white rounded">
+				Select
+			</button>
+		</div>
+	</div>
 </div>
-
