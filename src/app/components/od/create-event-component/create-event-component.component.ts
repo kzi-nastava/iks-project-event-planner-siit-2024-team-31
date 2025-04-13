@@ -1,7 +1,12 @@
 import {Component, ViewChild} from '@angular/core';
-import {MapComponent} from '../../utils/map/map.component';
+import {MapComponent} from '../map/map.component';
 import {FormsModule} from "@angular/forms";
-import {NgIf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
+import {EventType} from "../../../types/eventType";
+import {Page} from "../../../types/page";
+import {
+	EventTypesService
+} from "../../../services/event-types/event-types.service";
 
 @Component({
 	selector: 'app-create-event',
@@ -9,20 +14,135 @@ import {NgIf} from "@angular/common";
 	imports: [
 		MapComponent,
 		FormsModule,
-		NgIf
+		NgIf,
+		NgForOf
 	]
 })
 export class CreateEventComponent {
+
+	eventData: {
+		name: string;
+		description: string;
+		startDate: string;
+		endDate: string;
+		maxNumGuests: number;
+		isPrivate: boolean;
+		eventType: EventType;
+		location: {
+			lat: number;
+			lng: number;
+			address: string;
+		} | null;
+	} = {
+		name: '',
+		description: '',
+		startDate: '',
+		endDate: '',
+		maxNumGuests: 0,
+		isPrivate: false,
+		eventType: {
+			id: 0,
+			name: ''
+		},
+		location: null
+	};
+
 	showMap: boolean = false;
+	showAgendaCreation: boolean = false;
+	showBudgetCreation: boolean = false;
+	showEventTypeSelection: boolean = false;
+
+	currentEventTypePage: number = 1;
+	totalEventTypePages: number = 0;
+	eventTypesPageSize: number = 5;
+	paginatedEventTypes: EventType[] = [];
+	eventTypesQuery: string = '';
+
 	selectedLocation: {
 		lat: number;
 		lng: number;
-		address: string
+		address: string;
 	} | null = null;
+
+	constructor(public eventTypesService: EventTypesService) {
+		this.loadEventTypes();
+	}
 
 	@ViewChild(MapComponent)
 	mapComponent!: MapComponent;
 
+	// EVENT TYPE
+	openEventTypeSelection(): void {
+		this.showEventTypeSelection = true;
+	}
+
+	closeEventTypeSelection(): void {
+		this.showEventTypeSelection = false;
+	}
+
+	loadEventTypes(): void {
+		this.eventTypesService
+			.searchEventTypes(this.eventTypesQuery, this.currentEventTypePage, this.eventTypesPageSize)
+			.subscribe({
+				next: (page: Page<EventType>) => {
+					this.paginatedEventTypes = page.content;
+					this.totalEventTypePages = page.totalPages;
+				},
+				error: (err) => console.error('Error loading event types:', err),
+			});
+	}
+
+	onEventTypesQueryChange(): void {
+		this.currentEventTypePage = 1;
+		this.loadEventTypes();
+	}
+
+	previousEventTypePage(): void {
+		if (this.currentEventTypePage > 1) {
+			this.currentEventTypePage--;
+			this.loadEventTypes();
+		}
+	}
+
+	nextEventTypePage(): void {
+		if (this.currentEventTypePage < this.totalEventTypePages) {
+			this.currentEventTypePage++;
+			this.loadEventTypes();
+		}
+	}
+
+	isEventTypeSelected(type: EventType): boolean {
+		return this.eventData.eventType.id === type.id;
+	}
+
+	// При выборе типа события через радио кнопку сразу обновляем eventData.eventType
+	onSelectEventType(type: EventType): void {
+		this.eventData.eventType = {...type};
+	}
+
+	confirmEventTypeSelection(): void {
+		this.showEventTypeSelection = false;
+	}
+
+	// AGENDA
+	openAgendaCreation(): void {
+		this.showAgendaCreation = true;
+	}
+
+	closeAgendaCreation(): void {
+		this.showAgendaCreation = false;
+	}
+
+	// BUDGET
+	openBudgetCreation(): void {
+		this.showBudgetCreation = true;
+	}
+
+	closeBudgetCreation(): void {
+		this.showBudgetCreation = false;
+	}
+
+	// MAP
 	openMap(): void {
 		this.showMap = true;
 	}
@@ -41,6 +161,6 @@ export class CreateEventComponent {
 	}
 
 	onSubmit(): void {
-
+		// Обработка сабмита формы
 	}
 }
