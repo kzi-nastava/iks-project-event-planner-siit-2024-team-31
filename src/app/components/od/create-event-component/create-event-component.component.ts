@@ -7,6 +7,7 @@ import {Page} from "../../../types/page";
 import {
 	EventTypesService
 } from "../../../services/event-types/event-types.service";
+import {Event} from "../../../types/models/event.model"
 
 @Component({
 	selector: 'app-create-event',
@@ -20,20 +21,8 @@ import {
 })
 export class CreateEventComponent {
 
-	eventData: {
-		name: string;
-		description: string;
-		startDate: string;
-		endDate: string;
-		maxNumGuests: number;
-		isPrivate: boolean;
-		eventType: EventType;
-		location: {
-			lat: number;
-			lng: number;
-			address: string;
-		} | null;
-	} = {
+	eventData: Event = {
+		id: "-1",
 		name: '',
 		description: '',
 		startDate: '',
@@ -44,7 +33,10 @@ export class CreateEventComponent {
 			id: 0,
 			name: ''
 		},
-		location: null
+		location: null,
+		agenda: null,
+		budget: null,
+		imageUrls: []
 	};
 
 	showMap: boolean = false;
