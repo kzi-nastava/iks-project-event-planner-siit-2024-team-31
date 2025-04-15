@@ -1,0 +1,83 @@
+<div class="bg-white p-4 rounded shadow-lg relative w-[80%]">
+	<form action="">
+		<div class="flex flex-row">
+			<div>
+				<label class="block mb-2 font-bold">Title</label>
+				<input
+						id="agendaItemTitle"
+						type="text"
+						class="w-full p-2 border rounded"
+						[(ngModel)]="currentAgendaItem.title"
+						name="title"
+						required
+				/>
+			</div>
+			<div class="ml-4">
+				<label class="block mb-2 font-bold">Description</label>
+				<input
+						id="agendaItemDescription"
+						type="text"
+						class="w-full p-2 border rounded"
+						[(ngModel)]="currentAgendaItem.description"
+						name="description"
+						required
+				/>
+			</div>
+
+			<div class="ml-4">
+				<label class="block mb-2 font-bold">Start Time</label>
+				<input
+						id="agendaItemStartTime"
+						type="datetime-local"
+						class="w-full p-2 border rounded"
+						[(ngModel)]="currentAgendaItem.startTime"
+						name="duration"
+						required
+				/>
+			</div>
+
+			<div class="ml-4">
+				<label class="block mb-2 font-bold">End Time</label>
+				<input
+						id="agendaItemEndTime"
+						type="datetime-local"
+						class="w-full p-2 border rounded"
+						[(ngModel)]="currentAgendaItem.endTime"
+						name="duration"
+						required
+				/>
+
+			</div>
+
+			<div class="ml-4">
+				<label class="block mb-2 font-bold">Location</label>
+				<input
+						id="agendaItemDuration"
+						type="text"
+						class="w-full p-2 border rounded"
+						[(ngModel)]="currentAgendaItem.location"
+						name="duration"
+						placeholder="example. Concert Hall 1, Event Section 2..."
+						required
+				/>
+			</div>
+			<div class="ml-4 flex items-end">
+				<button class="px-4 py-2 bg-blue-500 text-white rounded"
+						(click)="addNewAgendaItem()"
+				>
+
+					Add
+				</button>
+			</div>
+
+		</div>
+
+	</form>
+
+	<div class="mt-4 flex justify-end">
+		<button (click)="createAgenda()"
+				class="px-4 py-2 bg-green-500 text-white rounded">
+			Select
+		</button>
+	</div>
+</div>

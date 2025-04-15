@@ -118,16 +118,19 @@
 	</div>
 
 	<div class="mb-4">
-		<label for="agenda" class="block mb-2 font-bold">Agenda</label>
+		<label for="agenda" class="block mb-2 font-bold">Agenda (select event
+			dates for creating agenda)</label>
 		<div>TODO: AGENDA</div>
-		<button type="button" (click)="openAgendaCreation()"
+		<!--				*ngIf="eventData.endDate && eventData.startDate"-->
+		<button
+				type="button" (click)="openAgendaCreation()"
 				class="mt-2 px-4 py-1 border rounded">
 			Create Agenda
 		</button>
 	</div>
 
 	<button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">
-		Create
+		Create New Event
 	</button>
 </form>
 
@@ -215,7 +218,12 @@
 <div *ngIf="showAgendaCreation"
 	 class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center"
 	 (click)="closeAgendaCreation()">
-	<!-- Контент для создания повестки -->
+	<div
+			(click)="$event.stopPropagation()">
+		<app-agenda-creation startDate="{{eventData.startDate}}"
+							 endDate="{{eventData.endDate}}"/>
+	</div>
+
 </div>
 
 <!-- Modal: Budget -->

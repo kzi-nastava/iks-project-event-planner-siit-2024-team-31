@@ -8,6 +8,9 @@ import {
 	EventTypesService
 } from "../../../services/event-types/event-types.service";
 import {Event} from "../../../types/models/event.model"
+import {
+	AgendaCreationComponent
+} from "../agenda-creation/agenda-creation.component";
 
 @Component({
 	selector: 'app-create-event',
@@ -16,7 +19,8 @@ import {Event} from "../../../types/models/event.model"
 		MapComponent,
 		FormsModule,
 		NgIf,
-		NgForOf
+		NgForOf,
+		AgendaCreationComponent
 	]
 })
 export class CreateEventComponent {
