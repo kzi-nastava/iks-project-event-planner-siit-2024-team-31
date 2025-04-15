@@ -120,9 +120,30 @@
 	<div class="mb-4">
 		<label for="agenda" class="block mb-2 font-bold">Agenda (select event
 			dates for creating agenda)</label>
-		<div>TODO: AGENDA</div>
-		<!--				*ngIf="eventData.endDate && eventData.startDate"-->
+		<div *ngIf="eventData.agenda != null && eventData.agenda.length > 0">
+			<div *ngFor="let a of eventData.agenda; let i = index">
+				<div class="flex flex-row items-center">
+					<div class="mr-1 font-bold">{{ i + 1 }}:
+						{{ a.title }}
+					</div>
+					<div class="mr-1">
+						{{ a.description | slice:0:30 }}{{ a.description.length > 30 ? '...' : '' }}
+					</div>
+					<div class="mr-1">{{ a.startTime | date: 'shortTime' }} - {{
+							a.endTime |
+								date: 'shortTime'
+						}}
+					</div>
+					<div>{{ a.location }}</div>
+				</div>
+			</div>
+			<button class="mt-2 px-4 py-1 border rounded"
+					(click)="openAgendaCreation()"
+			> Edit
+			</button>
+		</div>
 		<button
+				*ngIf="eventData.endDate && eventData.startDate"
 				type="button" (click)="openAgendaCreation()"
 				class="mt-2 px-4 py-1 border rounded">
 			Create Agenda
@@ -221,7 +242,11 @@
 	<div
 			(click)="$event.stopPropagation()">
 		<app-agenda-creation startDate="{{eventData.startDate}}"
-							 endDate="{{eventData.endDate}}"/>
+							 endDate="{{eventData.endDate}}"
+							 (dataEmitter)="handleAgendaData($event)"
+							 [agenda]="this.eventData.agenda ?
+							 this.eventData.agenda : []"
+		/>
 	</div>
 
 </div>

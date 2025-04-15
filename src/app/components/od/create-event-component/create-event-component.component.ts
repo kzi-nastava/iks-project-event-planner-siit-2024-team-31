@@ -1,7 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {MapComponent} from '../map/map.component';
 import {FormsModule} from "@angular/forms";
-import {NgForOf, NgIf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf, SlicePipe} from "@angular/common";
 import {EventType} from "../../../types/eventType";
 import {Page} from "../../../types/page";
 import {
@@ -11,6 +11,7 @@ import {Event} from "../../../types/models/event.model"
 import {
 	AgendaCreationComponent
 } from "../agenda-creation/agenda-creation.component";
+import {AgendaItem} from "../../../types/models/agendaItem.model";
 
 @Component({
 	selector: 'app-create-event',
@@ -20,7 +21,9 @@ import {
 		FormsModule,
 		NgIf,
 		NgForOf,
-		AgendaCreationComponent
+		AgendaCreationComponent,
+		DatePipe,
+		SlicePipe
 	]
 })
 export class CreateEventComponent {
@@ -62,6 +65,13 @@ export class CreateEventComponent {
 
 	constructor(public eventTypesService: EventTypesService) {
 		this.loadEventTypes();
+	}
+
+	ngOnInit(): void {
+		this.eventData.startDate = new Date().toISOString().substring(0, 16);
+		const tomorrow = new Date();
+		tomorrow.setDate(tomorrow.getDate() + 1);
+		this.eventData.endDate = tomorrow.toISOString().substring(0, 16);
 	}
 
 	@ViewChild(MapComponent)
@@ -129,6 +139,10 @@ export class CreateEventComponent {
 		this.showAgendaCreation = false;
 	}
 
+	handleAgendaData(agenda: AgendaItem[]) {
+		this.eventData.agenda = agenda;
+	}
+
 	// BUDGET
 	openBudgetCreation(): void {
 		this.showBudgetCreation = true;
@@ -159,4 +173,6 @@ export class CreateEventComponent {
 	onSubmit(): void {
 		// Обработка сабмита формы
 	}
+
+	protected readonly Date = Date;
 }
