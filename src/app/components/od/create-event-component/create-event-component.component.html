@@ -1,1 +1,269 @@
-<p>create-event-component works!</p>
+<form (ngSubmit)="onSubmit()"
+	  class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+	<h2 class="text-2xl font-bold mb-4">
+		Create new event
+		<hr class="bg-black h-1 mt-2"/>
+	</h2>
+
+	<div class="mb-4">
+		<label for="eventName" class="block mb-2 font-bold">Event Name</label>
+		<input
+				id="eventName"
+				type="text"
+				class="w-full p-2 border rounded"
+				[(ngModel)]="eventData.name"
+				name="eventName"
+				required
+		/>
+	</div>
+
+	<div class="mb-4">
+		<label for="eventDescription" class="block mb-2 font-bold">Event
+			Description</label>
+		<textarea
+				id="eventDescription"
+				class="w-full p-2 border rounded"
+				[(ngModel)]="eventData.description"
+				name="eventDescription"
+				rows="4"
+				required
+		></textarea>
+	</div>
+
+	<!-- Event Type -->
+	<div class="my-4">
+		<label class="block mb-1 font-bold">Event Type</label>
+		<input
+				id="eventType"
+				type="text"
+				class="w-full p-2 border rounded"
+				[value]="eventData.eventType.name"
+				readonly
+				placeholder="Event type is not selected"
+		/>
+		<button
+				type="button"
+				(click)="openEventTypeSelection()"
+				class="mt-2 px-4 py-1 border rounded">
+			Select Event Type
+		</button>
+	</div>
+
+	<div class="mb-4">
+		<label for="maxNumGuests" class="block mb-2 font-bold">
+			Maximum Number of Guests
+		</label>
+		<input
+				id="maxNumGuests"
+				type="number"
+				min="1"
+				class="w-full p-2 border rounded"
+				[(ngModel)]="eventData.maxNumGuests"
+				name="maxNumGuests"
+				required
+		/>
+	</div>
+
+	<div class="mb-4">
+		<label for="startDate" class="block mb-2 font-bold">Event Start
+			Date</label>
+		<input
+				id="startDate"
+				type="datetime-local"
+				class="w-full p-2 border rounded"
+				[(ngModel)]="eventData.startDate"
+				name="startDate"
+				required
+		/>
+	</div>
+
+	<div class="mb-4">
+		<label for="endDate" class="block mb-2 font-bold">Event End Date</label>
+		<input
+				id="endDate"
+				type="datetime-local"
+				class="w-full p-2 border rounded"
+				[(ngModel)]="eventData.endDate"
+				name="endDate"
+				required
+		/>
+	</div>
+
+	<div class="mb-4">
+		<label for="isPrivate" class="block mb-2 font-bold">Privacy type</label>
+		<input
+				id="isPrivate"
+				type="checkbox"
+				class="mr-2"
+				[(ngModel)]="eventData.isPrivate"
+				name="isPrivate"
+		/>
+		Private Event
+	</div>
+
+	<div class="mb-4">
+		<label for="location" class="block mb-2 font-bold">Location</label>
+		<input
+				id="location"
+				type="text"
+				class="w-full p-2 border rounded"
+				[value]="selectedLocation?.address"
+				readonly
+				placeholder="Location is not selected"
+		/>
+		<button type="button" (click)="openMap()"
+				class="mt-2 px-4 py-1 border rounded">
+			Select Location
+		</button>
+	</div>
+
+	<div class="mb-4">
+		<label for="agenda" class="block mb-2 font-bold">Agenda (select event
+			dates for creating agenda)</label>
+		<div *ngIf="eventData.agenda != null && eventData.agenda.length > 0">
+			<div *ngFor="let a of eventData.agenda; let i = index">
+				<div class="flex flex-row items-center">
+					<div class="mr-1 font-bold">{{ i + 1 }}:
+						{{ a.title }}
+					</div>
+					<div class="mr-1">
+						{{ a.description | slice:0:30 }}{{ a.description.length > 30 ? '...' : '' }}
+					</div>
+					<div class="mr-1">{{ a.startTime | date: 'shortTime' }} - {{
+							a.endTime |
+								date: 'shortTime'
+						}}
+					</div>
+					<div>{{ a.location }}</div>
+				</div>
+			</div>
+			<button class="mt-2 px-4 py-1 border rounded"
+					(click)="openAgendaCreation()"
+			> Edit
+			</button>
+		</div>
+		<button
+				*ngIf="eventData.endDate && eventData.startDate"
+				type="button" (click)="openAgendaCreation()"
+				class="mt-2 px-4 py-1 border rounded">
+			Create Agenda
+		</button>
+	</div>
+
+	<div class="mb-4">
+		<label for="budget" class="block mb-2 font-bold">Budget</label>
+
+		<button type="button" (click)="openBudgetCreation()"
+				class="mt-2 px-4 py-1 border rounded">
+			Create Budget
+		</button>
+
+
+	</div>
+	<button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">
+		Create New Event
+	</button>
+</form>
+
+<!-- Modal: Event Type Selection -->
+<div *ngIf="showEventTypeSelection"
+	 class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+	 (click)="closeEventTypeSelection()">
+	<div class="bg-white p-6 rounded shadow-lg w-80"
+		 (click)="$event.stopPropagation()">
+		<h3 class="text-lg font-bold mb-4">Choose Event Type</h3>
+		<input
+				type="text"
+				name="eventTypesQuery"
+				[(ngModel)]="eventTypesQuery"
+				(ngModelChange)="onEventTypesQueryChange()"
+				class="border border-gray-300 rounded px-2 py-1 w-full mb-2"
+				placeholder="Search event types..."
+		/>
+		<ng-container *ngIf="paginatedEventTypes.length; else noTypes">
+			<label class="block mb-2" *ngFor="let type of paginatedEventTypes">
+				<input
+						type="radio"
+						name="eventTypeRadio"
+						[checked]="isEventTypeSelected(type)"
+						(change)="onSelectEventType(type)"
+				/>
+				{{ type.name }}
+			</label>
+		</ng-container>
+		<ng-template #noTypes>
+			<div>No event types available</div>
+		</ng-template>
+		<div class="flex justify-between items-center mt-2">
+			<button
+					type="button"
+					(click)="previousEventTypePage()"
+					[disabled]="currentEventTypePage === 1"
+					class="px-3 py-1 border rounded">
+				Previous
+			</button>
+			<span>Page {{ currentEventTypePage }}
+				of {{ totalEventTypePages }}</span>
+			<button
+					type="button"
+					(click)="nextEventTypePage()"
+					[disabled]="currentEventTypePage === totalEventTypePages"
+					class="px-3 py-1 border rounded">
+				Next
+			</button>
+		</div>
+		<div class="flex justify-end gap-2 mt-4">
+			<button
+					type="button"
+					(click)="closeEventTypeSelection()"
+					class="bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400">
+				Cancel
+			</button>
+			<button
+					type="button"
+					(click)="confirmEventTypeSelection()"
+					class="px-4 py-2 bg-green-500 text-white rounded">
+				Select
+			</button>
+		</div>
+	</div>
+</div>
+
+<!-- Modal: Map -->
+<div *ngIf="showMap"
+	 class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center"
+	 (click)="closeMap()">
+	<div class="bg-white p-4 rounded shadow-lg relative w-[80%]"
+		 (click)="$event.stopPropagation()">
+		<app-map></app-map>
+		<div class="mt-4 flex justify-end">
+			<button (click)="onSelectLocation()"
+					class="px-4 py-2 bg-green-500 text-white rounded">
+				Select
+			</button>
+		</div>
+	</div>
+</div>
+
+<!-- Modal: Agenda -->
+<div *ngIf="showAgendaCreation"
+	 class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center"
+	 (click)="closeAgendaCreation()">
+	<div
+			(click)="$event.stopPropagation()">
+		<app-agenda-creation startDate="{{eventData.startDate}}"
+							 endDate="{{eventData.endDate}}"
+							 (dataEmitter)="handleAgendaData($event)"
+							 [agenda]="this.eventData.agenda ?
+							 this.eventData.agenda : []"
+		/>
+	</div>
+
+</div>
+
+<!-- Modal: Budget -->
+<div *ngIf="showBudgetCreation"
+	 class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center"
+	 (click)="closeBudgetCreation()">
+	<!-- Контент для создания бюджета -->
+</div>

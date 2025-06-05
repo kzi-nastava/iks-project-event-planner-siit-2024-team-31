@@ -1,414 +1,412 @@
-<form
-  (ngSubmit)="onSubmit()"
-  #myForm="ngForm"
-  class="max-w-2xl mx-auto bg-white p-6 rounded shadow"
->
-  <h2 class="text-2xl font-bold mb-4">
-    Create new service / product
-    <hr class="bg-black h-1" />
-  </h2>
+<form (ngSubmit)="onSubmit()" #myForm="ngForm"
+	  class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+	<!-- Заголовок формы -->
+	<h2 class="text-2xl font-bold mb-4">
+		Create new service / product
+		<hr class="bg-black h-1 mt-2"/>
+	</h2>
 
-  <!-- Main section-->
-  <section class="mb-8">
-    <h3 class="text-xl font-bold mb-2">
-      Main information section
-      <p class="text-gray-600 text-sm">
-        Fill in the basic information about the service or product you are
-        creating.
-      </p>
-    </h3>
+	<!-- Основной блок информации -->
+	<section class="mb-8">
+		<h3 class="text-xl font-bold mb-2">
+			Main information section
+			<p class="text-gray-600 text-sm">
+				Fill in the basic information about the service or product you
+				are creating.
+			</p>
+		</h3>
 
-    <!-- Service name -->
-    <div class="mb-4">
-      <label for="name" class="block mb-1 font-bold">Service Name</label>
-      <input
-        id="name"
-        name="name"
-        type="text"
-        [(ngModel)]="serviceData.name"
-        required
-        class="border border-gray-300 rounded px-2 py-1 w-full"
-        placeholder="e.g. Catering Package"
-      />
-    </div>
+		<!-- Название услуги -->
+		<div class="mb-4">
+			<label for="name" class="block mb-1 font-bold">Service Name</label>
+			<input
+					id="name"
+					name="name"
+					type="text"
+					[(ngModel)]="serviceData.name"
+					required
+					class="border border-gray-300 rounded px-2 py-1 w-full"
+					placeholder="e.g. Catering Package"
+			/>
+		</div>
 
-    <!-- Category -->
-    <div class="mb-4">
-      <label for="category" class="block mb-1 font-bold">Category</label>
-      <button
-        type="button"
-        class="border border-gray-300 rounded px-2 py-1 w-full text-left"
-        (click)="openCategoryPopup()"
-      >
-        {{ serviceData.category || "Select a category..." }}
-      </button>
-    </div>
+		<!-- Категория -->
+		<div class="mb-4">
+			<label for="category" class="block mb-1 font-bold">Category</label>
+			<button
+					type="button"
+					class="border border-gray-300 rounded px-2 py-1 w-full text-left"
+					(click)="openCategoryPopup()"
+			>
+				{{ serviceData.category || "Select a category..." }}
+			</button>
+		</div>
 
-    <!-- Modal window category -->
-    <div
-      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-      *ngIf="showCategoryModal"
-    >
-      <div class="bg-white p-6 rounded shadow-lg w-96">
-        <h3 class="text-lg font-bold mb-4">Choose or Create a Category</h3>
+		<!-- Модальное окно выбора категории с пагинацией -->
+		<div *ngIf="showCategoryModal"
+			 class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+			<div class="bg-white p-6 rounded shadow-lg w-96">
+				<h3 class="text-lg font-bold mb-4">Choose or Create a
+					Category</h3>
+				<input
+						type="text"
+						name="searchQuery"
+						[(ngModel)]="searchQuery"
+						(ngModelChange)="onSearchQueryChange()"
+						class="border border-gray-300 rounded px-2 py-1 w-full mb-2"
+						placeholder="Search or type a new category..."
+				/>
+				<ul class="max-h-60 overflow-auto border border-gray-300 rounded mb-4">
+					<li
+							*ngFor="let category of paginatedCategories"
+							class="px-2 py-1 hover:bg-gray-100 cursor-pointer"
+							(click)="selectCategory(category.name)"
+					>
+						{{ category.name }}
+					</li>
+					<li *ngIf="paginatedCategories.length === 0"
+						class="px-2 py-2 text-gray-400">
+						No matching categories
+					</li>
+				</ul>
+				<!-- Пагинация категорий -->
+				<div class="flex justify-between items-center mb-4">
+					<button
+							type="button"
+							(click)="previousCategoryPage()"
+							[disabled]="currentCategoryPage === 1"
+							class="px-3 py-1 border rounded"
+					>
+						Previous
+					</button>
+					<span>Page {{ currentCategoryPage }}
+						of {{ totalCategoryPages }}</span>
+					<button
+							type="button"
+							(click)="nextCategoryPage()"
+							[disabled]="currentCategoryPage === totalCategoryPages"
+							class="px-3 py-1 border rounded"
+					>
+						Next
+					</button>
+				</div>
+				<div class="flex justify-end gap-2">
+					<button
+							type="button"
+							class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+							(click)="createNewCategory()"
+					>
+						Add new
+					</button>
+					<button
+							type="button"
+							class="bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400"
+							(click)="closeCategoryPopup()"
+					>
+						Cancel
+					</button>
+				</div>
+			</div>
+		</div>
 
-        <input
-          type="text"
-          name="searchQuery"
-          [(ngModel)]="searchQuery"
-          (ngModelChange)="onSearchQueryChange()"
-          class="border border-gray-300 rounded px-2 py-1 w-full mb-2"
-          placeholder="Search or type a new category..."
-        />
+		<!-- Описание услуги -->
+		<div class="mb-4">
+			<label for="description"
+				   class="block mb-1 font-bold">Description</label>
+			<textarea
+					id="description"
+					name="description"
+					[(ngModel)]="serviceData.description"
+					class="border border-gray-300 rounded px-2 py-1 w-full"
+					placeholder="Describe the service"
+			></textarea>
+		</div>
 
-        <ul class="max-h-60 overflow-auto border border-gray-300 rounded mb-4">
-          <li
-            *ngFor="let cat of filteredCategories"
-            class="px-2 py-1 hover:bg-gray-100 cursor-pointer"
-            (click)="selectCategory(cat)"
-          >
-            {{ cat }}
-          </li>
+		<!-- Особенности -->
+		<div class="mb-4">
+			<label for="peculiarities" class="block mb-1 font-bold">Peculiarities</label>
+			<textarea
+					id="peculiarities"
+					name="peculiarities"
+					[(ngModel)]="serviceData.peculiarities"
+					class="border border-gray-300 rounded px-2 py-1 w-full"
+					placeholder="Any special details or features"
+			></textarea>
+		</div>
 
-          <li
-            *ngIf="filteredCategories.length === 0"
-            class="px-2 py-2 text-gray-400"
-          >
-            No matching categories
-          </li>
-        </ul>
+		<!-- Цена и скидка -->
+		<div class="flex flex-row justify-between gap-4 mb-4">
+			<div class="w-1/2">
+				<label for="price" class="block mb-1 font-bold">Price per hour
+					(DIN)</label>
+				<input
+						id="price"
+						name="price"
+						type="number"
+						[(ngModel)]="serviceData.price"
+						required
+						min="0"
+						class="border border-gray-300 rounded px-2 py-1 w-full"
+						placeholder="0"
+				/>
+			</div>
+			<div class="w-1/2">
+				<label for="discount" class="block mb-1 font-bold">Discount
+					(%)</label>
+				<input
+						id="discount"
+						name="discount"
+						type="number"
+						[(ngModel)]="serviceData.discount"
+						min="0"
+						class="border border-gray-300 rounded px-2 py-1 w-full"
+						placeholder="0"
+				/>
+			</div>
+		</div>
 
-        <div class="flex justify-end gap-2">
-          <button
-            type="button"
-            class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-            (click)="createNewCategory()"
-          >
-            Add new
-          </button>
+		<!-- Загрузка фотографий -->
+		<div class="mb-4">
+			<button
+					type="button"
+					(click)="fileInput.click()"
+					class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+			>
+				Upload Photo(s)
+			</button>
+			<input
+				#fileInput
+				type="file"
+				class="hidden"
+				multiple
+				accept="image/*"
+				(change)="onPhotosSelected($event)"
+			/>
+		</div>
 
-          <button
-            type="button"
-            class="bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400"
-            (click)="closeCategoryPopup()"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
+		<!-- Превью фотографий -->
+		<div class="mt-4">
+			<div class="flex flex-wrap gap-4">
+				<div *ngFor="let photoUrl of photoPreviews; let i = index"
+					 class="relative">
+					<img
+							[src]="photoUrl"
+							alt="Photo Preview"
+							class="w-32 h-32 object-cover border rounded"
+					/>
+					<button
+							type="button"
+							(click)="removePreview(i)"
+							class="absolute top-0 right-0 bg-red-500 text-white p-1 rounded"
+					>
+						×
+					</button>
+				</div>
+			</div>
+		</div>
 
-    <!-- Description -->
-    <div class="mb-4">
-      <label for="description" class="block mb-1 font-bold">Description</label>
-      <textarea
-        id="description"
-        name="description"
-        [(ngModel)]="serviceData.description"
-        class="border border-gray-300 rounded px-2 py-1 w-full"
-        placeholder="Describe the service"
-      ></textarea>
-    </div>
+		<!-- Выбор типов событий -->
+		<div class="my-4">
+			<label class="block mb-1 font-bold">Suitable Event Types</label>
+			<!-- Список выбранных типов (уже добавленных) -->
+			<div *ngFor="let et of serviceData.suitableEventTypes; let i = index"
+				 class="flex items-center gap-2 mb-2">
+				<input
+						type="text"
+						[value]="et.name"
+						disabled
+						class="border border-gray-300 rounded px-2 py-1 flex-grow bg-gray-100"
+				/>
+				<button
+						type="button"
+						(click)="removeSuitableEventType(i)"
+						class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+				>
+					Remove
+				</button>
+			</div>
+			<button
+					type="button"
+					(click)="openEventTypePopup()"
+					class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+			>
+				Add Event Type(s)
+			</button>
 
-    <!-- Peculiarities -->
-    <div class="mb-4">
-      <label for="peculiarities" class="block mb-1 font-bold"
-        >Peculiarities</label
-      >
-      <textarea
-        id="peculiarities"
-        name="peculiarities"
-        [(ngModel)]="serviceData.peculiarities"
-        class="border border-gray-300 rounded px-2 py-1 w-full"
-        placeholder="Any special details or features"
-      ></textarea>
-    </div>
+			<!-- Модальное окно выбора типа события с чекбоксами и пагинацией -->
+			<div *ngIf="showEventTypeModal"
+				 class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+				<div class="bg-white p-6 rounded shadow-lg w-80">
+					<h3 class="text-lg font-bold mb-4">Choose Event Types</h3>
+					<!-- Опциональное поле поиска -->
+					<input
+							type="text"
+							name="eventTypesQuery"
+							[(ngModel)]="eventTypesQuery"
+							(ngModelChange)="onEventTypesQueryChange()"
+							class="border border-gray-300 rounded px-2 py-1 w-full mb-2"
+							placeholder="Search event types..."
+					/>
+					<ng-container>
+						<label class="block mb-2"
+							   *ngFor="let type of paginatedEventTypes">
+							<input
+									type="checkbox"
+									[checked]="isEventTypeSelected(type)"
+									(change)="toggleEventTypeSelection(type, $event)"
+									name="eventTypeCheckbox_{{type.id}}"
+							/>
+							{{ type.name }}
+						</label>
+						<div *ngIf="paginatedEventTypes.length === 0">
+							No event types available
+						</div>
+					</ng-container>
+					<!-- Пагинация для типов событий -->
+					<div class="flex justify-between items-center mt-2">
+						<button
+								type="button"
+								(click)="previousEventTypePage()"
+								[disabled]="currentEventTypePage === 1"
+								class="px-3 py-1 border rounded"
+						>
+							Previous
+						</button>
+						<span>Page {{ currentEventTypePage }}
+							of {{ totalEventTypePages }}</span>
+						<button
+								type="button"
+								(click)="nextEventTypePage()"
+								[disabled]="currentEventTypePage === totalEventTypePages"
+								class="px-3 py-1 border rounded"
+						>
+							Next
+						</button>
+					</div>
+					<div class="flex justify-end gap-2 mt-4">
+						<button
+								type="button"
+								(click)="closeEventTypePopup()"
+								class="bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400"
+						>
+							Cancel
+						</button>
+						<button
+								type="button"
+								(click)="confirmAddEventTypes()"
+								class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+						>
+							Confirm
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 
-    <!-- Price & Discount in one row -->
-    <div class="flex flex-row justify-between gap-4 mb-4">
-      <!-- Price -->
-      <div class="w-1/2">
-        <label for="price" class="block mb-1 font-bold">
-          Price per hour (DIN)
-        </label>
-        <input
-          id="price"
-          name="price"
-          type="number"
-          [(ngModel)]="serviceData.price"
-          required
-          min="0"
-          class="border border-gray-300 rounded px-2 py-1 w-full"
-          placeholder="0"
-        />
-      </div>
+	<!-- Раздел видимости -->
+	<section class="mb-8">
+		<h3 class="text-xl font-bold mb-2">
+			Visibility section
+			<p class="text-gray-600 text-sm">
+				Choose the visibility and availability of the service.
+			</p>
+		</h3>
+		<div class="mb-4">
+			<label class="inline-flex items-center">
+				<input type="checkbox" name="isVisible"
+					   [(ngModel)]="serviceData.isVisible" class="mr-2"/>
+				Make it visible for organizers right after creation.
+			</label>
+		</div>
+		<div>
+			<label class="inline-flex items-center">
+				<input type="checkbox" name="isAvailable"
+					   [(ngModel)]="serviceData.isAvailable" class="mr-2"/>
+				Make it available for booking right after creation.
+			</label>
+		</div>
+	</section>
 
-      <!-- Discount -->
-      <div class="w-1/2">
-        <label for="discount" class="block mb-1 font-bold">Discount (%)</label>
-        <input
-          id="discount"
-          name="discount"
-          type="number"
-          [(ngModel)]="serviceData.discount"
-          min="0"
-          class="border border-gray-300 rounded px-2 py-1 w-full"
-          placeholder="0"
-        />
-      </div>
-    </div>
+	<!-- Раздел управления временем -->
+	<section class="mb-8">
+		<h3 class="text-xl font-bold mb-2">
+			Time management section
+			<p class="text-gray-600 text-sm">
+				Set the time information of the service.
+			</p>
+		</h3>
+		<div class="mb-4">
+			<label class="inline-flex items-center">
+				<input type="checkbox" name="noTimeSelectionRequired"
+					   [(ngModel)]="serviceData.noTimeSelectionRequired"
+					   (change)="onNoTimeSelectionChange($event)" class="mr-2"/>
+				No Time Selection Required
+			</label>
+		</div>
+		<div class="mb-4">
+			<label class="inline-flex items-center">
+				<input type="checkbox" name="manualTimeSelection"
+					   [(ngModel)]="serviceData.manualTimeSelection"
+					   (change)="onManualTimeSelectionChange($event)"
+					   [disabled]="serviceData.noTimeSelectionRequired"
+					   class="mr-2"/>
+				Manual time selection for organizer
+			</label>
+		</div>
+		<div class="mb-4">
+			<label for="serviceDurationMin" class="block mb-1 font-bold"
+				   [class.text-gray-500]="disableMinField">
+				Minimum Duration (minutes)
+			</label>
+			<input
+					id="serviceDurationMin"
+					name="serviceDurationMin"
+					type="number"
+					[(ngModel)]="serviceData.serviceDurationMin"
+					min="0"
+					class="border border-gray-300 rounded px-2 py-1 w-full disabled:bg-gray-100 disabled:text-gray-500"
+					placeholder="0"
+					[disabled]="disableMinField"
+			/>
+		</div>
+		<div class="mb-4">
+			<label for="serviceDurationMax" class="block mb-1 font-bold"
+				   [class.text-gray-500]="disableMaxField">
+				Maximum Duration (minutes)
+			</label>
+			<input
+					id="serviceDurationMax"
+					name="serviceDurationMax"
+					type="number"
+					[(ngModel)]="serviceData.serviceDurationMax"
+					min="0"
+					class="border border-gray-300 rounded px-2 py-1 w-full disabled:bg-gray-100 disabled:text-gray-500"
+					placeholder="0"
+					[disabled]="disableMaxField"
+			/>
+		</div>
+		<div class="mb-4">
+			<label for="bookingDeclineDeadline" class="block mb-1 font-bold"
+				   [class.text-gray-500]="disableBookingDeadline">
+				Cancellation Deadline (hours before start)
+			</label>
+			<input
+					id="bookingDeclineDeadline"
+					name="bookingDeclineDeadline"
+					type="number"
+					[(ngModel)]="serviceData.bookingDeclineDeadline"
+					min="0"
+					class="border border-gray-300 rounded px-2 py-1 w-full disabled:bg-gray-100 disabled:text-gray-500"
+					placeholder="0"
+					[disabled]="disableBookingDeadline"
+			/>
+		</div>
+	</section>
 
-    <!-- Upload Photo(s) + hidden file input -->
-    <button
-      type="button"
-      (click)="fileInput.click()"
-      class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mb-4"
-    >
-      Upload Photo(s)
-    </button>
-    <input
-      #fileInput
-      type="file"
-      class="hidden"
-      multiple
-      accept="image/*"
-      (change)="onPhotosSelected($event)"
-    />
-
-    <!-- photo preview -->
-    <div class="mt-4">
-      <div class="flex flex-wrap gap-4">
-        <div
-          *ngFor="let photoUrl of photoPreviews; let i = index"
-          class="relative"
-        >
-          <img
-            [src]="photoUrl"
-            alt="Photo Preview"
-            class="w-32 h-32 object-cover border rounded"
-          />
-          <button
-            type="button"
-            (click)="removePreview(i)"
-            class="absolute top-0 right-0 bg-red-500 text-white p-1 rounded"
-          >
-            ×
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- SuitableEventTypes -->
-    <div class="my-4">
-      <label class="block mb-1 font-bold">Suitable Event Types</label>
-      <div
-        *ngFor="let et of serviceData.suitableEventTypes; let i = index"
-        class="flex items-center gap-2 mb-2"
-      >
-        <!-- Отображаем name, так как et = {id, name} -->
-        <input
-          type="text"
-          [(ngModel)]="et.name"
-          [name]="'eventTypeName' + i"
-          class="border border-gray-300 rounded px-2 py-1 flex-grow"
-        />
-        <button
-          type="button"
-          (click)="removeSuitableEventType(i)"
-          class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-        >
-          Remove
-        </button>
-      </div>
-
-      <button
-        type="button"
-        (click)="openEventTypePopup()"
-        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-      >
-        Add Event Type
-      </button>
-
-      <!-- Modal -->
-      <div
-        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-        *ngIf="showEventTypeModal"
-      >
-        <div class="bg-white p-6 rounded shadow-lg w-80">
-          <h3 class="text-lg font-bold mb-4">Choose an Event Type</h3>
-
-          <!-- Список allEventTypes (id, name) -->
-          <ng-container>
-            <label class="block mb-2" *ngFor="let type of allEventTypes">
-              <input
-                type="radio"
-                name="radioEventType"
-                [value]="type"
-                [(ngModel)]="selectedEventType"
-              />
-              {{ type.name }}
-            </label>
-          </ng-container>
-
-          <div class="flex justify-end gap-2 mt-4">
-            <button
-              type="button"
-              class="bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400"
-              (click)="closeEventTypePopup()"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-              (click)="confirmAddEventType()"
-            >
-              Add
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Visibility section -->
-  <section class="mb-8">
-    <h3 class="text-xl font-bold mb-2">
-      Visibility section
-      <p class="text-gray-600 text-sm">
-        Choose the visibility and availability of the service.
-      </p>
-    </h3>
-
-    <div class="mb-4">
-      <label class="inline-flex items-center">
-        <input
-          type="checkbox"
-          name="isVisible"
-          [(ngModel)]="serviceData.isVisible"
-          class="mr-2"
-        />
-        Make it visible for organizers right after creation.
-      </label>
-    </div>
-
-    <div>
-      <label class="inline-flex items-center">
-        <input
-          type="checkbox"
-          name="isAvailable"
-          [(ngModel)]="serviceData.isAvailable"
-          class="mr-2"
-        />
-        Make it available for booking right after creation
-      </label>
-    </div>
-  </section>
-
-  <!-- Time management section -->
-  <section class="mb-8">
-    <h3 class="text-xl font-bold mb-2">
-      Time management section
-      <p class="text-gray-600 text-sm">
-        Set the time information of the service.
-      </p>
-    </h3>
-
-    <div class="mb-4">
-      <label class="inline-flex items-center">
-        <input
-          type="checkbox"
-          name="noTimeSelectionRequired"
-          [(ngModel)]="serviceData.noTimeSelectionRequired"
-          (change)="onNoTimeSelectionChange($event)"
-          class="mr-2"
-        />
-        No Time Selection Required
-      </label>
-    </div>
-
-    <div class="mb-4">
-      <label class="inline-flex items-center">
-        <input
-          type="checkbox"
-          name="manualTimeSelection"
-          [(ngModel)]="serviceData.manualTimeSelection"
-          (change)="onManualTimeSelectionChange($event)"
-          [disabled]="serviceData.noTimeSelectionRequired"
-          class="mr-2"
-        />
-        Manual time selection for organizer
-      </label>
-    </div>
-
-    <div class="mb-4">
-      <label
-        for="serviceDurationMin"
-        class="block mb-1 font-bold"
-        [class.text-gray-500]="disableMinField"
-      >
-        Minimum Duration (minutes)
-      </label>
-      <input
-        id="serviceDurationMin"
-        name="serviceDurationMin"
-        type="number"
-        [(ngModel)]="serviceData.serviceDurationMin"
-        min="0"
-        class="border border-gray-300 rounded px-2 py-1 w-full disabled:bg-gray-100 disabled:text-gray-500"
-        placeholder="0"
-        [disabled]="disableMinField"
-      />
-    </div>
-
-    <div class="mb-4">
-      <label
-        for="serviceDurationMax"
-        class="block mb-1 font-bold"
-        [class.text-gray-500]="disableMaxField"
-      >
-        Maximum Duration (minutes)
-      </label>
-      <input
-        id="serviceDurationMax"
-        name="serviceDurationMax"
-        type="number"
-        [(ngModel)]="serviceData.serviceDurationMax"
-        min="0"
-        class="border border-gray-300 rounded px-2 py-1 w-full disabled:bg-gray-100 disabled:text-gray-500"
-        placeholder="0"
-        [disabled]="disableMaxField"
-      />
-    </div>
-
-    <div class="mb-4">
-      <label
-        for="bookingDeclineDeadline"
-        class="block mb-1 font-bold"
-        [class.text-gray-500]="disableBookingDeadline"
-      >
-        Cancellation Deadline (hours before start)
-      </label>
-      <input
-        id="bookingDeclineDeadline"
-        name="bookingDeclineDeadline"
-        type="number"
-        [(ngModel)]="serviceData.bookingDeclineDeadline"
-        min="0"
-        class="border border-gray-300 rounded px-2 py-1 w-full disabled:bg-gray-100 disabled:text-gray-500"
-        placeholder="0"
-        [disabled]="disableBookingDeadline"
-      />
-    </div>
-  </section>
-
-  <!-- Submit Button -->
-  <button
-    type="submit"
-    [disabled]="!myForm.form.valid"
-    (ngSubmit)="onSubmit()"
-    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:bg-gray-300"
-  >
-    Create Service
-  </button>
+	<!-- Кнопка отправки формы -->
+	<button type="submit" [disabled]="!myForm.form.valid"
+			class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:bg-gray-300">
+		Create Service
+	</button>
 </form>

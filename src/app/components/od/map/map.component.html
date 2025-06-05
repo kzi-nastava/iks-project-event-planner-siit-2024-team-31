@@ -1,0 +1,25 @@
+<div class="map-container">
+	<div id="map" class="h-[600px] w-[100%]"></div>
+</div>
+
+<div class="mt-4 p-2 border rounded shadow">
+	<form (submit)="onSearch($event)">
+		<label for="search" class="block mb-1">Search address:</label>
+		<input
+				id="search"
+				type="text"
+				[(ngModel)]="searchQuery"
+				name="search"
+				placeholder="Street, City, State..."
+				class="border rounded px-2 py-1 w-full"
+		/>
+		<button type="submit" class="mt-2 px-4 py-1 border rounded">
+			Search
+		</button>
+	</form>
+
+	<div *ngIf="selectedAddress" class="mt-2">
+		<strong class="text-green-800 mb-2">Address selected:</strong>
+		<p>{{ selectedAddress }}</p>
+	</div>
+</div>

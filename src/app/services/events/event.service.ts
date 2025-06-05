@@ -24,10 +24,13 @@ export class EventService {
 
 		return {
 			id: `event-${index + 1}`,
-			title: `Event Title ${index + 1}`,
-			type: ['Conference', 'Exhibition', 'Festival', 'Networking', 'Workshop'][
-			index % 5
-				],
+			name: `Event Title ${index + 1}`,
+			eventType: {
+				id: index % 5,
+				name: ['Conference', 'Exhibition', 'Festival', 'Networking', 'Workshop'][
+				index % 5
+					],
+			},
 			description: `This is the description of Event Title ${
 				index + 1
 			}. It is a ${
@@ -35,8 +38,8 @@ export class EventService {
 				index % 5
 					]
 			}.`,
-			dateStart: isNaN(dateStart.getTime()) ? new Date() : dateStart,
-			dateEnd: isNaN(dateEnd.getTime()) ? new Date() : dateEnd,
+			startDate: isNaN(dateStart.getTime()) ? new Date().toISOString() : dateStart.toISOString(),
+			endDate: isNaN(dateEnd.getTime()) ? new Date().toISOString() : dateEnd.toISOString(),
 			imageUrls: Array.from(
 				{length: 3},
 				(_, imgIndex) =>
@@ -45,26 +48,14 @@ export class EventService {
 					}`
 			),
 			location: {
-				city: ['San Francisco', 'New York', 'Austin', 'Seattle', 'Chicago'][
-				index % 5
-					],
-				street: [
-					'Market Street',
-					'5th Avenue',
-					'Lamar Blvd',
-					'Pike Place',
-					'Wacker Drive',
-				][index % 5],
-				object: [
-					'Hall A',
-					'Hall B',
-					'Main Auditorium',
-					'Outdoor Stage',
-					'Room 101',
-				][index % 5],
+				lng: 19.8227 + index * 0.01,
+				lat: 45.2396 + index * 0.01,
+				address: `Address ${index + 1}`,
 			},
-			maxNumberOfGuests: 50 + index * 10,
+			maxNumGuests: 50 + index * 10,
 			isPrivate: index % 2 === 0,
+			agenda: null,
+			budget: null,
 		};
 	});
 

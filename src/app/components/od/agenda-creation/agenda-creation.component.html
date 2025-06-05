@@ -1,0 +1,110 @@
+<div class="bg-white p-4 rounded shadow-lg relative w-full">
+
+	<div>
+		<h2 class="text-xl font-bold mb-4">Create Agenda</h2>
+		<p class="text-gray-600 mb-4">
+			Event Time limits {{ startDate | date: 'short' }}
+			- {{ endDate | date: 'short' }}
+		</p>
+	</div>
+
+	<form action="" (ngSubmit)="addNewAgendaItem()">
+		<div class="flex flex-row">
+			<div class="mb-2 w-full ">
+				<label class="block mb-2 font-bold">Title</label>
+				<input
+						id="agendaItemTitle"
+						type="text"
+						class="w-full p-2 border rounded"
+						[(ngModel)]="currentAgendaItem.title"
+						name="title"
+						required
+				/>
+			</div>
+			<div class="mb-2 w-full ml-4">
+				<label class="block mb-2 font-bold">Description</label>
+				<input
+						id="agendaItemDescription"
+						type="text"
+						class="w-full p-2 border rounded"
+						[(ngModel)]="currentAgendaItem.description"
+						name="description"
+						required
+				/>
+			</div>
+			<div class="mb-2 w-full ml-4">
+				<label class="block mb-2 font-bold">Start Time</label>
+				<input
+						id="agendaItemStartTime"
+						type="datetime-local"
+						class="w-full p-2 border rounded"
+						[(ngModel)]="currentAgendaItem.startTime"
+						name="agendaItemStartTime"
+						required
+						[min]="startDate"
+						[max]="endDate"
+				/>
+			</div>
+			<div class="mb-2 w-full ml-4">
+				<label class="block mb-2 font-bold">End Time</label>
+				<input
+						id="agendaItemEndTime"
+						type="datetime-local"
+						class="w-full p-2 border rounded"
+						[(ngModel)]="currentAgendaItem.endTime"
+						name="agendaItemEndTime"
+						required
+						[min]="currentAgendaItem.startTime || startDate"
+						[max]="endDate"
+				/>
+			</div>
+			<div class="mb-2 w-full ml-4">
+				<label class="block mb-2 font-bold">Location</label>
+				<input
+						id="agendaItemLocation"
+						type="text"
+						class="w-full p-2 border rounded"
+						[(ngModel)]="currentAgendaItem.location"
+						name="location"
+						placeholder="Concert Hall 1, Event Section 2..."
+						required
+				/>
+			</div>
+			<div class="mb-2 flex items-end sm:ml-4">
+				<button type="button" (click)="addNewAgendaItem()"
+						class="px-4 py-2 bg-blue-500 text-white rounded">
+					Add
+				</button>
+			</div>
+		</div>
+
+		<div *ngFor="let agendaI of agenda" class="mt-2 border p-2 rounded">
+			<div class="flex flex-row justify-between">
+				<div class="flex flex-row">
+					<div class="font-bold mr-1">{{ agendaI.title }}</div>
+					<div class="mr-1">{{ agendaI.description }}</div>
+					<div class="mr-1">{{ agendaI.startTime | date: 'short' }}
+						- {{
+							agendaI.endTime |
+								date: 'short'
+						}}
+					</div>
+					<div>{{ agendaI.location }}</div>
+				</div>
+				<div class="flex items-center">
+					<button (click)="removeAgendaItem(agendaI)"
+							class="px-4 py-2 bg-red-500 text-white rounded">
+						Delete
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<div class="mt-4 flex justify-end">
+		<button (click)="createAgenda()"
+				class="px-4 py-2 bg-green-500 text-white rounded">
+			Select
+		</button>
+	</div>
+</div>
