@@ -22,5 +22,16 @@
     >
       Log in
     </button>
+
+    <p class="text-sm mt-4 text-gray-500 flex justify-between">
+      <a [routerLink]="['/register']" class="text-gray-500 hover:underline"
+        >Don't have an account?</a
+      >
+      <a
+        [routerLink]="['/forgot-password']"
+        class="text-blue-500 hover:underline"
+        >Forgot password?</a
+      >
+    </p>
   </form>
 </div>
