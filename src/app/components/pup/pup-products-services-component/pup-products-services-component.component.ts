@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ServiceProductService } from '../../../services/service-products/service-products.service';
+import { ProductService } from '../../../services/product/products.service';
 import { ServiceProduct } from '../../../types/models/service-product.model';
 
 @Component({
@@ -14,7 +14,7 @@ export class PupProductsServicesComponent implements OnInit {
   services: ServiceProduct[] = [];
   isLoading = false;
 
-  constructor(private serviceProductService: ServiceProductService) {}
+  constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
     this.loadUserServices();
@@ -22,7 +22,7 @@ export class PupProductsServicesComponent implements OnInit {
 
   private loadUserServices(): void {
     this.isLoading = true;
-    this.serviceProductService.getMyServices().subscribe({
+    this.productService.getMyServices().subscribe({
       next: (services) => {
         this.services = services;
         this.isLoading = false;

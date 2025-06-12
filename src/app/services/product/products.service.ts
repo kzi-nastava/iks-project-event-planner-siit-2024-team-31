@@ -8,7 +8,7 @@ import { baseUrl } from '../baseUrl';
 @Injectable({
   providedIn: 'root',
 })
-export class ServiceProductService {
+export class ProductService {
   private apiUrl = baseUrl + 'product';
 
   constructor(private http: HttpClient) {}

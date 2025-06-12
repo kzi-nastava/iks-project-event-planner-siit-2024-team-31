@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ServiceProductService } from '../../services/service-products/service-products.service';
+import { ProductService } from '../../services/product/products.service';
 import { ServiceProduct } from '../../types/models/service-product.model';
 
 @Component({
@@ -15,15 +15,13 @@ export class ServiceDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private serviceProductService: ServiceProductService
+    private productService: ProductService
   ) {}
 
   ngOnInit(): void {
     const serviceId = this.route.snapshot.paramMap.get('id')!;
-    this.serviceProductService
-      .getServiceById(serviceId)
-      .subscribe((service) => {
-        this.service = service;
-      });
+    this.productService.getServiceById(serviceId).subscribe((service) => {
+      this.service = service;
+    });
   }
 }

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ServiceProductService } from '../../../services/service-products/service-products.service';
+import { ProductService } from '../../../services/product/products.service';
 import { ServiceProduct } from '../../../types/models/service-product.model';
 import { ServiceCardComponent } from '../../service-card/service-card.component';
 import { ServiceFilterComponent } from '../../utils/service-filter/service-filter.component';
@@ -26,14 +26,14 @@ export class ServiceListFilteredComponent implements OnInit {
   pageSize: number = 16; // 4x4 grid
   totalPages: number = 0;
 
-  constructor(private serviceProductService: ServiceProductService) {}
+  constructor(private productService: ProductService) {}
 
   ngOnInit() {
     this.loadServices();
   }
 
   loadServices() {
-    this.serviceProductService.getAllServices().subscribe((services) => {
+    this.productService.getAllServices().subscribe((services) => {
       this.services = services;
       this.filteredServices = [...this.services];
       this.calculatePagination();

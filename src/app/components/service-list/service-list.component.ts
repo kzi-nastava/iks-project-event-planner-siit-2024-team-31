@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ServiceProductService } from '../../services/service-products/service-products.service';
+import { ProductService } from '../../services/product/products.service';
 import { ServiceProduct } from '../../types/models/service-product.model';
 import { ServiceCardComponent } from '../service-card/service-card.component';
 
@@ -22,14 +22,14 @@ export class ServiceListComponent implements OnInit {
   pageSize: number = 6; // Number of items per page
   totalPages: number = 1;
 
-  constructor(private serviceProductService: ServiceProductService) {}
+  constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
     this.loadServices();
   }
 
   loadServices() {
-    this.serviceProductService.getAllServices().subscribe((services) => {
+    this.productService.getAllServices().subscribe((services) => {
       this.services = services;
       this.applyFilter();
     });
