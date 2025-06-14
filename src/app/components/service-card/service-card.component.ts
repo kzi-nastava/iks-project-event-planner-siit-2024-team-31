@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ServiceProduct } from '../../types/models/service-product.model';
+import { Product } from '../../types/models/product.model';
+import { Service } from '../../types/models/service.model';
 
 @Component({
   selector: 'app-service-card',
@@ -10,5 +11,20 @@ import { ServiceProduct } from '../../types/models/service-product.model';
   imports: [RouterLink, CommonModule],
 })
 export class ServiceCardComponent {
-  @Input() service!: ServiceProduct;
+  @Input() service!: Product | Service;
+
+  isService(item: Product | Service): item is Service {
+    return 'minTimeUsageHours' in item;
+  }
+
+  formatPrice(price: number): string {
+    return new Intl.NumberFormat('sr-RS', {
+      style: 'currency',
+      currency: 'RSD',
+    }).format(price);
+  }
+
+  formatDate(date: Date): string {
+    return new Date(date).toLocaleDateString();
+  }
 }

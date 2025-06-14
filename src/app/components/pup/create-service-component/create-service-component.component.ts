@@ -328,10 +328,10 @@ export class CreateServiceComponent implements OnInit {
       formData.append('photos', file);
     });
 
-    this.productService.createNewService(formData).subscribe({
+    this.productService.createNewProduct(formData).subscribe({
       next: (response) => {
         console.log('Success:', response);
-        alert('Service created successfully!');
+        alert('Product created successfully!');
         this.router
           .navigate(['/pup/my-products-services'])
           .then((r) =>

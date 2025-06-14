@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../services/product/products.service';
-import { ServiceProduct } from '../../types/models/service-product.model';
+import { Product } from '../../types/models/product.model';
 
 @Component({
   selector: 'app-service-detail',
@@ -11,7 +11,7 @@ import { ServiceProduct } from '../../types/models/service-product.model';
   imports: [CommonModule],
 })
 export class ServiceDetailComponent implements OnInit {
-  service!: ServiceProduct;
+  service!: Product;
 
   constructor(
     private route: ActivatedRoute,
@@ -20,8 +20,10 @@ export class ServiceDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const serviceId = this.route.snapshot.paramMap.get('id')!;
-    this.productService.getServiceById(serviceId).subscribe((service) => {
-      this.service = service;
-    });
+    this.productService
+      .getServiceById(serviceId)
+      .subscribe((service: Product) => {
+        this.service = service;
+      });
   }
 }

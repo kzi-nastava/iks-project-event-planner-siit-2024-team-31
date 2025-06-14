@@ -17,8 +17,8 @@ export const generalRoutes = [
     path: 'services',
     loadComponent: () =>
       import(
-        '../components/service-list/service-list-filtered/service-list-filtered.component'
-      ).then((m) => m.ServiceListFilteredComponent),
+        '../components/service-list/service-product-list-filtered/service-product-list-filtered.component'
+      ).then((m) => m.ServiceProductListFilteredComponent),
   },
   {
     path: 'events',

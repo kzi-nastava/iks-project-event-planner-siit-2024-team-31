@@ -6,11 +6,36 @@
   />
   <div class="p-4">
     <h3 class="text-lg font-semibold">{{ service.name }}</h3>
-    <p class="text-gray-600">${{ service.price | number : "1.2-2" }}</p>
-    <p class="text-gray-600">{{ service.pupInfo.city }}</p>
+    <p class="text-gray-600">{{ formatPrice(service.price) }}</p>
+
+    <!-- Show pupId for products, or additional service info for services -->
+    <div *ngIf="!isService(service)" class="text-sm text-gray-500">
+      Product ID: {{ service.pupId }}
+    </div>
+    <div *ngIf="isService(service)" class="text-sm text-gray-500">
+      Available: {{ formatDate(service.availableFrom) }} -
+      {{ formatDate(service.availableTo) }}
+    </div>
+
+    <!-- Categories -->
+    <div class="flex flex-wrap gap-1 mt-2">
+      <span
+        *ngFor="let category of service.categories.slice(0, 2)"
+        class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
+      >
+        {{ category }}
+      </span>
+    </div>
+
+    <!-- Rating -->
+    <div class="flex items-center mt-2">
+      <span class="text-yellow-400">★</span>
+      <span class="ml-1 text-sm">{{ service.rating }}/5</span>
+    </div>
+
     <a
       [routerLink]="['/services', service.id]"
-      class="text-blue-500 hover:underline"
+      class="text-blue-500 hover:underline mt-2 inline-block"
       >More...</a
     >
   </div>

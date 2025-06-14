@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
-import { ServiceProduct } from '../../types/models/service-product.model';
+import { Product } from '../../types/models/product.model';
 import { ProductCategory } from '../../types/productCategory';
 import { baseUrl } from '../baseUrl';
 
@@ -13,69 +13,46 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
-  private services: ServiceProduct[] = Array.from(
-    { length: 50 },
-    (_, index) => {
-      const availableFrom = new Date();
-      const availableTo = new Date();
-      availableTo.setDate(availableTo.getDate() + (index % 30));
+  private products: Product[] = Array.from({ length: 50 }, (_, index) => {
+    return {
+      id: `product-${index + 1}`,
+      pupId: `pup-${index + 1}`,
+      name: `Product ${index + 1}`,
+      description: `This is a detailed description of Product ${
+        index + 1
+      }. It is designed to provide exceptional value to customers.`,
+      price: 50 + index * 10,
+      categories: [
+        'Photography',
+        'Catering',
+        'Decoration',
+        'Entertainment',
+        'Logistics',
+      ].slice(0, (index % 5) + 1),
+      isAvailable: index % 3 !== 0,
+      imageUrls: Array.from(
+        { length: 3 },
+        (_, imgIndex) =>
+          `https://picsum.photos/300/200?random=${
+            20 + index * 3 + imgIndex + 1
+          }`
+      ),
+      rating: parseFloat((Math.random() * 5).toFixed(1)),
+      suitableFor: ['Wedding', 'Conference', 'Party', 'Concert'].slice(
+        0,
+        (index % 4) + 1
+      ),
+    };
+  });
 
-      return {
-        id: `service-${index + 1}`,
-        name: `Service Product ${index + 1}`,
-        description: `This is a detailed description of Service Product ${
-          index + 1
-        }. It is designed to provide exceptional value to customers.`,
-        price: 50 + index * 10,
-        categories: [
-          'Photography',
-          'Catering',
-          'Decoration',
-          'Entertainment',
-          'Logistics',
-        ].slice(0, (index % 5) + 1),
-        isAvailable: index % 3 !== 0,
-        imageUrls: Array.from(
-          { length: 3 },
-          (_, imgIndex) =>
-            `https://picsum.photos/300/200?random=${
-              20 + index * 3 + imgIndex + 1
-            }`
-        ),
-        pupInfo: {
-          id: `pup-${index + 1}`,
-          name: `PUP Location ${index + 1}`,
-          city: ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami'][
-            index % 5
-          ],
-          street: `${(index + 1) * 10} Main Street`,
-          phone: `+1-555-00${index + 10}`,
-        },
-        rating: parseFloat((Math.random() * 5).toFixed(1)),
-        timings: {
-          minTimeUsageHours: 2 + (index % 3),
-          maxTimeUsageHours: 8 + (index % 5),
-          bookingDeclineDeadlineHours: 24 - (index % 5),
-        },
-        cancellationPolicy: ['Flexible', 'Moderate', 'Strict'][index % 3],
-        availableFrom: availableFrom,
-        availableTo: availableTo,
-        suitableFor: ['Wedding', 'Conference', 'Party', 'Concert'].slice(
-          0,
-          (index % 4) + 1
-        ),
-      };
-    }
-  );
-
-  public createNewService(request: FormData): Observable<any> {
+  public createNewProduct(request: FormData): Observable<any> {
     const headers = {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     };
     return this.http.post(`${this.apiUrl}`, request, { headers });
   }
 
-  public getServiceCategories(): Observable<ProductCategory[]> {
+  public getProductCategories(): Observable<ProductCategory[]> {
     const headers = {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     };
@@ -84,28 +61,37 @@ export class ProductService {
     });
   }
 
-  getTopServices(): Observable<ServiceProduct[]> {
-    const topServices = this.services.slice(0, 5);
-    return of(topServices);
+  getTopProducts(): Observable<Product[]> {
+    const topProducts = this.products.slice(0, 5);
+    return of(topProducts);
   }
 
-  getAllServices(): Observable<ServiceProduct[]> {
-    return of(this.services);
+  getAllProducts(): Observable<Product[]> {
+    return of(this.products);
   }
 
-  getServiceById(id: string): Observable<ServiceProduct> {
-    const service = this.services.find((service) => service.id === id);
-    if (service) {
-      return of(service);
+  getProductById(id: string): Observable<Product> {
+    const product = this.products.find((product) => product.id === id);
+    if (product) {
+      return of(product);
     } else {
-      return throwError(() => new Error('Service/Product not found'));
+      return throwError(() => new Error('Product not found'));
     }
   }
 
-  getMyServices(): Observable<ServiceProduct[]> {
+  getMyProducts(): Observable<Product[]> {
     const headers = {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     };
-    return this.http.get<ServiceProduct[]>(`${this.apiUrl}/my`, { headers });
+    return this.http.get<Product[]>(`${this.apiUrl}/my`, { headers });
+  }
+
+  getServiceById(id: string): Observable<Product> {
+    const product = this.products.find((product) => product.id === id);
+    if (product) {
+      return of(product);
+    } else {
+      return throwError(() => new Error('Service not found'));
+    }
   }
 }

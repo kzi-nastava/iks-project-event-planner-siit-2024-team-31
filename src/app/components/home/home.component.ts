@@ -3,11 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { EventService } from '../../services/events/event.service';
 import { ProductService } from '../../services/product/products.service';
 import { Event } from '../../types/models/event.model';
-import { ServiceProduct } from '../../types/models/service-product.model';
+import { Service } from '../../types/models/service.model';
 import { EventCardComponent } from '../event-card/event-card.component';
 import { EventListComponent } from '../event-list/event-list.component';
 import { ServiceCardComponent } from '../service-card/service-card.component';
 import { ServiceListComponent } from '../service-list/service-list.component';
+import { ProvidedServiceService } from '../../services/provided-service/provided-service.service'
 
 @Component({
   selector: 'app-home',
@@ -23,11 +24,12 @@ import { ServiceListComponent } from '../service-list/service-list.component';
 })
 export class HomeComponent implements OnInit {
   topEvents: Event[] = [];
-  topServices: ServiceProduct[] = [];
+  topServices: Service[] = [];
 
   constructor(
     private eventService: EventService,
-    private productService: ProductService
+    private productService: ProductService,
+    private providedServiceService: ProvidedServiceService
   ) {}
 
   ngOnInit(): void {
@@ -42,7 +44,7 @@ export class HomeComponent implements OnInit {
   }
 
   loadTopServices() {
-    this.productService.getTopServices().subscribe((services) => {
+    this.providedServiceService.getTopServices().subscribe((services) => {
       this.topServices = services;
     });
   }

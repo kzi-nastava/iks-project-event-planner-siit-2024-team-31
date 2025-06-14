@@ -1,149 +1,148 @@
 <nav
-		class="bg-blue-700 text-white py-4 shadow-gray-300 shadow-lg rounded-b-2xl mb-4"
+  class="bg-blue-700 text-white py-4 shadow-gray-300 shadow-lg rounded-b-2xl mb-4"
 >
-	<div class="container mx-auto px-4 flex items-center justify-between gap-6">
-		<div class="text-xl font-bold whitespace-nowrap">
-			<a href="/"
-			   class="hover:text-gray-200 transition-colors duration-200">
-				Event planner
-			</a>
-		</div>
+  <div class="container mx-auto px-4 flex items-center justify-between gap-6">
+    <div class="text-xl font-bold whitespace-nowrap">
+      <a href="/" class="hover:text-gray-200 transition-colors duration-200">
+        Event planner
+      </a>
+    </div>
 
-		<div
-				class="hidden md:flex flex-grow justify-center space-x-8 text-lg font-semibold"
-		>
-			<a
-					href="/events"
-					class="hover:text-gray-200 hover:underline transition-colors duration-200"
-			>
-				Events
-			</a>
-			<a
-					href="/services"
-					class="hover:text-gray-200 hover:underline transition-colors duration-200"
-			>
-				Services
-			</a>
-			<a
-					href="/about"
-					class="hover:text-gray-200 hover:underline transition-colors duration-200"
-			>
-				About
-			</a>
-		</div>
+    <div
+      class="hidden md:flex flex-grow justify-center space-x-8 text-lg font-semibold"
+    >
+      <a
+        href="/events"
+        class="hover:text-gray-200 hover:underline transition-colors duration-200"
+      >
+        Events
+      </a>
+      <a
+        href="/services"
+        class="hover:text-gray-200 hover:underline transition-colors duration-200"
+      >
+        Products and services
+      </a>
+      <a
+        href="/about"
+        class="hover:text-gray-200 hover:underline transition-colors duration-200"
+      >
+        About
+      </a>
+    </div>
 
-		<ng-container *ngIf="!(isAuthenticated$ | async)">
-			<div class="flex flex-nowrap items-center space-x-4 text-base">
-				<a
-						[routerLink]="registerButton.link"
-						class="bg-black hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
-				>
-					{{ registerButton.text }}
-				</a>
-				<a
-						[routerLink]="loginButton.link"
-						class="bg-black hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
-				>
-					{{ loginButton.text }}
-				</a>
-			</div>
-		</ng-container>
+    <ng-container *ngIf="!(isAuthenticated$ | async)">
+      <div class="flex flex-nowrap items-center space-x-4 text-base">
+        <a
+          [routerLink]="registerButton.link"
+          class="bg-black hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+        >
+          {{ registerButton.text }}
+        </a>
+        <a
+          [routerLink]="loginButton.link"
+          class="bg-black hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+        >
+          {{ loginButton.text }}
+        </a>
+      </div>
+    </ng-container>
 
-		<ng-container *ngIf="isAuthenticated$ | async">
-			<div class="flex flex-nowrap items-center space-x-4 text-base">
-				<a
-						[routerLink]="myProfileButton.link"
-						class="bg-black hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
-				>
-					{{ myProfileButton.text }}
-				</a>
+    <ng-container *ngIf="isAuthenticated$ | async">
+      <div class="flex flex-nowrap items-center space-x-4 text-base">
+        <a
+          [routerLink]="myProfileButton.link"
+          class="bg-black hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+        >
+          {{ myProfileButton.text }}
+        </a>
 
-				<div class="relative" (click)="$event.stopPropagation()">
-					<button
-							(click)="toggleDropdown()"
-							class="bg-black hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center space-x-2"
-					>
-						<span>Options</span>
-						<svg class="w-6 h-6 fill-current" viewBox="0 0 20 20">
-							<path d="M5.5 7l4 4 4-4H5.5z"/>
-							<!-- ▼ -->
-						</svg>
-					</button>
+        <div class="relative" (click)="$event.stopPropagation()">
+          <button
+            (click)="toggleDropdown()"
+            class="bg-black hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center space-x-2"
+          >
+            <span>Options</span>
+            <svg class="w-6 h-6 fill-current" viewBox="0 0 20 20">
+              <path d="M5.5 7l4 4 4-4H5.5z" />
+              <!-- ▼ -->
+            </svg>
+          </button>
 
-					<div
-							*ngIf="isDropdownOpen"
-							class="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg z-10"
-					>
-						<ng-container *ngIf="this.userRole === Role.ROLE_PUP">
-							<a
-									routerLink="/pup/my_dashboard"
-									class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
-							>
-								My dashboard
-							</a>
-							<a
-									routerLink="pup/my-products-services"
-									class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
-							>
-								My services
-							</a>
-						</ng-container>
+          <div
+            *ngIf="isDropdownOpen"
+            class="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg z-10"
+          >
+            <ng-container *ngIf="this.userRole === Role.ROLE_PUP">
+              <a
+                routerLink="/pup/my_dashboard"
+                class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+              >
+                My dashboard
+              </a>
+              <a
+                routerLink="pup/my-products-services"
+                class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+              >
+                My services
+              </a>
+            </ng-container>
 
-						<ng-container *ngIf="this.userRole === Role.ROLE_OD">
-							<a
-									routerLink="/od/my-events"
-									class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
-							>
-								My events
-							</a>
-						</ng-container>
+            <ng-container *ngIf="this.userRole === Role.ROLE_OD">
+              <a
+                routerLink="/od/my-events"
+                class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+              >
+                My events
+              </a>
+            </ng-container>
 
-						<ng-container *ngIf="this.userRole === Role.ROLE_ADMIN">
-							<a
-									routerLink="/admin/event-types"
-									class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
-							>
-								Manage event types
-							</a>
-							<a
-									routerLink="/admin/categories"
-									class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
-							>
-								Manage categories
-							</a>
-						</ng-container>
+            <ng-container *ngIf="this.userRole === Role.ROLE_ADMIN">
+              <a
+                routerLink="/admin/event-types"
+                class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+              >
+                Manage event types
+              </a>
+              <a
+                routerLink="/admin/categories"
+                class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+              >
+                Manage categories
+              </a>
+            </ng-container>
 
-						<ng-container *ngIf="this.userRole === Role.ROLE_USER">
-							<a
-									routerLink="/user/bookings"
-									class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
-							>
-								My events
-							</a>
-						</ng-container>
+            <ng-container *ngIf="this.userRole === Role.ROLE_USER">
+              <a
+                routerLink="/user/bookings"
+                class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+              >
+                My events
+              </a>
+            </ng-container>
 
-						<a
-								routerLink="/chats"
-								class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
-						>
-							My chats
-						</a>
-						<a
-								routerLink="/settings"
-								class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
-						>
-							Settings
-						</a>
-					</div>
-				</div>
+            <a
+              routerLink="/chats"
+              class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+            >
+              My chats
+            </a>
+            <a
+              routerLink="/settings"
+              class="block px-4 py-2 hover:bg-blue-500 hover:rounded-lg hover:text-white"
+            >
+              Settings
+            </a>
+          </div>
+        </div>
 
-				<a
-						class="bg-black hover:bg-red-500 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 cursor-pointer"
-						(click)="logout()"
-				>
-					Logout
-				</a>
-			</div>
-		</ng-container>
-	</div>
+        <a
+          class="bg-black hover:bg-red-500 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 cursor-pointer"
+          (click)="logout()"
+        >
+          Logout
+        </a>
+      </div>
+    </ng-container>
+  </div>
 </nav>

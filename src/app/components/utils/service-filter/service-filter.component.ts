@@ -31,6 +31,8 @@ export class ServiceFilterComponent {
   cities: string[] = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami'];
   suitabilityOptions: string[] = ['Wedding', 'Conference', 'Party', 'Concert'];
 
+  switcher: boolean = true; // true for products, false for services
+
   filteredCategories: string[] = [...this.categories];
   filteredCities: string[] = [...this.cities];
   filteredSuitability: string[] = [...this.suitabilityOptions];

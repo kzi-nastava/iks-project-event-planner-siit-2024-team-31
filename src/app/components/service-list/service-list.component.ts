@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ProductService } from '../../services/product/products.service';
-import { ServiceProduct } from '../../types/models/service-product.model';
+import { ProvidedServiceService } from '../../services/provided-service/provided-service.service';
+import { Service } from '../../types/models/service.model';
 import { ServiceCardComponent } from '../service-card/service-card.component';
 
 @Component({
@@ -12,24 +12,24 @@ import { ServiceCardComponent } from '../service-card/service-card.component';
   imports: [CommonModule, ServiceCardComponent, FormsModule],
 })
 export class ServiceListComponent implements OnInit {
-  services: ServiceProduct[] = [];
+  services: Service[] = [];
   searchTerm: string = '';
-  filteredServices: ServiceProduct[] = [];
-  paginatedServices: ServiceProduct[] = [];
+  filteredServices: Service[] = [];
+  paginatedServices: Service[] = [];
 
   // Pagination properties
   currentPage: number = 1;
   pageSize: number = 6; // Number of items per page
   totalPages: number = 1;
 
-  constructor(private productService: ProductService) {}
+  constructor(private providedServiceService: ProvidedServiceService) {}
 
   ngOnInit(): void {
     this.loadServices();
   }
 
   loadServices() {
-    this.productService.getAllServices().subscribe((services) => {
+    this.providedServiceService.getMyServices().subscribe((services) => {
       this.services = services;
       this.applyFilter();
     });
