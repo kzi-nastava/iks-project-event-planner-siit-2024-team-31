@@ -5,9 +5,12 @@ import { Router } from '@angular/router';
 import { EventTypesService } from '../../../services/event-types/event-types.service'; // Отдельный сервис для работы с типами событий
 import { ProductCategoriesService } from '../../../services/product-categories/product-categories.service';
 import { ProductService } from '../../../services/product/products.service';
+import { ProvidedServiceCategoriesService } from '../../../services/provided-service-categories/provided-service-categories.service';
+import { ProvidedServiceService } from '../../../services/provided-service/provided-service.service';
 import { EventType } from '../../../types/eventType'; // { id: number; name: string; }
 import { Page } from '../../../types/page';
 import { ProductCategory } from '../../../types/productCategory';
+import { ServiceCategory } from '../../../types/serviceCategory';
 
 @Component({
   selector: 'app-create-service',
@@ -17,12 +20,13 @@ import { ProductCategory } from '../../../types/productCategory';
 })
 export class CreateServiceComponent implements OnInit {
   // ------------
-  // Pagination for categories (server-side through ProductCategoriesService)
+  // Pagination for categories (server-side through ProductCategoriesService or ProvidedServiceCategoriesService)
   // ------------
   currentCategoryPage: number = 1;
   totalCategoryPages: number = 0;
   categoryPageSize: number = 10;
-  paginatedCategories: ProductCategory[] = [];
+  paginatedProductCategories: ProductCategory[] = [];
+  paginatedServiceCategories: ServiceCategory[] = [];
   searchQuery: string = '';
 
   // ------------
@@ -43,6 +47,9 @@ export class CreateServiceComponent implements OnInit {
   // ------------
   photoPreviews: string[] = [];
   filesForUpload: File[] = [];
+
+  // Type selector
+  isCreatingService = true; // true for service, false for product
 
   // Service data contains all the fields for the service
   serviceData = {
@@ -65,8 +72,9 @@ export class CreateServiceComponent implements OnInit {
 
   constructor(
     public productService: ProductService,
-    // public eventService: EventService,
+    public providedServiceService: ProvidedServiceService,
     public productCategoryService: ProductCategoriesService,
+    public serviceCategoryService: ProvidedServiceCategoriesService,
     public eventTypesService: EventTypesService,
     private router: Router
   ) {}
@@ -80,19 +88,39 @@ export class CreateServiceComponent implements OnInit {
   // Methods for working with categories
   // ---------------------------------
   loadCategories(): void {
-    this.productCategoryService
-      .searchProductCategories(
-        this.searchQuery,
-        this.currentCategoryPage,
-        this.categoryPageSize
-      )
-      .subscribe({
-        next: (page: Page<ProductCategory>) => {
-          this.paginatedCategories = page.content;
-          this.totalCategoryPages = page.totalPages;
-        },
-        error: (err) => console.error('Error loading categories:', err),
-      });
+    if (this.isCreatingService) {
+      // Load service categories
+      this.serviceCategoryService
+        .searchServiceCategories(
+          this.searchQuery,
+          this.currentCategoryPage,
+          this.categoryPageSize
+        )
+        .subscribe({
+          next: (page: Page<ServiceCategory>) => {
+            this.paginatedServiceCategories = page.content;
+            this.totalCategoryPages = page.totalPages;
+          },
+          error: (err) =>
+            console.error('Error loading service categories:', err),
+        });
+    } else {
+      // Load product categories
+      this.productCategoryService
+        .searchProductCategories(
+          this.searchQuery,
+          this.currentCategoryPage,
+          this.categoryPageSize
+        )
+        .subscribe({
+          next: (page: Page<ProductCategory>) => {
+            this.paginatedProductCategories = page.content;
+            this.totalCategoryPages = page.totalPages;
+          },
+          error: (err) =>
+            console.error('Error loading product categories:', err),
+        });
+    }
   }
 
   onSearchQueryChange(): void {
@@ -136,6 +164,13 @@ export class CreateServiceComponent implements OnInit {
       this.serviceData.category = newCat;
       this.closeCategoryPopup();
     }
+  }
+
+  // Getter for template to access the right categories array
+  get currentCategories(): (ProductCategory | ServiceCategory)[] {
+    return this.isCreatingService
+      ? this.paginatedServiceCategories
+      : this.paginatedProductCategories;
   }
 
   // ---------------------------------
@@ -187,8 +222,161 @@ export class CreateServiceComponent implements OnInit {
     this.showEventTypeModal = false;
   }
 
-  isEventTypeSelected(type: EventType): boolean {
-    return this.serviceData.suitableEventTypes.some((et) => et.id === type.id);
+  toggleEventType(eventType: EventType): void {
+    const index = this.serviceData.suitableEventTypes.findIndex(
+      (et) => et.id === eventType.id
+    );
+    if (index > -1) {
+      this.serviceData.suitableEventTypes.splice(index, 1);
+    } else {
+      this.serviceData.suitableEventTypes.push(eventType);
+    }
+  }
+
+  isEventTypeSelected(eventType: EventType): boolean {
+    return this.serviceData.suitableEventTypes.some(
+      (et) => et.id === eventType.id
+    );
+  }
+
+  // ---------------------------------
+  // Photo upload methods
+  // ---------------------------------
+  onFileSelected(event: any): void {
+    const files: FileList = event.target.files;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.type.startsWith('image/')) {
+        this.filesForUpload.push(file);
+
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.photoPreviews.push(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+
+  removePhoto(index: number): void {
+    this.photoPreviews.splice(index, 1);
+    this.filesForUpload.splice(index, 1);
+  }
+
+  // ---------------------------------
+  // Type switching
+  // ---------------------------------
+  toggleType(): void {
+    this.isCreatingService = !this.isCreatingService;
+    // Reset category when switching types
+    this.serviceData.category = '';
+    // Reload categories for the new type
+    this.loadCategories();
+  }
+
+  // ---------------------------------
+  // Form submission
+  // ---------------------------------
+  onSubmit(): void {
+    if (!this.validateForm()) {
+      return;
+    }
+
+    const formData = new FormData();
+
+    // Add basic fields
+    formData.append('name', this.serviceData.name);
+    formData.append('category', this.serviceData.category);
+    formData.append('description', this.serviceData.description);
+    formData.append('peculiarities', this.serviceData.peculiarities);
+    formData.append('price', this.serviceData.price.toString());
+    formData.append('discount', this.serviceData.discount.toString());
+    formData.append('isVisible', this.serviceData.isVisible.toString());
+    formData.append('isAvailable', this.serviceData.isAvailable.toString());
+
+    // Add suitable event types
+    this.serviceData.suitableEventTypes.forEach((eventType, index) => {
+      formData.append(`suitableEventTypes[${index}]`, eventType.id.toString());
+    });
+
+    // Add photos
+    this.filesForUpload.forEach((file, index) => {
+      formData.append(`photos`, file);
+    });
+
+    // Add service-specific fields only if creating a service
+    if (this.isCreatingService) {
+      formData.append(
+        'serviceDurationMin',
+        this.serviceData.serviceDurationMin.toString()
+      );
+      formData.append(
+        'serviceDurationMax',
+        this.serviceData.serviceDurationMax.toString()
+      );
+      formData.append(
+        'bookingDeclineDeadline',
+        this.serviceData.bookingDeclineDeadline.toString()
+      );
+      formData.append(
+        'noTimeSelectionRequired',
+        this.serviceData.noTimeSelectionRequired.toString()
+      );
+      formData.append(
+        'manualTimeSelection',
+        this.serviceData.manualTimeSelection.toString()
+      );
+      formData.append(
+        'bookingConfirmation',
+        this.serviceData.bookingConfirmation
+      );
+    }
+
+    // Submit to appropriate service
+    const submitObservable = this.isCreatingService
+      ? this.providedServiceService.createNewService(formData)
+      : this.productService.createNewProduct(formData);
+
+    submitObservable.subscribe({
+      next: (response) => {
+        console.log(
+          `${
+            this.isCreatingService ? 'Service' : 'Product'
+          } created successfully:`,
+          response
+        );
+        this.router.navigate(['/pup/my-products-services']);
+      },
+      error: (error) => {
+        console.error(
+          `Error creating ${this.isCreatingService ? 'service' : 'product'}:`,
+          error
+        );
+      },
+    });
+  }
+
+  private validateForm(): boolean {
+    if (!this.serviceData.name.trim()) {
+      alert('Please enter a name');
+      return false;
+    }
+    if (!this.serviceData.category.trim()) {
+      alert('Please select a category');
+      return false;
+    }
+    if (this.serviceData.price <= 0) {
+      alert('Please enter a valid price');
+      return false;
+    }
+    return true;
+  }
+
+  // ---------------------------------
+  // Missing methods for template compatibility
+  // ---------------------------------
+  removeSuitableEventType(index: number): void {
+    this.serviceData.suitableEventTypes.splice(index, 1);
   }
 
   toggleEventTypeSelection(type: EventType, event: Event): void {
@@ -207,40 +395,7 @@ export class CreateServiceComponent implements OnInit {
     this.showEventTypeModal = false;
   }
 
-  removeSuitableEventType(index: number): void {
-    this.serviceData.suitableEventTypes.splice(index, 1);
-    this.loadEventTypes();
-  }
-
-  // ---------------------------------
-  // Photos upload and preview
-  // ---------------------------------
-  onPhotosSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-    for (let i = 0; i < input.files.length; i++) {
-      const file = input.files[i];
-      this.filesForUpload.push(file);
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        const result = e.target?.result;
-        if (result && typeof result === 'string') {
-          this.photoPreviews.push(result);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-    input.value = '';
-  }
-
-  removePreview(index: number): void {
-    this.photoPreviews.splice(index, 1);
-    this.filesForUpload.splice(index, 1);
-  }
-
-  // ---------------------------------
-  // Service time management
-  // ---------------------------------
+  // Service time management getters and methods
   get disableMinField(): boolean {
     return this.serviceData.noTimeSelectionRequired;
   }
@@ -275,73 +430,5 @@ export class CreateServiceComponent implements OnInit {
     if (!isChecked) {
       this.serviceData.serviceDurationMax = 0;
     }
-  }
-
-  // ---------------------------------
-  // Send form data to the server
-  // ---------------------------------
-  onSubmit(): void {
-    console.log('Form submitted!', this.serviceData);
-    const formData = new FormData();
-    formData.append('name', this.serviceData.name);
-    formData.append('category', this.serviceData.category);
-    formData.append('description', this.serviceData.description);
-    formData.append('peculiarities', this.serviceData.peculiarities);
-    formData.append('price', this.serviceData.price.toString());
-    formData.append('discount', this.serviceData.discount.toString());
-
-    this.serviceData.suitableEventTypes.forEach((et) => {
-      formData.append('suitableEventTypes', et.id.toString());
-    });
-
-    formData.append('isVisible', this.serviceData.isVisible ? 'true' : 'false');
-    formData.append(
-      'isAvailable',
-      this.serviceData.isAvailable ? 'true' : 'false'
-    );
-    formData.append(
-      'serviceDurationMin',
-      this.serviceData.serviceDurationMin.toString()
-    );
-    formData.append(
-      'serviceDurationMax',
-      this.serviceData.serviceDurationMax.toString()
-    );
-    formData.append(
-      'bookingDeclineDeadline',
-      this.serviceData.bookingDeclineDeadline.toString()
-    );
-    formData.append(
-      'noTimeSelectionRequired',
-      this.serviceData.noTimeSelectionRequired ? 'true' : 'false'
-    );
-    formData.append(
-      'manualTimeSelection',
-      this.serviceData.manualTimeSelection ? 'true' : 'false'
-    );
-    formData.append(
-      'bookingConfirmation',
-      this.serviceData.bookingConfirmation
-    );
-
-    this.filesForUpload.forEach((file) => {
-      formData.append('photos', file);
-    });
-
-    this.productService.createNewProduct(formData).subscribe({
-      next: (response) => {
-        console.log('Success:', response);
-        alert('Product created successfully!');
-        this.router
-          .navigate(['/pup/my-products-services'])
-          .then((r) =>
-            console.log('Redirected to my products/services page:', r)
-          );
-      },
-      error: (err) => {
-        console.error('Error:', err);
-        alert('Error creating service, check console for details');
-      },
-    });
   }
 }

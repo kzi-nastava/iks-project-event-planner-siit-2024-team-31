@@ -13,8 +13,28 @@ import { Service } from '../../types/models/service.model';
 export class ServiceCardComponent {
   @Input() service!: Product | Service;
 
+  private defaultImageUrl = 'assets/images/default-service.svg';
+  private imageError = false;
+
   isService(item: Product | Service): item is Service {
     return 'minTimeUsageHours' in item;
+  }
+
+  getImageUrl(): string {
+    if (this.imageError) {
+      return this.defaultImageUrl;
+    }
+
+    if (!this.service.imageUrls || this.service.imageUrls.length === 0) {
+      return this.defaultImageUrl;
+    }
+
+    return this.service.imageUrls[0];
+  }
+
+  onImageError(event: any): void {
+    this.imageError = true;
+    event.target.src = this.defaultImageUrl;
   }
 
   formatPrice(price: number): string {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../services/product/products.service';
 import { ProvidedServiceService } from '../../../services/provided-service/provided-service.service';
@@ -20,6 +20,8 @@ import { ServiceFilterComponent } from '../../utils/service-filter/service-filte
   standalone: true,
 })
 export class ServiceProductListFilteredComponent implements OnInit {
+  @ViewChild(ServiceFilterComponent) filterComponent!: ServiceFilterComponent;
+
   products: Product[] = [];
   services: Service[] = [];
   filteredItems: (Product | Service)[] = [];
@@ -42,6 +44,10 @@ export class ServiceProductListFilteredComponent implements OnInit {
 
   toggleView(): void {
     this.showProducts = !this.showProducts;
+    // Notify the filter component about the type change
+    if (this.filterComponent) {
+      this.filterComponent.onTypeChange(this.showProducts);
+    }
     this.loadData();
   }
 
@@ -62,7 +68,7 @@ export class ServiceProductListFilteredComponent implements OnInit {
   }
 
   private loadServices(): void {
-    this.providedServiceService.getTopServices().subscribe((services) => {
+    this.providedServiceService.getAllServices().subscribe((services) => {
       this.services = services;
       this.filteredItems = [...this.services];
       this.calculatePagination();
@@ -97,20 +103,36 @@ export class ServiceProductListFilteredComponent implements OnInit {
     const sourceItems = this.showProducts ? this.products : this.services;
 
     this.filteredItems = sourceItems.filter((item) => {
-      const matchesCategory =
-        !filters.selectedCategories.length ||
-        item.categories.some((category: string) =>
-          filters.selectedCategories.includes(category)
-        );
+      let matchesCategory = true;
+      let matchesSuitability = true;
+
+      // Handle categories differently for products vs services
+      if (filters.selectedCategories.length > 0) {
+        if (this.showProducts) {
+          // For products: category is a single ProductCategory object
+          const product = item as Product;
+          matchesCategory =
+            product.category &&
+            filters.selectedCategories.includes(product.category.name);
+        } else {
+          // For services: category is a single ServiceCategory object
+          const service = item as Service;
+          matchesCategory =
+            service.category &&
+            filters.selectedCategories.includes(service.category.name);
+        }
+      }
 
       const matchesPrice =
         item.price >= filters.minPrice && item.price <= filters.maxPrice;
 
-      const matchesSuitability =
-        !filters.selectedSuitability.length ||
-        item.suitableFor.some((suitable: string) =>
-          filters.selectedSuitability.includes(suitable)
-        );
+      // Handle suitableFor
+      if (filters.selectedSuitability.length > 0) {
+        matchesSuitability =
+          item.suitableFor?.some((suitable: string) =>
+            filters.selectedSuitability.includes(suitable)
+          ) || false;
+      }
 
       // For services, check additional fields
       if (!this.showProducts && 'availableFrom' in item) {

@@ -2,6 +2,7 @@
   <!-- Filter -->
   <div class="w-1/4 pr-5">
     <app-service-product-filter
+      [showProducts]="showProducts"
       (filtersChange)="applyFilters($event)"
     ></app-service-product-filter>
   </div>

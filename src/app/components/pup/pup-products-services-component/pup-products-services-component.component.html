@@ -77,10 +77,10 @@
       <!-- Categories -->
       <div class="flex flex-wrap gap-1 mb-2">
         <span
-          *ngFor="let category of product.categories"
+          *ngIf="product.category"
           class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
         >
-          {{ category }}
+          {{ product.category.name }}
         </span>
       </div>
 
@@ -146,10 +146,10 @@
       <!-- Categories -->
       <div class="flex flex-wrap gap-1 mb-2">
         <span
-          *ngFor="let category of service.categories"
+          *ngIf="service.category"
           class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
         >
-          {{ category }}
+          {{ service.category.name }}
         </span>
       </div>
 

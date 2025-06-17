@@ -1,33 +1,535 @@
-<div class="container mx-auto px-4">
-  <section>
-    <h2 class="text-2xl font-bold my-4">Top 5 events in your city</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+<div class="container mx-auto px-4 py-8">
+  <!-- Hero Section -->
+  <section class="text-center mb-16">
+    <h1
+      class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent mb-4"
+    >
+      Welcome to Event Planner
+    </h1>
+    <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+      Discover amazing events, connect with top service providers, and create
+      unforgettable experiences
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="/events" class="btn-primary"> Browse Events </a>
+      <a href="/services" class="btn-secondary"> Find Services </a>
+    </div>
+  </section>
+
+  <!-- Top 5 Events -->
+  <section class="section-sm">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-3xl font-bold text-gray-800">🎉 Top Events</h2>
+      <a
+        href="/events"
+        class="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+      >
+        View All →
+      </a>
+    </div>
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
+    >
       <app-event-card
         *ngFor="let event of topEvents"
         [event]="event"
       ></app-event-card>
     </div>
+    <div *ngIf="topEvents.length === 0" class="text-center py-12">
+      <div class="text-gray-400 text-6xl mb-4">📅</div>
+      <p class="text-gray-500 text-lg">No top events available</p>
+    </div>
   </section>
 
-  <section>
-    <h2 class="text-2xl font-bold my-4">All events</h2>
-    <app-event-list></app-event-list>
+  <!-- All Events with Search -->
+  <section class="section-sm">
+    <div class="bg-white rounded-2xl shadow-lg p-8">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6">
+        🔍 Explore All Events
+      </h2>
+
+      <!-- Search Bar -->
+      <div class="mb-8">
+        <div class="relative max-w-md mx-auto">
+          <div
+            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+          >
+            <svg
+              *ngIf="!eventsLoading"
+              class="h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            <div
+              *ngIf="eventsLoading"
+              class="animate-spin h-5 w-5 text-blue-500"
+            >
+              <svg fill="none" viewBox="0 0 24 24">
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+          <input
+            type="text"
+            [(ngModel)]="eventSearchTerm"
+            (input)="onEventSearchChange()"
+            placeholder="Search events by name or description..."
+            class="input-primary pl-10"
+          />
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div
+        *ngIf="eventsLoading"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-8"
+      >
+        <div
+          *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8]"
+          class="bg-white rounded-xl shadow-lg overflow-hidden h-full flex flex-col"
+        >
+          <div class="h-40 shimmer"></div>
+          <div class="p-3 flex-1">
+            <div class="h-4 shimmer rounded mb-2"></div>
+            <div class="h-3 shimmer rounded mb-1"></div>
+            <div class="h-3 shimmer rounded w-3/4 mb-3"></div>
+            <div class="space-y-1 mb-3">
+              <div class="h-3 shimmer rounded w-2/3"></div>
+              <div class="h-3 shimmer rounded w-1/2"></div>
+            </div>
+            <div class="h-8 shimmer rounded"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Events Grid -->
+      <div
+        *ngIf="!eventsLoading"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-8"
+      >
+        <app-event-card
+          *ngFor="let event of paginatedEvents"
+          [event]="event"
+        ></app-event-card>
+        <!-- Skeleton placeholders to maintain grid layout -->
+        <div
+          *ngFor="let placeholder of getEventPlaceholders()"
+          class="bg-gray-100 rounded-xl shadow-lg h-full flex flex-col opacity-30"
+        >
+          <div class="h-40 bg-gray-200 rounded-t-xl"></div>
+          <div class="p-3 flex-1">
+            <div class="h-4 bg-gray-200 rounded mb-2"></div>
+            <div class="h-3 bg-gray-200 rounded mb-1"></div>
+            <div class="h-3 bg-gray-200 rounded w-3/4"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div
+        *ngIf="!eventsLoading && paginatedEvents.length === 0"
+        class="text-center py-12"
+      >
+        <div class="text-gray-400 text-6xl mb-4">🔍</div>
+        <p class="text-gray-500 text-lg">
+          No events found matching your search
+        </p>
+        <p class="text-gray-400 text-sm mt-2">
+          Try adjusting your search terms
+        </p>
+      </div>
+
+      <!-- Pagination -->
+      <div
+        *ngIf="!eventsLoading && (eventsCurrentPage > 0 || eventsHasMore)"
+        class="flex justify-center items-center space-x-4"
+      >
+        <button
+          (click)="changeEventsPage('prev')"
+          [disabled]="eventsCurrentPage === 0"
+          class="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          ← Previous
+        </button>
+        <span
+          class="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg font-medium"
+        >
+          Page {{ eventsCurrentPage + 1 }}
+        </span>
+        <button
+          (click)="changeEventsPage('next')"
+          [disabled]="!eventsHasMore"
+          class="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Next →
+        </button>
+      </div>
+    </div>
   </section>
 
-  <section>
-    <h2 class="text-2xl font-bold my-4">
-      Top 5 services and products in your city
-    </h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+  <!-- Top 5 Services -->
+  <section class="section-sm">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-3xl font-bold text-gray-800">⭐ Top Services</h2>
+      <a
+        href="/services"
+        class="text-purple-600 hover:text-purple-700 font-medium transition-colors"
+      >
+        View All →
+      </a>
+    </div>
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
+    >
       <app-service-card
         *ngFor="let service of topServices"
         [service]="service"
       ></app-service-card>
     </div>
+    <div *ngIf="topServices.length === 0" class="text-center py-12">
+      <div class="text-gray-400 text-6xl mb-4">🛠️</div>
+      <p class="text-gray-500 text-lg">No top services available</p>
+    </div>
   </section>
 
-  <section>
-    <h2 class="text-2xl font-bold my-4">All services and products</h2>
-    <app-service-list></app-service-list>
+  <!-- All Services with Search -->
+  <section class="section-sm">
+    <div
+      class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-lg p-8"
+    >
+      <h2 class="text-3xl font-bold text-gray-800 mb-6">
+        🔍 Explore All Services
+      </h2>
+
+      <!-- Search Bar -->
+      <div class="mb-8">
+        <div class="relative max-w-md mx-auto">
+          <div
+            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+          >
+            <svg
+              *ngIf="!servicesLoading"
+              class="h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            <div
+              *ngIf="servicesLoading"
+              class="animate-spin h-5 w-5 text-purple-500"
+            >
+              <svg fill="none" viewBox="0 0 24 24">
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+          <input
+            type="text"
+            [(ngModel)]="serviceSearchTerm"
+            (input)="onServiceSearchChange()"
+            placeholder="Search services by name or description..."
+            class="input-primary pl-10"
+          />
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div
+        *ngIf="servicesLoading"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-8"
+      >
+        <div
+          *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8]"
+          class="bg-white rounded-xl shadow-lg overflow-hidden h-full flex flex-col"
+        >
+          <div class="h-40 shimmer"></div>
+          <div class="p-3 flex-1">
+            <div class="h-4 shimmer rounded mb-2"></div>
+            <div class="h-3 shimmer rounded mb-1"></div>
+            <div class="h-3 shimmer rounded w-3/4 mb-3"></div>
+            <div class="space-y-1 mb-3">
+              <div class="h-3 shimmer rounded w-2/3"></div>
+              <div class="h-3 shimmer rounded w-1/2"></div>
+            </div>
+            <div class="h-8 shimmer rounded"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services Grid -->
+      <div
+        *ngIf="!servicesLoading"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-8"
+      >
+        <app-service-card
+          *ngFor="let service of paginatedServices"
+          [service]="service"
+        ></app-service-card>
+        <!-- Skeleton placeholders to maintain grid layout -->
+        <div
+          *ngFor="let placeholder of getServicePlaceholders()"
+          class="bg-gray-100 rounded-xl shadow-lg h-full flex flex-col opacity-30"
+        >
+          <div class="h-40 bg-gray-200 rounded-t-xl"></div>
+          <div class="p-3 flex-1">
+            <div class="h-4 bg-gray-200 rounded mb-2"></div>
+            <div class="h-3 bg-gray-200 rounded mb-1"></div>
+            <div class="h-3 bg-gray-200 rounded w-3/4"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div
+        *ngIf="!servicesLoading && paginatedServices.length === 0"
+        class="text-center py-12"
+      >
+        <div class="text-gray-400 text-6xl mb-4">🔍</div>
+        <p class="text-gray-500 text-lg">
+          No services found matching your search
+        </p>
+        <p class="text-gray-400 text-sm mt-2">
+          Try adjusting your search terms
+        </p>
+      </div>
+
+      <!-- Pagination -->
+      <div
+        *ngIf="!servicesLoading && (servicesCurrentPage > 0 || servicesHasMore)"
+        class="flex justify-center items-center space-x-4"
+      >
+        <button
+          (click)="changeServicesPage('prev')"
+          [disabled]="servicesCurrentPage === 0"
+          class="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          ← Previous
+        </button>
+        <span
+          class="px-4 py-2 bg-purple-100 text-purple-800 rounded-lg font-medium"
+        >
+          Page {{ servicesCurrentPage + 1 }}
+        </span>
+        <button
+          (click)="changeServicesPage('next')"
+          [disabled]="!servicesHasMore"
+          class="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Next →
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top 5 Products -->
+  <section class="section-sm">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-3xl font-bold text-gray-800">🛍️ Top Products</h2>
+      <a
+        href="/services"
+        class="text-cyan-600 hover:text-cyan-700 font-medium transition-colors"
+      >
+        View All →
+      </a>
+    </div>
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
+    >
+      <app-service-card
+        *ngFor="let product of topProducts"
+        [service]="product"
+      ></app-service-card>
+    </div>
+    <div *ngIf="topProducts.length === 0" class="text-center py-12">
+      <div class="text-gray-400 text-6xl mb-4">📦</div>
+      <p class="text-gray-500 text-lg">No top products available</p>
+    </div>
+  </section>
+
+  <!-- All Products with Search -->
+  <section class="section-sm">
+    <div
+      class="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl shadow-lg p-8"
+    >
+      <h2 class="text-3xl font-bold text-gray-800 mb-6">
+        🔍 Explore All Products
+      </h2>
+
+      <!-- Search Bar -->
+      <div class="mb-8">
+        <div class="relative max-w-md mx-auto">
+          <div
+            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+          >
+            <svg
+              *ngIf="!productsLoading"
+              class="h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            <div
+              *ngIf="productsLoading"
+              class="animate-spin h-5 w-5 text-cyan-500"
+            >
+              <svg fill="none" viewBox="0 0 24 24">
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+          <input
+            type="text"
+            [(ngModel)]="productSearchTerm"
+            (input)="onProductSearchChange()"
+            placeholder="Search products by name or description..."
+            class="input-primary pl-10"
+          />
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div
+        *ngIf="productsLoading"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-8"
+      >
+        <div
+          *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8]"
+          class="bg-white rounded-xl shadow-lg overflow-hidden h-full flex flex-col"
+        >
+          <div class="h-40 shimmer"></div>
+          <div class="p-3 flex-1">
+            <div class="h-4 shimmer rounded mb-2"></div>
+            <div class="h-3 shimmer rounded mb-1"></div>
+            <div class="h-3 shimmer rounded w-3/4 mb-3"></div>
+            <div class="space-y-1 mb-3">
+              <div class="h-3 shimmer rounded w-2/3"></div>
+              <div class="h-3 shimmer rounded w-1/2"></div>
+            </div>
+            <div class="h-8 shimmer rounded"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div
+        *ngIf="!productsLoading"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-8"
+      >
+        <app-service-card
+          *ngFor="let product of paginatedProducts"
+          [service]="product"
+        ></app-service-card>
+        <!-- Skeleton placeholders to maintain grid layout -->
+        <div
+          *ngFor="let placeholder of getProductPlaceholders()"
+          class="bg-gray-100 rounded-xl shadow-lg h-full flex flex-col opacity-30"
+        >
+          <div class="h-40 bg-gray-200 rounded-t-xl"></div>
+          <div class="p-3 flex-1">
+            <div class="h-4 bg-gray-200 rounded mb-2"></div>
+            <div class="h-3 bg-gray-200 rounded mb-1"></div>
+            <div class="h-3 bg-gray-200 rounded w-3/4"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div
+        *ngIf="!productsLoading && paginatedProducts.length === 0"
+        class="text-center py-12"
+      >
+        <div class="text-gray-400 text-6xl mb-4">🔍</div>
+        <p class="text-gray-500 text-lg">
+          No products found matching your search
+        </p>
+        <p class="text-gray-400 text-sm mt-2">
+          Try adjusting your search terms
+        </p>
+      </div>
+
+      <!-- Pagination -->
+      <div
+        *ngIf="!productsLoading && (productsCurrentPage > 0 || productsHasMore)"
+        class="flex justify-center items-center space-x-4"
+      >
+        <button
+          (click)="changeProductsPage('prev')"
+          [disabled]="productsCurrentPage === 0"
+          class="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          ← Previous
+        </button>
+        <span
+          class="px-4 py-2 bg-cyan-100 text-cyan-800 rounded-lg font-medium"
+        >
+          Page {{ productsCurrentPage + 1 }}
+        </span>
+        <button
+          (click)="changeProductsPage('next')"
+          [disabled]="!productsHasMore"
+          class="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Next →
+        </button>
+      </div>
+    </div>
   </section>
 </div>

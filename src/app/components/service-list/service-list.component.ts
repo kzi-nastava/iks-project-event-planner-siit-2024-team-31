@@ -29,7 +29,7 @@ export class ServiceListComponent implements OnInit {
   }
 
   loadServices() {
-    this.providedServiceService.getMyServices().subscribe((services) => {
+    this.providedServiceService.getAllServices().subscribe((services) => {
       this.services = services;
       this.applyFilter();
     });

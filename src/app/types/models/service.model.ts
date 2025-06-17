@@ -1,9 +1,11 @@
+import { ServiceCategory } from '../serviceCategory';
+
 export interface Service {
   id: string;
   name: string;
   description: string;
   price: number;
-  categories: string[];
+  category: ServiceCategory;
   isAvailable: boolean;
   imageUrls: string[];
   pupId: string;
