@@ -11,7 +11,7 @@ import { baseUrl } from '../baseUrl';
 export class ProductCategoriesService {
   constructor(private http: HttpClient) {}
 
-  baseApiUrl = baseUrl + 'product-categories';
+  baseApiUrl = baseUrl + 'product-category';
 
   private getHeaders() {
     return {

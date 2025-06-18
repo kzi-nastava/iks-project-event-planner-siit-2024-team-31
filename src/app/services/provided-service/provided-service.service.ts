@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
+import { ServiceFilters } from '../../types/filter.interface';
 import { Service } from '../../types/models/service.model';
 import { PaginatedResponse } from '../../types/pagination.interface';
 import { baseUrl } from '../baseUrl';
@@ -59,6 +60,100 @@ export class ProvidedServiceService {
     return this.http.get<PaginatedResponse<Service>>(url);
   }
 
+  // Advanced filtering method
+  public getServicesWithFilters(
+    page: number,
+    pageSize: number,
+    filters: ServiceFilters
+  ): Observable<PaginatedResponse<Service>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', pageSize.toString());
+
+    // Add filters to params
+    if (filters.searchTerm && filters.searchTerm.trim()) {
+      params = params.set('keyword', filters.searchTerm.trim());
+    }
+
+    if (filters.categoryIds && filters.categoryIds.length > 0) {
+      // Multiple category IDs
+      filters.categoryIds.forEach((categoryId) => {
+        params = params.append('categoryIds', categoryId);
+      });
+    }
+
+    if (filters.minPrice !== undefined && filters.minPrice >= 0) {
+      params = params.set('minPrice', filters.minPrice.toString());
+    }
+
+    if (filters.maxPrice !== undefined && filters.maxPrice > 0) {
+      params = params.set('maxPrice', filters.maxPrice.toString());
+    }
+
+    if (filters.minRating !== undefined && filters.minRating > 0) {
+      params = params.set('minRating', filters.minRating.toString());
+    }
+
+    if (filters.availableFrom) {
+      params = params.set('availableFrom', filters.availableFrom);
+    }
+
+    if (filters.availableTo) {
+      params = params.set('availableTo', filters.availableTo);
+    }
+
+    if (filters.serviceDurationMinMinutes !== undefined) {
+      params = params.append(
+        'serviceDurationMinMinutes',
+        filters.serviceDurationMinMinutes.toString()
+      );
+    }
+
+    if (filters.serviceDurationMaxMinutes !== undefined) {
+      params = params.append(
+        'serviceDurationMaxMinutes',
+        filters.serviceDurationMaxMinutes.toString()
+      );
+    }
+
+    if (filters.suitableFor && filters.suitableFor.length > 0) {
+      // Convert string IDs to numbers and add to params
+      filters.suitableFor.forEach((suitableId) => {
+        const numericId = parseInt(suitableId, 10);
+        if (!isNaN(numericId)) {
+          params = params.append('suitableFor', numericId.toString());
+        }
+      });
+    }
+
+    if (filters.isAvailable !== undefined) {
+      params = params.set('isAvailable', filters.isAvailable.toString());
+    }
+
+    if (filters.pupId) {
+      // Convert string ID to number
+      const numericPupId = parseInt(filters.pupId, 10);
+      if (!isNaN(numericPupId)) {
+        params = params.set('pupId', numericPupId.toString());
+      }
+    }
+
+    // Handle sorting with default values
+    if (filters.sortBy) {
+      const sortBy = filters.sortBy || 'name';
+      const sortDirection = filters.sortDirection || 'asc';
+      params = params.set('sort', `${sortBy},${sortDirection}`);
+    } else {
+      // Default sorting
+      params = params.set('sort', 'name,asc');
+    }
+
+    return this.http.get<PaginatedResponse<Service>>(
+      `${this.apiUrl}/public/filter-search`,
+      { params }
+    );
+  }
+
   public searchServices(
     searchTerm: string,
     page: number = 0,
@@ -85,5 +180,15 @@ export class ProvidedServiceService {
     return this.http.post(`${this.apiUrl}`, request, {
       headers: this.getHeaders(),
     });
+  }
+
+  // Get filter options for services
+  public getServiceFilterOptions(): Observable<{
+    categories: any[];
+    suitableForOptions: string[];
+    priceRange: { min: number; max: number };
+    ratingRange: { min: number; max: number };
+  }> {
+    return this.http.get<any>(`${this.apiUrl}/public/filter-options`);
   }
 }

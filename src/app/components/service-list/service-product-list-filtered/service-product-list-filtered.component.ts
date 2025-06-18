@@ -1,159 +1,260 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Observable,
+  Subject,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 import { ProductService } from '../../../services/product/products.service';
 import { ProvidedServiceService } from '../../../services/provided-service/provided-service.service';
+import {
+  ProductFilters,
+  ServiceFilters,
+} from '../../../types/filter.interface';
 import { Product } from '../../../types/models/product.model';
 import { Service } from '../../../types/models/service.model';
+import { PaginatedResponse } from '../../../types/pagination.interface';
 import { ServiceCardComponent } from '../../service-card/service-card.component';
-import { ServiceFilterComponent } from '../../utils/service-filter/service-filter.component';
+import { AdvancedFilterComponent } from '../../utils/advanced-filter/advanced-filter.component';
 
 @Component({
   selector: 'app-service-product-list-filtered',
   templateUrl: './service-product-list-filtered.component.html',
-  imports: [
-    FormsModule,
-    CommonModule,
-    ServiceFilterComponent,
-    ServiceCardComponent,
-  ],
+  imports: [CommonModule, AdvancedFilterComponent, ServiceCardComponent],
   standalone: true,
 })
-export class ServiceProductListFilteredComponent implements OnInit {
-  @ViewChild(ServiceFilterComponent) filterComponent!: ServiceFilterComponent;
+export class ServiceProductListFilteredComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private filterSubject$ = new Subject<ServiceFilters | ProductFilters>();
 
-  products: Product[] = [];
-  services: Service[] = [];
-  filteredItems: (Product | Service)[] = [];
-  paginatedItems: (Product | Service)[] = [];
+  // Data
+  items: (Product | Service)[] = [];
+  loading = false;
+  error: string | null = null;
 
-  currentPage: number = 1;
-  pageSize: number = 16; // 4x4 grid
-  totalPages: number = 0;
+  // Pagination
+  currentPage = 0;
+  pageSize = 12; // 3x4 grid
+  totalPages = 0;
+  totalElements = 0;
+  hasMore = false;
 
-  showProducts: boolean = true; // true for products, false for services
+  // Filter state
+  currentType: 'services' | 'products' = 'services';
+  currentFilters: ServiceFilters | ProductFilters = {};
+
+  // UI State
+  showTypeToggle = true;
 
   constructor(
     private productService: ProductService,
     private providedServiceService: ProvidedServiceService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.initializeFilters();
+    this.setupFilterDebouncing();
     this.loadData();
   }
 
-  toggleView(): void {
-    this.showProducts = !this.showProducts;
-    // Notify the filter component about the type change
-    if (this.filterComponent) {
-      this.filterComponent.onTypeChange(this.showProducts);
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private initializeFilters(): void {
+    if (this.currentType === 'services') {
+      this.currentFilters = {
+        searchTerm: '',
+        categoryIds: [],
+        minPrice: 0,
+        maxPrice: 10000,
+        minRating: 0,
+        isAvailable: true,
+        sortBy: 'name',
+        sortDirection: 'asc',
+      } as ServiceFilters;
+    } else {
+      this.currentFilters = {
+        searchTerm: '',
+        categoryIds: [],
+        minPrice: 0,
+        maxPrice: 10000,
+        minRating: 0,
+        isAvailable: true,
+        sortBy: 'name',
+        sortDirection: 'asc',
+      } as ProductFilters;
     }
-    this.loadData();
+  }
+
+  private setupFilterDebouncing(): void {
+    this.filterSubject$
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(
+          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+        ),
+        switchMap((filters) => {
+          this.currentFilters = filters;
+          this.currentPage = 0; // Reset to first page
+          return this.fetchData();
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (response: PaginatedResponse<Product | Service>) => {
+          this.handleDataResponse(response);
+        },
+        error: (error: any) => {
+          this.handleError(error);
+        },
+      });
+  }
+
+  private fetchData(): Observable<PaginatedResponse<Product | Service>> {
+    this.loading = true;
+    this.error = null;
+
+    if (this.currentType === 'services') {
+      return this.providedServiceService.getServicesWithFilters(
+        this.currentPage,
+        this.pageSize,
+        this.currentFilters as ServiceFilters
+      ) as Observable<PaginatedResponse<Product | Service>>;
+    } else {
+      return this.productService.getProductsWithFilters(
+        this.currentPage,
+        this.pageSize,
+        this.currentFilters as ProductFilters
+      ) as Observable<PaginatedResponse<Product | Service>>;
+    }
   }
 
   private loadData(): void {
-    if (this.showProducts) {
-      this.loadProducts();
-    } else {
-      this.loadServices();
-    }
-  }
-
-  private loadProducts(): void {
-    this.productService.getAllProducts().subscribe((products) => {
-      this.products = products;
-      this.filteredItems = [...this.products];
-      this.calculatePagination();
+    this.fetchData().subscribe({
+      next: (response: PaginatedResponse<Product | Service>) => {
+        this.handleDataResponse(response);
+      },
+      error: (error: any) => {
+        this.handleError(error);
+      },
     });
   }
 
-  private loadServices(): void {
-    this.providedServiceService.getAllServices().subscribe((services) => {
-      this.services = services;
-      this.filteredItems = [...this.services];
-      this.calculatePagination();
-    });
+  private handleDataResponse(
+    response: PaginatedResponse<Product | Service>
+  ): void {
+    this.items = response.content || [];
+    this.totalPages = response.totalPages || 0;
+    this.totalElements = response.totalElements || 0;
+    this.hasMore = !response.last;
+    this.loading = false;
   }
 
-  calculatePagination() {
-    this.totalPages = Math.ceil(this.filteredItems.length / this.pageSize);
-    this.changePage(1);
+  private handleError(error: any): void {
+    console.error('Error loading data:', error);
+    this.error = 'Failed to load data. Please try again.';
+    this.loading = false;
+    this.items = [];
   }
 
-  changePage(page: number) {
-    this.currentPage = page;
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    this.paginatedItems = this.filteredItems.slice(startIndex, endIndex);
+  // Event handlers
+  onTypeToggle(): void {
+    this.currentType =
+      this.currentType === 'services' ? 'products' : 'services';
+    this.initializeFilters();
+    this.currentFilters = { ...this.currentFilters };
+    this.loadData();
   }
 
-  nextPage() {
-    if (this.currentPage < this.totalPages) {
-      this.changePage(this.currentPage + 1);
+  onFiltersChange(filters: ServiceFilters | ProductFilters): void {
+    this.filterSubject$.next(filters);
+  }
+
+  onResetFilters(): void {
+    this.initializeFilters();
+    this.currentFilters = { ...this.currentFilters };
+    this.loadData();
+  }
+
+  // Pagination methods
+  goToPage(page: number): void {
+    if (page >= 0 && page < this.totalPages && page !== this.currentPage) {
+      this.currentPage = page;
+      this.loadData();
     }
   }
 
-  prevPage() {
-    if (this.currentPage > 1) {
-      this.changePage(this.currentPage - 1);
+  nextPage(): void {
+    if (this.hasMore) {
+      this.goToPage(this.currentPage + 1);
     }
   }
 
-  applyFilters(filters: any) {
-    const sourceItems = this.showProducts ? this.products : this.services;
+  prevPage(): void {
+    if (this.currentPage > 0) {
+      this.goToPage(this.currentPage - 1);
+    }
+  }
 
-    this.filteredItems = sourceItems.filter((item) => {
-      let matchesCategory = true;
-      let matchesSuitability = true;
+  // Helper methods
+  get displayedPageNumber(): number {
+    return this.currentPage + 1; // Convert from 0-based to 1-based for display
+  }
 
-      // Handle categories differently for products vs services
-      if (filters.selectedCategories.length > 0) {
-        if (this.showProducts) {
-          // For products: category is a single ProductCategory object
-          const product = item as Product;
-          matchesCategory =
-            product.category &&
-            filters.selectedCategories.includes(product.category.name);
-        } else {
-          // For services: category is a single ServiceCategory object
-          const service = item as Service;
-          matchesCategory =
-            service.category &&
-            filters.selectedCategories.includes(service.category.name);
-        }
-      }
+  get displayedTotalPages(): number {
+    return Math.max(this.totalPages, 1);
+  }
 
-      const matchesPrice =
-        item.price >= filters.minPrice && item.price <= filters.maxPrice;
+  get paginationInfo(): string {
+    const start = this.currentPage * this.pageSize + 1;
+    const end = Math.min(start + this.pageSize - 1, this.totalElements);
+    return `${start}-${end} of ${this.totalElements}`;
+  }
 
-      // Handle suitableFor
-      if (filters.selectedSuitability.length > 0) {
-        matchesSuitability =
-          item.suitableFor?.some((suitable: string) =>
-            filters.selectedSuitability.includes(suitable)
-          ) || false;
-      }
+  get hasPrevPage(): boolean {
+    return this.currentPage > 0;
+  }
 
-      // For services, check additional fields
-      if (!this.showProducts && 'availableFrom' in item) {
-        const service = item as Service;
-        const matchesAvailability =
-          (!filters.fromDate ||
-            new Date(service.availableFrom) >= new Date(filters.fromDate)) &&
-          (!filters.toDate ||
-            new Date(service.availableTo) <= new Date(filters.toDate));
+  get hasNextPage(): boolean {
+    return this.hasMore;
+  }
 
-        return (
-          matchesCategory &&
-          matchesPrice &&
-          matchesSuitability &&
-          matchesAvailability
-        );
-      }
+  // Generate array for pagination numbers
+  get visiblePages(): number[] {
+    const current = this.currentPage;
+    const total = this.totalPages;
+    const delta = 2; // Show 2 pages before and after current
 
-      return matchesCategory && matchesPrice && matchesSuitability;
-    });
+    let start = Math.max(0, current - delta);
+    let end = Math.min(total - 1, current + delta);
 
-    this.calculatePagination();
+    // Adjust if we're near the beginning or end
+    if (current <= delta) {
+      end = Math.min(total - 1, 2 * delta);
+    }
+    if (current >= total - delta - 1) {
+      start = Math.max(0, total - 2 * delta - 1);
+    }
+
+    const pages = [];
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  // Generate skeleton items for loading state
+  get skeletonItems(): any[] {
+    return new Array(this.pageSize).fill(null);
+  }
+
+  // TrackBy function for performance optimization
+  trackByItemId(index: number, item: Product | Service): string {
+    return item.id;
   }
 }

@@ -75,7 +75,13 @@ export class PupProductsServicesComponent implements OnInit {
     }).format(price);
   }
 
-  formatDate(date: Date): string {
-    return new Date(date).toLocaleDateString();
+  formatDate(date: Date | string | undefined | null): string {
+    if (!date) {
+      return 'N/A';
+    }
+    if (typeof date === 'string') {
+      return new Date(date).toLocaleDateString();
+    }
+    return date.toLocaleDateString();
   }
 }

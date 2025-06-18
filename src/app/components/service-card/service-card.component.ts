@@ -17,7 +17,7 @@ export class ServiceCardComponent {
   private imageError = false;
 
   isService(item: Product | Service): item is Service {
-    return 'minTimeUsageHours' in item;
+    return 'serviceDurationMinMinutes' in item;
   }
 
   getImageUrl(): string {
@@ -44,7 +44,13 @@ export class ServiceCardComponent {
     }).format(price);
   }
 
-  formatDate(date: Date): string {
-    return new Date(date).toLocaleDateString();
+  formatDate(date: Date | string | undefined | null): string {
+    if (!date) {
+      return 'N/A';
+    }
+    if (typeof date === 'string') {
+      return new Date(date).toLocaleDateString();
+    }
+    return date.toLocaleDateString();
   }
 }

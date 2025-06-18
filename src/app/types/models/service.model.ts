@@ -10,11 +10,15 @@ export interface Service {
   imageUrls: string[];
   pupId: string;
   rating: number;
-  minTimeUsageHours: number;
-  maxTimeUsageHours: number;
+  serviceDurationMinMinutes: number;
+  serviceDurationMaxMinutes: number;
   bookingDeclineDeadlineHours: number;
   cancellationPolicy: string;
-  availableFrom: Date;
-  availableTo: Date;
+  availableFrom?: Date | string;
+  availableTo?: Date | string;
   suitableFor: string[];
+  categoryId: string;
+  categoryName: string;
+  pupUsername: string;
+  suitableForEventTypes: string[];
 }
