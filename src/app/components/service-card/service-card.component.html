@@ -1,17 +1,66 @@
-<div class="bg-white rounded-lg shadow-md overflow-hidden">
-  <img
-    [src]="service.imageUrls[0]"
-    alt="{{ service.name }}"
-    class="w-full h-32 object-cover"
-  />
-  <div class="p-4">
-    <h3 class="text-lg font-semibold">{{ service.name }}</h3>
-    <p class="text-gray-600">${{ service.price | number : "1.2-2" }}</p>
-    <p class="text-gray-600">{{ service.pupInfo.city }}</p>
+<div
+  class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden h-full flex flex-col"
+>
+  <!-- Image Container with fixed aspect ratio -->
+  <div class="relative h-40 overflow-hidden">
+    <img
+      [src]="getImageUrl()"
+      [alt]="service.name"
+      class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+      (error)="onImageError($event)"
+    />
+    <!-- Price Badge -->
+    <div
+      class="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 rounded-lg text-sm font-semibold"
+    >
+      {{ formatPrice(service.price) }}
+    </div>
+    <!-- Rating Badge -->
+    <div
+      class="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded-lg text-sm flex items-center"
+    >
+      <span class="text-yellow-400 mr-1">★</span>
+      <span>{{ service.rating }}</span>
+    </div>
+  </div>
+
+  <!-- Content Container -->
+  <div class="p-3 flex-1 flex flex-col">
+    <!-- Title -->
+    <h3
+      class="text-base font-bold text-gray-800 mb-2 line-clamp-2 leading-tight"
+    >
+      {{ service.name }}
+    </h3>
+
+    <!-- Description -->
+    <p class="text-sm text-gray-600 mb-3 line-clamp-2 flex-1">
+      {{ service.description }}
+    </p>
+
+    <!-- Categories -->
+    <div class="mb-3">
+      <span
+        *ngIf="isService(service) && service.category"
+        class="inline-block bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium"
+      >
+        {{ service.category.name }}
+      </span>
+      <span
+        *ngIf="!isService(service) && service.category"
+        class="inline-block bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium"
+      >
+        {{ service.category.name }}
+      </span>
+    </div>
+
+    <!-- Action Button -->
     <a
       [routerLink]="['/services', service.id]"
-      class="text-blue-500 hover:underline"
-      >More...</a
+      [queryParams]="{ type: isService(service) ? 'service' : 'product' }"
+      class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white text-center py-2 px-4 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
     >
+      View Details
+    </a>
   </div>
 </div>

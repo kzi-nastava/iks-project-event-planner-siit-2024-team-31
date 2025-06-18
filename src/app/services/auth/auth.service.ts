@@ -1,11 +1,11 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { LoginResponse } from '../../types/dto/responses/loginResponse';
-import { RegisterResponse } from '../../types/dto/responses/registerResponse';
-import { Role } from '../../types/roles';
-import { baseUrl } from '../baseUrl';
+import { HttpClient } from '@angular/common/http'
+import { Injectable } from '@angular/core'
+import { BehaviorSubject, Observable } from 'rxjs'
+import { map } from 'rxjs/operators'
+import { LoginResponse } from '../../types/dto/responses/loginResponse'
+import { RegisterResponse } from '../../types/dto/responses/registerResponse'
+import { Role } from '../../types/roles'
+import { baseUrl } from '../baseUrl'
 
 @Injectable({
   providedIn: 'root',

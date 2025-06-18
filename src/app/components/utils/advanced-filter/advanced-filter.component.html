@@ -1,0 +1,301 @@
+<div class="filter-container">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <h3 class="text-lg font-semibold text-gray-800">
+      {{ currentType === "services" ? "Service" : "Product" }} Filters
+    </h3>
+    <button
+      (click)="resetAllFilters()"
+      class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+    >
+      Reset All
+    </button>
+  </div>
+
+  <!-- Search Section -->
+  <div class="filter-section">
+    <button (click)="toggleSection('search')" class="section-header">
+      <span>🔍 Search</span>
+      <span class="section-toggle">
+        {{ expandedSections.search ? "−" : "+" }}
+      </span>
+    </button>
+
+    <div *ngIf="expandedSections.search" class="section-content">
+      <input
+        type="text"
+        [(ngModel)]="getCurrentFilters().searchTerm"
+        (input)="onSearchChange()"
+        placeholder="Search by name or description..."
+        class="form-input"
+      />
+    </div>
+  </div>
+
+  <!-- Categories Section -->
+  <div class="filter-section">
+    <button (click)="toggleSection('categories')" class="section-header">
+      <span>📂 Categories</span>
+      <span class="section-toggle">
+        {{ expandedSections.categories ? "−" : "+" }}
+      </span>
+    </button>
+
+    <div *ngIf="expandedSections.categories" class="section-content">
+      <input
+        type="text"
+        [(ngModel)]="categorySearch"
+        placeholder="Search categories..."
+        class="section-search"
+      />
+
+      <div class="checkbox-list">
+        <label
+          *ngFor="let category of filteredCategories"
+          class="checkbox-item"
+        >
+          <input
+            type="checkbox"
+            [checked]="isCategorySelected(category.id)"
+            (change)="toggleCategory(category.id)"
+            class="checkbox-input"
+          />
+          <span class="checkbox-label">{{ category.name }}</span>
+          <span *ngIf="category.count" class="checkbox-count"
+            >({{ category.count }})</span
+          >
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Price Range Section -->
+  <div class="filter-section">
+    <button (click)="toggleSection('price')" class="section-header">
+      <span>💰 Price Range</span>
+      <span class="section-toggle">
+        {{ expandedSections.price ? "−" : "+" }}
+      </span>
+    </button>
+
+    <div *ngIf="expandedSections.price" class="section-content">
+      <div class="input-grid">
+        <div>
+          <label class="block text-xs text-gray-600 mb-1">Min Price</label>
+          <input
+            type="number"
+            [(ngModel)]="getCurrentFilters().minPrice"
+            (input)="onPriceChange()"
+            [min]="priceRange.min"
+            [max]="priceRange.max"
+            placeholder="0"
+            class="form-input"
+          />
+        </div>
+        <div>
+          <label class="block text-xs text-gray-600 mb-1">Max Price</label>
+          <input
+            type="number"
+            [(ngModel)]="getCurrentFilters().maxPrice"
+            (input)="onPriceChange()"
+            [min]="priceRange.min"
+            [max]="priceRange.max"
+            placeholder="10000"
+            class="form-input"
+          />
+        </div>
+      </div>
+
+      <div class="text-xs text-gray-500 text-center">
+        RSD{{ getCurrentFilters().minPrice }} - RSD{{
+          getCurrentFilters().maxPrice
+        }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Rating Section -->
+  <div class="filter-section">
+    <button (click)="toggleSection('rating')" class="section-header">
+      <span>⭐ Minimum Rating</span>
+      <span class="section-toggle">
+        {{ expandedSections.rating ? "−" : "+" }}
+      </span>
+    </button>
+
+    <div *ngIf="expandedSections.rating" class="section-content">
+      <div class="rating-slider-container">
+        <input
+          type="range"
+          [(ngModel)]="getCurrentFilters().minRating"
+          (input)="onRatingChange()"
+          [min]="ratingRange.min"
+          [max]="ratingRange.max"
+          step="0.5"
+          class="rating-slider"
+        />
+        <span class="rating-value"> {{ getCurrentFilters().minRating }}+ </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Availability Dates Section (Services only) -->
+  <div class="filter-section" *ngIf="currentType === 'services'">
+    <button (click)="toggleSection('availability')" class="section-header">
+      <span>📅 Availability</span>
+      <span class="section-toggle">
+        {{ expandedSections.availability ? "−" : "+" }}
+      </span>
+    </button>
+
+    <div *ngIf="expandedSections.availability" class="section-content">
+      <div class="input-grid">
+        <div>
+          <label class="block text-xs text-gray-600 mb-1">Available From</label>
+          <input
+            type="date"
+            [(ngModel)]="serviceFilters.availableFrom"
+            (change)="onDateChange()"
+            class="form-input"
+          />
+        </div>
+        <div>
+          <label class="block text-xs text-gray-600 mb-1">Available To</label>
+          <input
+            type="date"
+            [(ngModel)]="serviceFilters.availableTo"
+            (change)="onDateChange()"
+            class="form-input"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Duration Section (Services only) -->
+  <div class="filter-section" *ngIf="currentType === 'services'">
+    <button (click)="toggleSection('timeUsage')" class="section-header">
+      <span>⏰ Service Duration</span>
+      <span class="section-toggle">
+        {{ expandedSections.timeUsage ? "−" : "+" }}
+      </span>
+    </button>
+
+    <div *ngIf="expandedSections.timeUsage" class="section-content">
+      <div class="input-grid">
+        <div>
+          <label class="block text-xs text-gray-600 mb-1">Min Minutes</label>
+          <input
+            type="number"
+            [(ngModel)]="serviceFilters.serviceDurationMinMinutes"
+            (input)="onDurationChange()"
+            min="0"
+            step="1"
+            placeholder="No minimum"
+            class="form-input"
+          />
+        </div>
+        <div>
+          <label class="block text-xs text-gray-600 mb-1">Max Minutes</label>
+          <input
+            type="number"
+            [(ngModel)]="serviceFilters.serviceDurationMaxMinutes"
+            (input)="onDurationChange()"
+            min="0"
+            step="1"
+            placeholder="No maximum"
+            class="form-input"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Suitability Section -->
+  <div class="filter-section">
+    <button (click)="toggleSection('suitability')" class="section-header">
+      <span>🎯 Suitable For</span>
+      <span class="section-toggle">
+        {{ expandedSections.suitability ? "−" : "+" }}
+      </span>
+    </button>
+
+    <div *ngIf="expandedSections.suitability" class="section-content">
+      <input
+        type="text"
+        [(ngModel)]="suitabilitySearch"
+        placeholder="Search suitability options..."
+        class="section-search"
+      />
+
+      <div class="checkbox-list">
+        <label
+          *ngFor="let option of filteredSuitabilityOptions"
+          class="checkbox-item"
+        >
+          <input
+            type="checkbox"
+            [checked]="isSuitabilitySelected(option.id)"
+            (change)="toggleSuitability(option.id)"
+            class="checkbox-input"
+          />
+          <span class="checkbox-label">{{ option.name }}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Availability Status -->
+  <div class="filter-section">
+    <label class="availability-checkbox">
+      <input
+        type="checkbox"
+        [(ngModel)]="getCurrentFilters().isAvailable"
+        (change)="onAvailabilityChange()"
+        class="availability-input"
+      />
+      <span class="availability-label">Show only available items</span>
+    </label>
+  </div>
+
+  <!-- Sorting Section -->
+  <div class="filter-section">
+    <button (click)="toggleSection('sorting')" class="section-header">
+      <span>🔀 Sort By</span>
+      <span class="section-toggle">
+        {{ expandedSections.sorting ? "−" : "+" }}
+      </span>
+    </button>
+
+    <div *ngIf="expandedSections.sorting" class="section-content">
+      <div class="input-grid">
+        <div>
+          <label class="block text-xs text-gray-600 mb-1">Sort Field</label>
+          <select
+            [(ngModel)]="getCurrentFilters().sortBy"
+            (change)="onSortChange()"
+            class="form-input"
+          >
+            <option value="name">Name</option>
+            <option value="price">Price</option>
+            <option value="rating">Rating</option>
+            <option *ngIf="currentType === 'services'" value="availableFrom">
+              Available From
+            </option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-600 mb-1">Direction</label>
+          <select
+            [(ngModel)]="getCurrentFilters().sortDirection"
+            (change)="onSortChange()"
+            class="form-input"
+          >
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

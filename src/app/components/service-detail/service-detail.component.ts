@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ServiceProductService } from '../../services/service-products/service-products.service';
-import { ServiceProduct } from '../../types/models/service-product.model';
+import { ProductService } from '../../services/product/products.service';
+import { ProvidedServiceService } from '../../services/provided-service/provided-service.service';
+import { Product } from '../../types/models/product.model';
+import { Service } from '../../types/models/service.model';
 
 @Component({
   selector: 'app-service-detail',
@@ -11,19 +13,70 @@ import { ServiceProduct } from '../../types/models/service-product.model';
   imports: [CommonModule],
 })
 export class ServiceDetailComponent implements OnInit {
-  service!: ServiceProduct;
+  item!: Service | Product;
+  isLoading = true;
+  error = '';
 
   constructor(
     private route: ActivatedRoute,
-    private serviceProductService: ServiceProductService
+    private productService: ProductService,
+    private providedServiceService: ProvidedServiceService
   ) {}
 
   ngOnInit(): void {
-    const serviceId = this.route.snapshot.paramMap.get('id')!;
-    this.serviceProductService
-      .getServiceById(serviceId)
-      .subscribe((service) => {
-        this.service = service;
+    const itemId = this.route.snapshot.paramMap.get('id')!;
+    const itemType = this.route.snapshot.queryParamMap.get('type') || 'service';
+
+    this.loadItem(itemId, itemType);
+  }
+
+  private loadItem(id: string, type: string): void {
+    this.isLoading = true;
+    this.error = '';
+
+    if (type === 'product') {
+      this.productService.getProductById(id).subscribe({
+        next: (product) => {
+          this.item = product;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.error = 'Product not found';
+          this.isLoading = false;
+        },
       });
+    } else {
+      this.providedServiceService.getServiceById(id).subscribe({
+        next: (service) => {
+          this.item = service;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.error = 'Service not found';
+          this.isLoading = false;
+        },
+      });
+    }
+  }
+
+  isService(item: Product | Service): item is Service {
+    return 'serviceDurationMinMinutes' in item;
+  }
+
+  formatPrice(price: number): string {
+    return new Intl.NumberFormat('sr-RS', {
+      style: 'currency',
+      currency: 'RSD',
+    }).format(price);
+  }
+
+  formatDate(date: Date | string | undefined | null): string {
+    if (!date) {
+      return 'N/A';
+    }
+    if (typeof date === 'string') {
+      return new Date(date).toLocaleDateString();
+    }
+    return date.toLocaleDateString();
   }
 }

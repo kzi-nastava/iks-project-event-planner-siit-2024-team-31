@@ -1,17 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ProductCategoryDTO } from '../../types/dto/productCategoryDTO';
 import { Page } from '../../types/page';
+import { ServiceCategory } from '../../types/serviceCategory';
 import { baseUrl } from '../baseUrl';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProductCategoriesService {
+export class ProvidedServiceCategoriesService {
   constructor(private http: HttpClient) {}
 
-  baseApiUrl = baseUrl + 'product-category';
+  baseApiUrl = baseUrl + 'service-category';
 
   private getHeaders() {
     return {
@@ -20,17 +20,17 @@ export class ProductCategoriesService {
   }
 
   // Public method for getting categories without authentication
-  searchProductCategoriesPublic(
+  searchServiceCategoriesPublic(
     keyword: string,
     page: number,
     size: number
-  ): Observable<Page<ProductCategoryDTO>> {
+  ): Observable<Page<ServiceCategory>> {
     const params = {
       keyword,
       page: (page - 1).toString(),
       size: size.toString(),
     };
-    return this.http.get<Page<ProductCategoryDTO>>(
+    return this.http.get<Page<ServiceCategory>>(
       `${this.baseApiUrl}/public/search`,
       {
         params,
@@ -39,27 +39,31 @@ export class ProductCategoriesService {
   }
 
   // Public method for getting all categories without authentication
-  getAllProductCategoriesPublic(): Observable<ProductCategoryDTO[]> {
-    return this.http.get<ProductCategoryDTO[]>(`${this.baseApiUrl}/public/all`);
+  getAllServiceCategoriesPublic(): Observable<ServiceCategory[]> {
+    return this.http.get<ServiceCategory[]>(`${this.baseApiUrl}/public/all`);
   }
 
   // Protected method for authenticated users
-  searchProductCategories(
+  searchServiceCategories(
     keyword: string,
     page: number,
     size: number
-  ): Observable<Page<ProductCategoryDTO>> {
+  ): Observable<Page<ServiceCategory>> {
     const params = {
       keyword,
       page: (page - 1).toString(),
       size: size.toString(),
     };
-    return this.http.get<Page<ProductCategoryDTO>>(
-      `${this.baseApiUrl}/search`,
-      {
-        params,
-        headers: this.getHeaders(),
-      }
-    );
+    return this.http.get<Page<ServiceCategory>>(`${this.baseApiUrl}/search`, {
+      params,
+      headers: this.getHeaders(),
+    });
+  }
+
+  // Protected method for authenticated users
+  getAllServiceCategories(): Observable<ServiceCategory[]> {
+    return this.http.get<ServiceCategory[]>(`${this.baseApiUrl}/all`, {
+      headers: this.getHeaders(),
+    });
   }
 }
