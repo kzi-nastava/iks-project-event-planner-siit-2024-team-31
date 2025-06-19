@@ -1,154 +1,561 @@
-<div class="container mx-auto p-4">
-	<div class="flex flex-row items-center mb-4">
-		<h1 class="text-2xl font-bold">Event Types
-			Management</h1>
-		<button
-				(click)="openCreateForm()"
-				class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-auto"
-		>
-			Create new
-		</button>
-	</div>
+<div
+  class="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100 py-8 px-4 sm:px-6 lg:px-8"
+>
+  <div class="max-w-7xl mx-auto">
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+      <div
+        class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6"
+      >
+        <!-- Title Section -->
+        <div class="flex items-center gap-4">
+          <div
+            class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center"
+          >
+            <svg
+              class="w-8 h-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">
+              Event Types Management
+            </h1>
+            <p class="text-lg text-gray-600 mt-1">
+              Manage and organize event categories
+            </p>
+          </div>
+        </div>
 
-	<div class="mb-4">
-		<input
-				type="text"
-				placeholder="Search by name or description..."
-				[(ngModel)]="keyword"
-				(input)="searchEventTypes()"
-				class="border rounded px-2 py-1 w-full"
-		/>
-	</div>
+        <!-- Create Button -->
+        <button
+          (click)="openCreateForm()"
+          class="flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 shadow-lg hover:shadow-xl"
+        >
+          <svg
+            class="w-5 h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            ></path>
+          </svg>
+          Create New Type
+        </button>
+      </div>
+    </div>
 
-	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-		<app-event-type-card
-				*ngFor="let eventType of eventTypes"
-				[id]="eventType.id"
-				[name]="eventType.name"
-				[description]="eventType.description"
-		></app-event-type-card>
-	</div>
+    <!-- Search Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+      <div class="flex items-center gap-4">
+        <div class="flex-1 relative">
+          <input
+            type="text"
+            placeholder="Search event types by name or description..."
+            [(ngModel)]="keyword"
+            (input)="searchEventTypes()"
+            class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+          />
+          <svg
+            class="absolute left-4 top-3.5 w-5 h-5 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            ></path>
+          </svg>
+        </div>
+        <div class="text-sm text-gray-500 whitespace-nowrap">
+          Found {{ eventTypes.length }} types
+        </div>
+      </div>
+    </div>
 
-	<div class="flex justify-center mt-4">
-		<button
-				*ngFor="let page of [].constructor(totalPages); let i = index"
-				(click)="changePage(i + 1)"
-				[class.bg-blue-500]="currentPage === i + 1"
-				class="px-4 py-2 mx-1 border rounded-lg"
-		>
-			{{ i + 1 }}
-		</button>
-	</div>
+    <!-- Event Types Grid -->
+    <div class="mb-8">
+      <div *ngIf="eventTypes.length === 0" class="text-center py-12">
+        <svg
+          class="mx-auto h-16 w-16 text-gray-400 mb-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+          ></path>
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">
+          No event types found
+        </h3>
+        <p class="text-gray-500 mb-4">
+          Get started by creating your first event type.
+        </p>
+        <button
+          (click)="openCreateForm()"
+          class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors duration-200"
+        >
+          <svg
+            class="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            ></path>
+          </svg>
+          Create Event Type
+        </button>
+      </div>
+
+      <div
+        *ngIf="eventTypes.length > 0"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      >
+        <app-event-type-card
+          *ngFor="let eventType of eventTypes"
+          [id]="eventType.id"
+          [name]="eventType.name"
+          [description]="eventType.description"
+        ></app-event-type-card>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="bg-white rounded-2xl shadow-xl p-6">
+      <div class="flex justify-center items-center gap-2">
+        <!-- Previous Button -->
+        <button
+          (click)="changePage(currentPage - 1)"
+          [disabled]="currentPage === 1"
+          class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            ></path>
+          </svg>
+        </button>
+
+        <!-- Page Numbers -->
+        <div class="flex gap-1">
+          <button
+            *ngFor="let page of [].constructor(totalPages); let i = index"
+            (click)="changePage(i + 1)"
+            class="px-4 py-2 rounded-lg font-medium transition-all duration-200"
+            [ngClass]="{
+              'bg-purple-600 text-white shadow-lg': currentPage === i + 1,
+              'text-gray-700 hover:bg-gray-100': currentPage !== i + 1
+            }"
+          >
+            {{ i + 1 }}
+          </button>
+        </div>
+
+        <!-- Next Button -->
+        <button
+          (click)="changePage(currentPage + 1)"
+          [disabled]="currentPage === totalPages"
+          class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            ></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="text-center mt-4 text-sm text-gray-500">
+        Page {{ currentPage }} of {{ totalPages }}
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- create form -->
+<!-- Create Form Modal -->
 <div
-		class="fixed inset-0 flex items-center justify-center z-50"
-		*ngIf="showCreateForm"
+  class="fixed inset-0 flex items-center justify-center z-50 p-4"
+  *ngIf="showCreateForm"
 >
-	<div
-			class="absolute inset-0 bg-gray-900 opacity-50">
-	</div>
+  <div
+    class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+    (click)="closeCreateForm()"
+  ></div>
 
-	<div class="relative bg-white rounded p-4 shadow-lg w-full max-w-md mx-auto">
-		<h2 class="text-xl font-bold mb-2">Create new Event Type</h2>
+  <div
+    class="relative bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden z-10 transform transition-all duration-300"
+  >
+    <!-- Modal Header -->
+    <div class="p-8 bg-gradient-to-r from-purple-500 to-purple-600">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <div
+            class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-white">Create New Event Type</h2>
+            <p class="text-white/80 mt-1">
+              Add a new category for organizing events
+            </p>
+          </div>
+        </div>
+        <button
+          (click)="closeCreateForm()"
+          class="p-2 rounded-full hover:bg-white/20 transition-colors duration-200 text-white"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </div>
 
-		<form (ngSubmit)="createNewEventType()">
-			<div class="mb-4">
-				<label class="block font-semibold mb-1" for="name">Name</label>
-				<input
-						id="name"
-						name="name"
-						[(ngModel)]="newEventType.name"
-						required
-						class="border px-2 py-1 w-full"
-				/>
-			</div>
+    <!-- Modal Content -->
+    <div class="max-h-[calc(90vh-200px)] overflow-y-auto">
+      <form (ngSubmit)="createNewEventType()" class="p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Basic Information -->
+          <div class="space-y-6">
+            <div class="bg-gray-50 rounded-2xl p-6">
+              <h3
+                class="text-lg font-semibold text-gray-900 mb-6 flex items-center"
+              >
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                Basic Information
+              </h3>
 
-			<div class="mb-4">
-				<label class="block font-semibold mb-1" for="description">Description</label>
-				<textarea
-						id="description"
-						name="description"
-						[(ngModel)]="newEventType.description"
-						class="border px-2 py-1 w-full"
-						rows="3"
-				></textarea>
-			</div>
+              <!-- Name Field -->
+              <div class="mb-6">
+                <label
+                  for="name"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Event Type Name *
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  [(ngModel)]="newEventType.name"
+                  required
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  placeholder="e.g., Conference, Workshop, Wedding"
+                />
+              </div>
 
-			<div class="mb-4">
-				<label class="block font-semibold mb-1">Recommended Product
-					Categories</label>
+              <!-- Description Field -->
+              <div>
+                <label
+                  for="description"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  [(ngModel)]="newEventType.description"
+                  rows="4"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 resize-none"
+                  placeholder="Provide a detailed description of this event type..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
 
-				<div>
-					<input type="text"
-						   placeholder="Searching in name and description..."
-						   name="formQuery"
-						   [(ngModel)]="keywordForm"
-						   (input)="changePageForm(this.currentPageForm)"
-						   class="border rounded px-2 py-1 w-full"
-					>
-				</div>
+          <!-- Product Categories -->
+          <div class="space-y-6">
+            <div class="bg-gray-50 rounded-2xl p-6">
+              <h3
+                class="text-lg font-semibold text-gray-900 mb-6 flex items-center"
+              >
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  ></path>
+                </svg>
+                Recommended Product Categories
+              </h3>
 
-				<div class="border rounded p-2">
-					<div
-							*ngFor="let category of recommendedProductCategoriesList"
-							class="flex items-center"
-					>
-						<input
-								type="checkbox"
-								(ngModelChange)="toggleToSelectedList(category.id)"
-								[(ngModel)]="category.selected"
-								name="category-{{ category.id }}"
-								class="mr-2"
-						/>
-						<label
-								[matTooltip]="category.description"
-								matTooltipPosition="right"
-								matTooltipClass="productCategoryTooltip"
-								aria-label="Category description"
-						>{{ category.name }}</label>
-					</div>
-				</div>
+              <!-- Search Categories -->
+              <div class="mb-4">
+                <div class="relative">
+                  <input
+                    type="text"
+                    placeholder="Search categories..."
+                    name="formQuery"
+                    [(ngModel)]="keywordForm"
+                    (input)="changePageForm(this.currentPageForm)"
+                    class="w-full px-4 py-3 pl-11 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  />
+                  <svg
+                    class="absolute left-3 top-3.5 w-5 h-5 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    ></path>
+                  </svg>
+                </div>
+              </div>
 
-				<div class="flex flex-row mt-2">
-					<button
-							type="button"
-							name="formPrevButton"
-							(click)="changePageForm(this.currentPageForm - 1)"
-							class="mr-2 divide-blue-500 hover:bg-blue-500
-							hover:text-white font-bold border py-1 px-4 rounded"
-					>
-						<
-					</button>
-					<button
-							type="button"
-							name="formNextButton"
-							(click)="changePageForm(this.currentPageForm + 1)"
-							class="mr-2 divide-blue-500 hover:bg-blue-500
-							hover:text-white font-bold border py-1 px-4 rounded">
-						>
-					</button>
-				</div>
-			</div>
+              <!-- Categories List -->
+              <div
+                class="border border-gray-200 rounded-xl max-h-64 overflow-y-auto"
+              >
+                <div
+                  *ngIf="recommendedProductCategoriesList.length === 0"
+                  class="p-4 text-center text-gray-500"
+                >
+                  <svg
+                    class="mx-auto h-8 w-8 text-gray-400 mb-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                    ></path>
+                  </svg>
+                  No categories found
+                </div>
 
-			<div class="flex justify-end space-x-2">
-				<button
-						type="button"
-						name="formCancelButton"
-						(click)="closeCreateForm()"
-						class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded"
-				>
-					Cancel
-				</button>
-				<button
-						type="submit"
-						name="formSaveButton"
-						class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-4 rounded"
-				>
-					Save
-				</button>
-			</div>
-		</form>
-	</div>
+                <div
+                  *ngFor="let category of recommendedProductCategoriesList"
+                  class="flex items-start p-4 hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 last:border-b-0"
+                >
+                  <input
+                    type="checkbox"
+                    (ngModelChange)="toggleToSelectedList(category.id)"
+                    [(ngModel)]="category.selected"
+                    name="category-{{ category.id }}"
+                    class="mt-1 h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                  />
+                  <div class="ml-3 flex-1">
+                    <label
+                      class="block text-sm font-medium text-gray-900 cursor-pointer"
+                    >
+                      {{ category.name }}
+                    </label>
+                    <p class="text-xs text-gray-500 mt-1">
+                      {{ category.description }}
+                    </p>
+                    <span
+                      class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-2"
+                      [ngClass]="{
+                        'bg-green-100 text-green-800':
+                          category.status === 'Active',
+                        'bg-red-100 text-red-800': category.status !== 'Active'
+                      }"
+                    >
+                      {{ category.status }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Categories Pagination -->
+              <div
+                *ngIf="totalPagesForm > 1"
+                class="flex items-center justify-between mt-4"
+              >
+                <button
+                  type="button"
+                  (click)="changePageForm(this.currentPageForm - 1)"
+                  [disabled]="currentPageForm === 1"
+                  class="flex items-center px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                >
+                  <svg
+                    class="w-4 h-4 mr-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 19l-7-7 7-7"
+                    ></path>
+                  </svg>
+                  Previous
+                </button>
+
+                <span class="text-sm text-gray-500">
+                  Page {{ currentPageForm }} of {{ totalPagesForm }}
+                </span>
+
+                <button
+                  type="button"
+                  (click)="changePageForm(this.currentPageForm + 1)"
+                  [disabled]="currentPageForm === totalPagesForm"
+                  class="flex items-center px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                >
+                  Next
+                  <svg
+                    class="w-4 h-4 ml-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Selected Categories Summary -->
+              <div
+                *ngIf="selectedProductCategories.length > 0"
+                class="mt-4 p-3 bg-purple-50 rounded-lg"
+              >
+                <p class="text-sm font-medium text-purple-900 mb-2">
+                  Selected Categories ({{ selectedProductCategories.length }})
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    *ngFor="let categoryId of selectedProductCategories"
+                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+                  >
+                    {{ getSelectedCategoryName(categoryId) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+          <button
+            type="button"
+            (click)="closeCreateForm()"
+            class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="!newEventType.name?.trim()"
+            class="px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 shadow-lg hover:shadow-xl disabled:transform-none disabled:shadow-none"
+          >
+            <span class="flex items-center">
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                ></path>
+              </svg>
+              Create Event Type
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

@@ -1,182 +1,766 @@
-<div class="container mx-auto p-4" *ngIf="!isLoading">
-	<div *ngIf="errorMessage"
-		 class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-		{{ errorMessage }}
-	</div>
-
-	<div *ngIf="eventType"
-		 class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-		<div class="flex justify-between items-center mb-6">
-			<h1 class="text-3xl font-bold">{{ eventType.name }}</h1>
-			<div class="space-x-4">
-				<button
-						(click)="this.openEditForm()"
-						class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-				>
-					Edit
-				</button>
-				<button
-						(click)="onSwitchStatus()"
-						[class.bg-red-500]="eventType.status.name === 'ACTIVE'"
-						[class.hover:bg-red-700]="eventType.status.name ===
-						'ACTIVE'"
-						[class.bg-green-500]="eventType.status.name ===
-						'INACTIVE'"
-						[class.hover:bg-green-700]="eventType.status.name === 'INACTIVE'"
-						class="  text-white font-bold py-2 px-4 rounded"
-				>
-					{{ eventType.status.name === 'ACTIVE' ? 'Deactivate' : 'Activate' }}
-				</button>
-			</div>
-		</div>
-
-		<div class="mb-4">
-			<label class="block text-gray-700 font-bold mb-2">Description:</label>
-			<p class="text-gray-700">{{ eventType.description }}</p>
-		</div>
-
-		<div class="mb-4">
-			<label class="block text-gray-700 font-bold mb-2">Status:</label>
-			<span
-					[class.bg-green-500]="eventType.status.name === 'ACTIVE'"
-					[class.bg-red-500]="eventType.status.name === 'INACTIVE'"
-					class="text-white px-2 py-1 rounded"
-			>
-        {{ eventType.status.name }}
-      </span>
-		</div>
-
-		<div class="mb-4">
-			<label class="block text-gray-700 font-bold mb-2">Recommended
-				Product Categories:</label>
-			<ul class="list-disc pl-6">
-				<li *ngFor="let category of eventType.recommendedProductCategories"
-					class="text-gray-700 mb-2">
-					{{ category.name }} - {{ category.description }}
-					<span class="text-sm text-gray-500">
-						({{ category.status.name }})</span>
-				</li>
-				<li *ngIf="eventType.recommendedProductCategories.length === 0"
-					class="text-gray-500">
-					No recommended categories
-				</li>
-			</ul>
-		</div>
-	</div>
-</div>
-
-<div *ngIf="isLoading" class="text-center p-8">
-	Loading...
-</div>
-
 <div
-		class="fixed inset-0 flex items-center justify-center z-50"
-		*ngIf="showEditForm"
+  class="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100"
 >
-	<div
-			class="absolute inset-0 bg-gray-900 opacity-50">
-	</div>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex items-center justify-center min-h-screen">
+    <div class="text-center">
+      <div
+        class="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"
+      ></div>
+      <p class="text-gray-600 font-medium">Loading event type details...</p>
+    </div>
+  </div>
 
-	<div class="relative bg-white rounded p-4 shadow-lg w-full max-w-md mx-auto">
-		<h2 class="text-xl font-bold mb-2">Update Event Type</h2>
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading" class="p-8">
+    <div class="max-w-2xl mx-auto">
+      <div class="bg-red-50 border-l-4 border-red-400 p-6 rounded-lg">
+        <div class="flex items-center">
+          <svg
+            class="w-6 h-6 text-red-400 mr-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <div>
+            <h3 class="text-lg font-medium text-red-800 mb-1">
+              Error Loading Event Type
+            </h3>
+            <p class="text-red-700">{{ errorMessage }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-		<form (ngSubmit)="updateEventType()">
-			<div class="mb-4">
-				<label class="block font-semibold mb-1"
-					   for="name">Name</label>
-				<input
-						id="name"
-						name="name"
-						[(ngModel)]="editData.name"
-						required
-						class="border px-2 py-1 w-full"
-				/>
-			</div>
+  <!-- Main Content -->
+  <div *ngIf="eventType && !isLoading" class="py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+      <!-- Header Section -->
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+        <!-- Purple Header -->
+        <div class="bg-gradient-to-r from-purple-500 to-purple-600 px-8 py-6">
+          <div
+            class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center"
+              >
+                <svg
+                  class="w-8 h-8 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  ></path>
+                </svg>
+              </div>
+              <div>
+                <h1 class="text-3xl font-bold text-white">
+                  {{ eventType.name }}
+                </h1>
+                <p class="text-white/80 mt-1">Event Type Management</p>
+              </div>
+            </div>
 
-			<div class="mb-4">
-				<label class="block font-semibold mb-1" for="description">Description</label>
-				<textarea
-						id="description"
-						name="description"
-						[(ngModel)]="editData.description"
-						class="border px-2 py-1 w-full"
-						rows="3"
-				></textarea>
-			</div>
-			
-			<div class="mb-4">
-				<label class="block font-semibold mb-1">Recommended Product
-					Categories</label>
+            <!-- Action Buttons -->
+            <div class="flex gap-3">
+              <button
+                (click)="openEditForm()"
+                class="flex items-center px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg font-medium transition-all duration-200 backdrop-blur-sm"
+              >
+                <svg
+                  class="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  ></path>
+                </svg>
+                Edit
+              </button>
+              <button
+                (click)="onSwitchStatus()"
+                class="flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-200 backdrop-blur-sm"
+                [ngClass]="{
+                  'bg-red-500/20 hover:bg-red-500/30 text-white':
+                    eventType.status.name === 'ACTIVE',
+                  'bg-green-500/20 hover:bg-green-500/30 text-white':
+                    eventType.status.name === 'INACTIVE'
+                }"
+              >
+                <svg
+                  class="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  ></path>
+                </svg>
+                {{
+                  eventType.status.name === "ACTIVE" ? "Deactivate" : "Activate"
+                }}
+              </button>
+            </div>
+          </div>
+        </div>
 
-				<div>
-					<input type="text"
-						   placeholder="Searching in name and description..."
-						   name="formQuery"
-						   [(ngModel)]="keywordEdit"
-						   (input)="changePageForm(this.currentPageEdit)"
-						   class="border rounded px-2 py-1 w-full"
-					>
-				</div>
+        <!-- Content -->
+        <div class="p-8">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Information -->
+            <div class="lg:col-span-2 space-y-8">
+              <!-- Description Section -->
+              <div class="bg-gray-50 rounded-2xl p-6">
+                <h2
+                  class="text-xl font-semibold text-gray-900 mb-4 flex items-center"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    ></path>
+                  </svg>
+                  Description
+                </h2>
+                <div class="prose prose-gray max-w-none">
+                  <p class="text-gray-700 leading-relaxed">
+                    {{
+                      eventType.description ||
+                        "No description available for this event type."
+                    }}
+                  </p>
+                </div>
+              </div>
 
-				<div class="border rounded p-2">
-					<div
-							*ngFor="let category of recommendedProductCategoriesList"
-							class="flex items-center"
-					>
-						<input
-								type="checkbox"
-								(ngModelChange)="toggleCategorySelection(category.id)"
-								[(ngModel)]="category.selected"
-								name="category-{{ category.id }}"
-								class="mr-2"
-						/>
-						<label
-								[matTooltip]="category.description"
-								matTooltipPosition="right"
-								matTooltipClass="productCategoryTooltip"
-								aria-label="Category description"
-						>{{ category.name }}</label>
-					</div>
-				</div>
+              <!-- Recommended Categories Section -->
+              <div class="bg-gray-50 rounded-2xl p-6">
+                <h2
+                  class="text-xl font-semibold text-gray-900 mb-6 flex items-center"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                    ></path>
+                  </svg>
+                  Recommended Product Categories
+                  <span
+                    class="ml-2 px-2 py-1 bg-purple-100 text-purple-800 text-sm rounded-full font-medium"
+                  >
+                    {{ eventType.recommendedProductCategories.length }}
+                  </span>
+                </h2>
 
-				<div class="flex flex-row mt-2">
-					<button
-							type="button"
-							name="formPrevButton"
-							(click)="changePageForm(this.currentPageEdit - 1)"
-							class="mr-2 divide-blue-500 hover:bg-blue-500
-							hover:text-white font-bold border py-1 px-4 rounded"
-					>
-						<
-					</button>
-					<button
-							type="button"
-							name="formNextButton"
-							(click)="changePageForm(this.currentPageEdit + 1)"
-							class="mr-2 divide-blue-500 hover:bg-blue-500
-							hover:text-white font-bold border py-1 px-4 rounded">
-						>
-					</button>
-				</div>
-			</div>
+                <div
+                  *ngIf="eventType.recommendedProductCategories.length === 0"
+                  class="text-center py-8"
+                >
+                  <svg
+                    class="mx-auto h-12 w-12 text-gray-400 mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                    ></path>
+                  </svg>
+                  <h3 class="text-lg font-medium text-gray-900 mb-2">
+                    No Categories Assigned
+                  </h3>
+                  <p class="text-gray-500">
+                    This event type doesn't have any recommended product
+                    categories yet.
+                  </p>
+                </div>
 
-			<div class="flex justify-end space-x-2">
-				<button
-						type="button"
-						name="formCancelButton"
-						(click)="closeEditForm()"
-						class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded"
-				>
-					Cancel
-				</button>
-				<button
-						type="submit"
-						name="formSaveButton"
-						class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-4 rounded"
-				>
-					Save
-				</button>
-			</div>
-		</form>
-	</div>
+                <div
+                  *ngIf="eventType.recommendedProductCategories.length > 0"
+                  class="grid grid-cols-1 md:grid-cols-2 gap-4"
+                >
+                  <div
+                    *ngFor="
+                      let category of eventType.recommendedProductCategories
+                    "
+                    class="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow duration-200"
+                  >
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <h3 class="font-medium text-gray-900 mb-1">
+                          {{ category.name }}
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-3">
+                          {{ category.description }}
+                        </p>
+                        <span
+                          class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                          [ngClass]="{
+                            'bg-green-100 text-green-800':
+                              category.status.name === 'ACTIVE',
+                            'bg-red-100 text-red-800':
+                              category.status.name === 'INACTIVE',
+                            'bg-yellow-100 text-yellow-800':
+                              category.status.name !== 'ACTIVE' &&
+                              category.status.name !== 'INACTIVE'
+                          }"
+                        >
+                          {{ category.status.name }}
+                        </span>
+                      </div>
+                      <div
+                        class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center ml-3"
+                      >
+                        <svg
+                          class="w-4 h-4 text-purple-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                          ></path>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+              <!-- Status Card -->
+              <div class="bg-white border border-gray-200 rounded-2xl p-6">
+                <h3
+                  class="text-lg font-semibold text-gray-900 mb-4 flex items-center"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  Current Status
+                </h3>
+                <div class="text-center">
+                  <div
+                    class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium"
+                    [ngClass]="{
+                      'bg-green-100 text-green-800':
+                        eventType.status.name === 'ACTIVE',
+                      'bg-red-100 text-red-800':
+                        eventType.status.name === 'INACTIVE',
+                      'bg-yellow-100 text-yellow-800':
+                        eventType.status.name !== 'ACTIVE' &&
+                        eventType.status.name !== 'INACTIVE'
+                    }"
+                  >
+                    <div
+                      class="w-2 h-2 rounded-full mr-2"
+                      [ngClass]="{
+                        'bg-green-400': eventType.status.name === 'ACTIVE',
+                        'bg-red-400': eventType.status.name === 'INACTIVE',
+                        'bg-yellow-400':
+                          eventType.status.name !== 'ACTIVE' &&
+                          eventType.status.name !== 'INACTIVE'
+                      }"
+                    ></div>
+                    {{ eventType.status.name }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Stats -->
+              <div class="bg-white border border-gray-200 rounded-2xl p-6">
+                <h3
+                  class="text-lg font-semibold text-gray-900 mb-4 flex items-center"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    ></path>
+                  </svg>
+                  Quick Stats
+                </h3>
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Categories</span>
+                    <span class="font-semibold text-gray-900">{{
+                      eventType.recommendedProductCategories.length
+                    }}</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Active Categories</span>
+                    <span class="font-semibold text-green-600">
+                      {{ getActiveCategoriesCount() }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="bg-white border border-gray-200 rounded-2xl p-6">
+                <h3
+                  class="text-lg font-semibold text-gray-900 mb-4 flex items-center"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"
+                    ></path>
+                  </svg>
+                  Quick Actions
+                </h3>
+                <div class="space-y-3">
+                  <button
+                    (click)="openEditForm()"
+                    class="w-full flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors duration-200"
+                  >
+                    <svg
+                      class="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      ></path>
+                    </svg>
+                    Edit Details
+                  </button>
+                  <button
+                    (click)="onSwitchStatus()"
+                    class="w-full flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+                    [ngClass]="{
+                      'bg-red-600 hover:bg-red-700 text-white':
+                        eventType.status.name === 'ACTIVE',
+                      'bg-green-600 hover:bg-green-700 text-white':
+                        eventType.status.name === 'INACTIVE'
+                    }"
+                  >
+                    <svg
+                      class="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      ></path>
+                    </svg>
+                    {{
+                      eventType.status.name === "ACTIVE"
+                        ? "Deactivate"
+                        : "Activate"
+                    }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Form Modal -->
+<div
+  class="fixed inset-0 flex items-center justify-center z-50 p-4"
+  *ngIf="showEditForm"
+>
+  <div
+    class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+    (click)="closeEditForm()"
+  ></div>
+
+  <div
+    class="relative bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden z-10 transform transition-all duration-300"
+  >
+    <!-- Modal Header -->
+    <div class="p-8 bg-gradient-to-r from-purple-500 to-purple-600">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <div
+            class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-white">Update Event Type</h2>
+            <p class="text-white/80 mt-1">
+              Modify event type details and categories
+            </p>
+          </div>
+        </div>
+        <button
+          (click)="closeEditForm()"
+          class="p-2 rounded-full hover:bg-white/20 transition-colors duration-200 text-white"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Content -->
+    <div class="max-h-[calc(90vh-200px)] overflow-y-auto">
+      <form (ngSubmit)="updateEventType()" class="p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Basic Information -->
+          <div class="space-y-6">
+            <div class="bg-gray-50 rounded-2xl p-6">
+              <h3
+                class="text-lg font-semibold text-gray-900 mb-6 flex items-center"
+              >
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                Basic Information
+              </h3>
+
+              <!-- Name Field -->
+              <div class="mb-6">
+                <label
+                  for="edit-name"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Event Type Name *
+                </label>
+                <input
+                  id="edit-name"
+                  name="name"
+                  type="text"
+                  [(ngModel)]="editData.name"
+                  required
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  placeholder="e.g., Conference, Workshop, Wedding"
+                />
+              </div>
+
+              <!-- Description Field -->
+              <div>
+                <label
+                  for="edit-description"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Description
+                </label>
+                <textarea
+                  id="edit-description"
+                  name="description"
+                  [(ngModel)]="editData.description"
+                  rows="4"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 resize-none"
+                  placeholder="Provide a detailed description of this event type..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Categories -->
+          <div class="space-y-6">
+            <div class="bg-gray-50 rounded-2xl p-6">
+              <h3
+                class="text-lg font-semibold text-gray-900 mb-6 flex items-center"
+              >
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  ></path>
+                </svg>
+                Recommended Product Categories
+              </h3>
+
+              <!-- Search Categories -->
+              <div class="mb-4">
+                <div class="relative">
+                  <input
+                    type="text"
+                    placeholder="Search categories..."
+                    name="formQuery"
+                    [(ngModel)]="keywordEdit"
+                    (input)="changePageForm(this.currentPageEdit)"
+                    class="w-full px-4 py-3 pl-11 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  />
+                  <svg
+                    class="absolute left-3 top-3.5 w-5 h-5 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    ></path>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Categories List -->
+              <div
+                class="border border-gray-200 rounded-xl max-h-64 overflow-y-auto"
+              >
+                <div
+                  *ngIf="recommendedProductCategoriesList.length === 0"
+                  class="p-4 text-center text-gray-500"
+                >
+                  <svg
+                    class="mx-auto h-8 w-8 text-gray-400 mb-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                    ></path>
+                  </svg>
+                  No categories found
+                </div>
+
+                <div
+                  *ngFor="let category of recommendedProductCategoriesList"
+                  class="flex items-start p-4 hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 last:border-b-0"
+                >
+                  <input
+                    type="checkbox"
+                    (ngModelChange)="toggleCategorySelection(category.id)"
+                    [(ngModel)]="category.selected"
+                    name="category-{{ category.id }}"
+                    class="mt-1 h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                  />
+                  <div class="ml-3 flex-1">
+                    <label
+                      class="block text-sm font-medium text-gray-900 cursor-pointer"
+                    >
+                      {{ category.name }}
+                    </label>
+                    <p class="text-xs text-gray-500 mt-1">
+                      {{ category.description }}
+                    </p>
+                    <span
+                      class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-2"
+                      [ngClass]="{
+                        'bg-green-100 text-green-800':
+                          category.status.name === 'ACTIVE',
+                        'bg-red-100 text-red-800':
+                          category.status.name !== 'ACTIVE'
+                      }"
+                    >
+                      {{ category.status.name }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Categories Pagination -->
+              <div
+                *ngIf="totalPagesEdit > 1"
+                class="flex items-center justify-between mt-4"
+              >
+                <button
+                  type="button"
+                  (click)="changePageForm(this.currentPageEdit - 1)"
+                  [disabled]="currentPageEdit === 1"
+                  class="flex items-center px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                >
+                  <svg
+                    class="w-4 h-4 mr-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 19l-7-7 7-7"
+                    ></path>
+                  </svg>
+                  Previous
+                </button>
+
+                <span class="text-sm text-gray-500">
+                  Page {{ currentPageEdit }} of {{ totalPagesEdit }}
+                </span>
+
+                <button
+                  type="button"
+                  (click)="changePageForm(this.currentPageEdit + 1)"
+                  [disabled]="currentPageEdit === totalPagesEdit"
+                  class="flex items-center px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                >
+                  Next
+                  <svg
+                    class="w-4 h-4 ml-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+          <button
+            type="button"
+            (click)="closeEditForm()"
+            class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="!editData.name?.trim()"
+            class="px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 shadow-lg hover:shadow-xl disabled:transform-none disabled:shadow-none"
+          >
+            <span class="flex items-center">
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                ></path>
+              </svg>
+              Update Event Type
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
