@@ -55,7 +55,7 @@ export class ProductCategoriesService {
       size: size.toString(),
     };
     return this.http.get<Page<ProductCategoryDTO>>(
-      `${this.baseApiUrl}/search`,
+      `${this.baseApiUrl}/public/search`,
       {
         params,
         headers: this.getHeaders(),

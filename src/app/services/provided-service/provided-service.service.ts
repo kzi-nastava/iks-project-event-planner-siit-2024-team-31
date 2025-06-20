@@ -172,6 +172,26 @@ export class ProvidedServiceService {
     });
   }
 
+  // New method for paginated my services
+  public getMyServicesPage(
+    page: number,
+    pageSize: number,
+    searchTerm?: string
+  ): Observable<PaginatedResponse<Service>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', pageSize.toString());
+
+    if (searchTerm && searchTerm.trim()) {
+      params = params.set('keyword', encodeURIComponent(searchTerm.trim()));
+    }
+
+    return this.http.get<PaginatedResponse<Service>>(`${this.apiUrl}/my`, {
+      headers: this.getHeaders(),
+      params: params,
+    });
+  }
+
   public getServiceById(id: string): Observable<Service> {
     return this.http.get<Service>(`${this.apiUrl}/public/${id}`);
   }

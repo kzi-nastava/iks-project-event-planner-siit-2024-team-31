@@ -1,203 +1,430 @@
-<div class="container mx-auto p-4">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold">
-      My {{ showProducts ? "Products" : "Services" }}
-    </h1>
-    <div class="flex items-center space-x-4">
-      <!-- Switcher -->
-      <div class="flex items-center space-x-2">
-        <span [class.font-bold]="showProducts" class="text-xl">Products</span>
-        <button
-          (click)="toggleView()"
-          class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          [class.bg-blue-600]="!showProducts"
-          [class.bg-gray-200]="showProducts"
-        >
-          <span
-            class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
-            [class.translate-x-6]="!showProducts"
-            [class.translate-x-1]="showProducts"
-          ></span>
-        </button>
-        <span [class.font-bold]="!showProducts" class="text-xl">Services</span>
-      </div>
-
-      <a
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200"
-        routerLink="/pup/create-service"
+<!-- Modern PUP Services Page with Purple Theme -->
+<div
+  class="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50"
+>
+  <!-- Header Section -->
+  <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
+    <div class="container mx-auto px-4 py-8">
+      <div
+        class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
       >
-        Create new {{ showProducts ? "product" : "service" }}
-      </a>
+        <!-- Title and Description -->
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="p-2 bg-white/20 rounded-lg">
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                ></path>
+              </svg>
+            </div>
+            <h1 class="text-3xl font-bold">
+              My {{ showProducts ? "Products" : "Services" }}
+            </h1>
+          </div>
+          <p class="text-purple-100 text-lg">
+            Manage your {{ showProducts ? "products" : "services" }} and track
+            their performance
+          </p>
+        </div>
+
+        <!-- Controls -->
+        <div
+          class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4"
+        >
+          <!-- View Switcher -->
+          <div
+            class="flex items-center bg-white/20 backdrop-blur-sm rounded-xl p-1"
+          >
+            <button
+              (click)="switchToProducts()"
+              [class]="
+                showProducts
+                  ? 'bg-white text-purple-600 shadow-sm'
+                  : 'text-white hover:bg-white/10'
+              "
+              class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 font-medium"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                ></path>
+              </svg>
+              Products
+            </button>
+            <button
+              (click)="switchToServices()"
+              [class]="
+                !showProducts
+                  ? 'bg-white text-purple-600 shadow-sm'
+                  : 'text-white hover:bg-white/10'
+              "
+              class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 font-medium"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M8 6a2 2 0 00-2 2v6"
+                ></path>
+              </svg>
+              Services
+            </button>
+          </div>
+
+          <!-- Create Button -->
+          <a
+            routerLink="/pup/create-service"
+            class="flex items-center gap-2 bg-white text-purple-600 hover:bg-purple-50 px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              ></path>
+            </svg>
+            Create {{ showProducts ? "Product" : "Service" }}
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Loading Spinner -->
-  <div *ngIf="isLoading" class="flex justify-center items-center py-8">
-    <div
-      class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
-    ></div>
-  </div>
-
-  <!-- Products List -->
-  <div
-    *ngIf="!isLoading && showProducts"
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-  >
-    <div
-      *ngFor="let product of products"
-      class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200"
-    >
-      <!-- Image -->
-      <div class="mb-4 relative h-48 rounded-lg overflow-hidden">
-        <img
-          [src]="product.imageUrls[0]"
-          [alt]="product.name"
-          class="w-full h-full object-cover"
-        />
-      </div>
-
-      <!-- Header -->
-      <div class="flex justify-between items-start mb-2">
-        <h3 class="text-xl font-semibold">{{ product.name }}</h3>
-        <span
-          [class]="
-            product.isAvailable
-              ? 'bg-green-100 text-green-800'
-              : 'bg-red-100 text-red-800'
-          "
-          class="px-2 py-1 rounded-full text-sm"
-        >
-          {{ product.isAvailable ? "Available" : "Unavailable" }}
-        </span>
-      </div>
-
-      <!-- Description -->
-      <p class="text-gray-600 mb-2 line-clamp-2">{{ product.description }}</p>
-
-      <!-- Categories -->
-      <div class="flex flex-wrap gap-1 mb-2">
-        <span
-          *ngIf="product.category"
-          class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
-        >
-          {{ product.category.name }}
-        </span>
-      </div>
-
-      <!-- Price and Rating -->
-      <div class="flex justify-between items-center text-sm text-gray-500 mb-4">
-        <div class="flex items-center">
-          <span class="text-yellow-400">★</span>
-          <span class="ml-1">{{ product.rating }}/5</span>
+  <!-- Content Section -->
+  <div class="container mx-auto px-4 py-8">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-2xl p-6 shadow-lg border border-purple-100">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">
+              Total {{ showProducts ? "Products" : "Services" }}
+            </p>
+            <p class="text-2xl font-bold text-gray-900">
+              {{ getTotalCount() }}
+            </p>
+          </div>
+          <div class="p-3 bg-purple-100 rounded-xl">
+            <svg
+              class="w-6 h-6 text-purple-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+              ></path>
+            </svg>
+          </div>
         </div>
-        <span class="font-semibold text-lg text-gray-800">{{
-          formatPrice(product.price)
-        }}</span>
       </div>
 
-      <!-- Actions -->
-      <div class="flex justify-end space-x-2">
-        <a
-          [routerLink]="['/pup/edit-product', product.id]"
-          class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded transition-colors duration-200"
-        >
-          Edit
-        </a>
+      <div class="bg-white rounded-2xl p-6 shadow-lg border border-green-100">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Available</p>
+            <p class="text-2xl font-bold text-gray-900">
+              {{ getAvailableCount() }}
+            </p>
+          </div>
+          <div class="p-3 bg-green-100 rounded-xl">
+            <svg
+              class="w-6 h-6 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow-lg border border-amber-100">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Average Rating</p>
+            <p class="text-2xl font-bold text-gray-900">
+              {{ getAverageRating() | number : "1.1-1" }}
+            </p>
+          </div>
+          <div class="p-3 bg-amber-100 rounded-xl">
+            <svg
+              class="w-6 h-6 text-amber-600"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+              ></path>
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Services List -->
-  <div
-    *ngIf="!isLoading && !showProducts"
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-  >
+    <!-- Search Section -->
     <div
-      *ngFor="let service of services"
-      class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200"
+      class="bg-white rounded-2xl shadow-lg border border-purple-100 p-6 mb-8"
     >
-      <!-- Image -->
-      <div class="mb-4 relative h-48 rounded-lg overflow-hidden">
-        <img
-          [src]="service.imageUrls[0]"
-          [alt]="service.name"
-          class="w-full h-full object-cover"
-        />
-      </div>
-
-      <!-- Header -->
-      <div class="flex justify-between items-start mb-2">
-        <h3 class="text-xl font-semibold">{{ service.name }}</h3>
-        <span
-          [class]="
-            service.isAvailable
-              ? 'bg-green-100 text-green-800'
-              : 'bg-red-100 text-red-800'
-          "
-          class="px-2 py-1 rounded-full text-sm"
-        >
-          {{ service.isAvailable ? "Available" : "Unavailable" }}
-        </span>
-      </div>
-
-      <!-- Description -->
-      <p class="text-gray-600 mb-2 line-clamp-2">{{ service.description }}</p>
-
-      <!-- Categories -->
-      <div class="flex flex-wrap gap-1 mb-2">
-        <span
-          *ngIf="service.category"
-          class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
-        >
-          {{ service.category.name }}
-        </span>
-      </div>
-
-      <!-- Price and Rating -->
-      <div class="flex justify-between items-center text-sm text-gray-500 mb-2">
-        <div class="flex items-center">
-          <span class="text-yellow-400">★</span>
-          <span class="ml-1">{{ service.rating }}/5</span>
+      <div class="flex flex-col sm:flex-row gap-4 items-center">
+        <div class="flex-1 relative">
+          <div
+            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+          >
+            <svg
+              class="h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+          </div>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange()"
+            placeholder="Search {{ showProducts ? 'products' : 'services' }}..."
+            class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300"
+          />
         </div>
-        <span class="font-semibold text-lg text-gray-800">{{
-          formatPrice(service.price)
-        }}</span>
+        <button
+          *ngIf="searchTerm"
+          (click)="clearSearch()"
+          class="px-4 py-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+          Clear
+        </button>
+        <div class="text-sm text-gray-600">
+          Showing {{ (showProducts ? products : services).length }} of
+          {{ getTotalCount() }} results
+        </div>
       </div>
+    </div>
 
-      <!-- Availability -->
-      <div class="text-sm text-gray-600 mb-4">
-        <p>
-          Available: {{ formatDate(service.availableFrom) }} -
-          {{ formatDate(service.availableTo) }}
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+      <div class="flex items-center gap-3">
+        <div
+          class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"
+        ></div>
+        <span class="text-gray-600 font-medium"
+          >Loading {{ showProducts ? "products" : "services" }}...</span
+        >
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div
+      *ngIf="!isLoading && showProducts"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
+    >
+      <app-service-card
+        *ngFor="let product of products"
+        [service]="product"
+        class="transform transition-all duration-300 hover:scale-105"
+      ></app-service-card>
+    </div>
+
+    <!-- Services Grid -->
+    <div
+      *ngIf="!isLoading && !showProducts"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
+    >
+      <app-service-card
+        *ngFor="let service of services"
+        [service]="service"
+        class="transform transition-all duration-300 hover:scale-105"
+      ></app-service-card>
+    </div>
+
+    <!-- Empty State -->
+    <div
+      *ngIf="
+        !isLoading &&
+        (showProducts ? products.length === 0 : services.length === 0)
+      "
+      class="text-center py-16"
+    >
+      <div class="max-w-md mx-auto">
+        <div class="mb-6">
+          <svg
+            class="w-20 h-20 mx-auto text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+            ></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">
+          No {{ showProducts ? "products" : "services" }} found
+        </h3>
+        <p class="text-gray-600 mb-6">
+          <ng-container *ngIf="searchTerm">
+            No {{ showProducts ? "products" : "services" }} match your search
+            criteria.
+          </ng-container>
+          <ng-container *ngIf="!searchTerm">
+            You haven't created any
+            {{ showProducts ? "products" : "services" }} yet.
+          </ng-container>
         </p>
-      </div>
-
-      <!-- Actions -->
-      <div class="flex justify-end space-x-2">
         <a
-          [routerLink]="['/pup/edit-service', service.id]"
-          class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded transition-colors duration-200"
+          routerLink="/pup/create-service"
+          class="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition-colors duration-200 font-semibold"
         >
-          Edit
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            ></path>
+          </svg>
+          Create {{ showProducts ? "Product" : "Service" }}
         </a>
       </div>
     </div>
-  </div>
 
-  <!-- Empty State -->
-  <div
-    *ngIf="
-      !isLoading &&
-      ((showProducts && products.length === 0) ||
-        (!showProducts && services.length === 0))
-    "
-    class="text-center py-8"
-  >
-    <p class="text-gray-500 text-lg">
-      You don't have any {{ showProducts ? "products" : "services" }} yet.
-      <a routerLink="/pup/create-service" class="text-blue-500 hover:underline">
-        Create your first one!
-      </a>
-    </p>
+    <!-- Pagination -->
+    <div
+      *ngIf="!isLoading && totalPages > 1"
+      class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-2xl shadow-lg border border-purple-100 p-6"
+    >
+      <div class="text-sm text-gray-600">
+        Showing {{ currentPage * pageSize + 1 }} to
+        {{ Math.min((currentPage + 1) * pageSize, totalElements) }} of
+        {{ totalElements }} results
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Previous Button -->
+        <button
+          (click)="previousPage()"
+          [disabled]="!hasPreviousPage()"
+          class="px-4 py-2 border-2 border-gray-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all duration-200 font-semibold flex items-center gap-2"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            ></path>
+          </svg>
+          Previous
+        </button>
+
+        <!-- Page Numbers -->
+        <div class="flex items-center gap-1">
+          <button
+            *ngFor="let page of getPageNumbers()"
+            (click)="goToPage(page)"
+            [class]="
+              page === currentPage
+                ? 'bg-purple-600 text-white'
+                : 'bg-white text-gray-700 hover:bg-purple-50'
+            "
+            class="w-10 h-10 rounded-xl border-2 border-gray-200 font-semibold transition-all duration-200"
+          >
+            {{ page + 1 }}
+          </button>
+        </div>
+
+        <!-- Next Button -->
+        <button
+          (click)="nextPage()"
+          [disabled]="!hasNextPage()"
+          class="px-4 py-2 border-2 border-gray-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all duration-200 font-semibold flex items-center gap-2"
+        >
+          Next
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
 </div>

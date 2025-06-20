@@ -54,10 +54,13 @@ export class ProvidedServiceCategoriesService {
       page: (page - 1).toString(),
       size: size.toString(),
     };
-    return this.http.get<Page<ServiceCategory>>(`${this.baseApiUrl}/search`, {
-      params,
-      headers: this.getHeaders(),
-    });
+    return this.http.get<Page<ServiceCategory>>(
+      `${this.baseApiUrl}/public/search`,
+      {
+        params,
+        headers: this.getHeaders(),
+      }
+    );
   }
 
   // Protected method for authenticated users

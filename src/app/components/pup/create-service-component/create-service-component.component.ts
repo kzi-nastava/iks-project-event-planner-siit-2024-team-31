@@ -76,7 +76,7 @@ export class CreateServiceComponent implements OnInit {
     public productCategoryService: ProductCategoriesService,
     public serviceCategoryService: ProvidedServiceCategoriesService,
     public eventTypesService: EventTypesService,
-    private router: Router
+    public router: Router
   ) {}
 
   ngOnInit(): void {
@@ -430,5 +430,19 @@ export class CreateServiceComponent implements OnInit {
     if (!isChecked) {
       this.serviceData.serviceDurationMax = 0;
     }
+  }
+
+  // Form progress calculation
+  getFormProgress(): number {
+    let progress = 0;
+    const totalFields = 5; // name, category, price, description, photos
+
+    if (this.serviceData.name?.trim()) progress++;
+    if (this.serviceData.category?.trim()) progress++;
+    if (this.serviceData.price && this.serviceData.price > 0) progress++;
+    if (this.serviceData.description?.trim()) progress++;
+    if (this.photoPreviews.length > 0) progress++;
+
+    return Math.round((progress / totalFields) * 100);
   }
 }
