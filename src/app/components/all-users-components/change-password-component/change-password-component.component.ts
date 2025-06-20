@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user/user.service';
 import { UpdatePasswordRequest } from '../../../types/dto/requests/updatePasswordRequest';
 import { CommonMessageResponse } from '../../../types/dto/responses/commonMessageResponse';
+import { Role } from '../../../types/roles';
 
 @Component({
   selector: 'app-change-password',
@@ -16,11 +17,14 @@ export class ChangePasswordComponent {
   constructor(private userService: UserService) {}
 
   @Input() showModal = false;
+  @Input() userRole: Role | null = null;
   @Output() closeModal = new EventEmitter<void>();
 
   oldPassword = '';
   newPassword = '';
   confirmNewPassword = '';
+
+  protected readonly Role = Role;
 
   closeModalWindow() {
     this.oldPassword = '';

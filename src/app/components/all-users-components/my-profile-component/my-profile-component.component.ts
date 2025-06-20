@@ -1,107 +1,167 @@
-import {CommonModule} from '@angular/common';
-import {Component, OnChanges, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {AuthService} from '../../../services/auth/auth.service';
-import {UserService} from '../../../services/user/user.service';
-import {
-  UserMyProfileResponse
-} from '../../../types/dto/responses/userMyProfileResponse';
-import {
-  ChangePasswordComponent
-} from '../change-password-component/change-password-component.component';
-import {
-  EditProfileFormComponent
-} from '../edit-profile-form-component/edit-profile-form-component.component';
-import {Role} from "../../../types/roles";
+import { CommonModule } from '@angular/common';
+import { Component, OnChanges, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../services/auth/auth.service';
+import { UserService } from '../../../services/user/user.service';
+import { UserMyProfileResponse } from '../../../types/dto/responses/userMyProfileResponse';
+import { Role } from '../../../types/roles';
+import { ChangePasswordComponent } from '../change-password-component/change-password-component.component';
+import { EditProfileFormComponent } from '../edit-profile-form-component/edit-profile-form-component.component';
 
 @Component({
-	selector: 'app-my-profile-component',
-	standalone: true,
-	imports: [CommonModule, ChangePasswordComponent, EditProfileFormComponent],
-	templateUrl: './my-profile-component.component.html',
+  selector: 'app-my-profile-component',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ChangePasswordComponent,
+    EditProfileFormComponent,
+  ],
+  templateUrl: './my-profile-component.component.html',
 })
 export class MyProfileComponent implements OnInit, OnChanges {
-	userProfile: UserMyProfileResponse | null = null;
-	userRole: Role | null = null;
-	notificationsEnabled = false;
-	selectedPhotoUrl: string | null = null;
+  userProfile: UserMyProfileResponse | null = null;
+  userRole: Role | null = null;
+  notificationsEnabled = false;
+  selectedPhotoUrl: string | null = null;
 
-	fallbackImage = 'assets/fallback-image.png';
+  fallbackImage = 'assets/fallback-image.png';
 
-	showChangePasswordModal = false;
-	showEditProfileModal = false;
+  showChangePasswordModal = false;
+  showEditProfileModal = false;
+  showDeactivateModal = false;
 
-	//TODO: add user event calendar
+  // Deactivation form data
+  deactivatePassword = '';
+  isDeactivating = false;
+  deactivateError = '';
 
-	constructor(
-		private userService: UserService,
-		private authService: AuthService,
-		private router: Router
-	) {
-	}
+  //TODO: add user event calendar
 
-	ngOnInit(): void {
-		this.userRole = this.authService.getRole();
-		this.userService.getUserProfile().subscribe({
-			next: (response) => {
-				this.userProfile = response;
-				if (
-					(this.userRole === Role.ROLE_OD || this.userRole === Role.ROLE_PUP) &&
-					this.userProfile?.tempPhotoUrlAndIdDTOList?.length
-				) {
-					this.selectedPhotoUrl =
-						this.userProfile.tempPhotoUrlAndIdDTOList[0].tempPhotoUrl;
-				}
-			},
-			error: (error) => {
-				console.error(error);
-			},
-		});
-	}
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
-	ngOnChanges(): void {
-	}
+  ngOnInit(): void {
+    this.userRole = this.authService.getRole();
 
-	refreshUserProfile() {
-		this.userService.getUserProfile().subscribe({
-			next: (response) => {
-				this.userProfile = response;
-			},
-			error: (error) => {
-				console.error('Error reloading profile:', error);
-			},
-		});
-	}
+    this.userService.getUserProfile().subscribe({
+      next: (response) => {
+        this.userProfile = response;
+        if (
+          (this.userRole === Role.ROLE_OD || this.userRole === Role.ROLE_PUP) &&
+          this.userProfile?.tempPhotoUrlAndIdDTOList?.length
+        ) {
+          this.selectedPhotoUrl =
+            this.userProfile.tempPhotoUrlAndIdDTOList[0].tempPhotoUrl;
+        }
+      },
+      error: (error) => {
+        console.error(error);
+      },
+    });
+  }
 
-	toggleNotifications(): void {
-		this.notificationsEnabled = !this.notificationsEnabled;
-	}
+  ngOnChanges(): void {}
 
-	selectPhoto(url: string) {
-		this.selectedPhotoUrl = url;
-	}
+  refreshUserProfile() {
+    this.userService.getUserProfile().subscribe({
+      next: (response) => {
+        this.userProfile = response;
+      },
+      error: (error) => {
+        console.error('Error reloading profile:', error);
+      },
+    });
+  }
 
-	openEditProfileModal() {
-		this.showEditProfileModal = true;
-	}
+  toggleNotifications(): void {
+    this.notificationsEnabled = !this.notificationsEnabled;
+  }
 
-	closeEditProfileModal() {
-		this.showEditProfileModal = false;
-	}
+  selectPhoto(url: string) {
+    this.selectedPhotoUrl = url;
+  }
 
-	openChangePasswordModal() {
-		this.showChangePasswordModal = true;
-	}
+  openEditProfileModal() {
+    this.showEditProfileModal = true;
+  }
 
-	closeChangePasswordModal() {
-		this.showChangePasswordModal = false;
-	}
+  closeEditProfileModal() {
+    this.showEditProfileModal = false;
+  }
 
-	deactivateAccount() {
-		//for PUP account can be deactivated only if there are no booked services
-		//for OD account can be deactivated only if there are no active and upcoming events
-		//for USER account can be deactivated only if there are no active and upcoming events
-	}
+  openChangePasswordModal() {
+    this.showChangePasswordModal = true;
+  }
 
-	protected readonly Role = Role;
+  closeChangePasswordModal() {
+    this.showChangePasswordModal = false;
+  }
+
+  openDeactivateModal() {
+    this.showDeactivateModal = true;
+    this.deactivatePassword = '';
+    this.deactivateError = '';
+  }
+
+  closeDeactivateModal() {
+    this.showDeactivateModal = false;
+    this.deactivatePassword = '';
+    this.deactivateError = '';
+    this.isDeactivating = false;
+  }
+
+  deactivateAccount() {
+    if (!this.deactivatePassword.trim()) {
+      this.deactivateError =
+        'Please enter your password to confirm deactivation.';
+      return;
+    }
+
+    // Check role-specific restrictions
+    if (this.userRole === Role.ROLE_PUP) {
+      // For PUP account can be deactivated only if there are no booked services
+      // TODO: Add check for booked services
+    } else if (this.userRole === Role.ROLE_OD) {
+      // For OD account can be deactivated only if there are no active and upcoming events
+      // TODO: Add check for active/upcoming events
+    } else if (this.userRole === Role.ROLE_USER) {
+      // For USER account can be deactivated only if there are no active and upcoming events
+      // TODO: Add check for active/upcoming events
+    }
+
+    this.isDeactivating = true;
+    this.deactivateError = '';
+
+    this.authService.deactivateAccount(this.deactivatePassword).subscribe({
+      next: () => {
+        // Successful deactivation
+        alert(
+          'Your account has been successfully deactivated. You will be logged out.'
+        );
+        this.authService.logout();
+        this.router.navigate(['/auth/login']);
+      },
+      error: (error) => {
+        this.isDeactivating = false;
+        if (error.status === 401) {
+          this.deactivateError = 'Incorrect password. Please try again.';
+        } else if (error.status === 400) {
+          this.deactivateError =
+            error.error?.message ||
+            'Cannot deactivate account. You may have active bookings or events.';
+        } else {
+          this.deactivateError =
+            'An error occurred while deactivating your account. Please try again.';
+        }
+        console.error('Deactivation error:', error);
+      },
+    });
+  }
+
+  protected readonly Role = Role;
 }
