@@ -4,10 +4,86 @@
   <!-- Image Container with fixed aspect ratio -->
   <div class="relative h-40 overflow-hidden">
     <img
-      [src]="event.imageUrls[0] || 'assets/images/default-event.svg'"
+      *ngIf="
+        event.imageUrls && event.imageUrls.length > 0 && !imageError;
+        else defaultEventImage
+      "
+      [src]="event.imageUrls[0]"
       [alt]="event.name"
       class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+      (error)="onImageError($event)"
     />
+
+    <ng-template #defaultEventImage>
+      <div
+        class="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-100 via-teal-100 to-emerald-100 relative overflow-hidden"
+      >
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-10">
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <pattern
+                id="eventPattern"
+                width="25"
+                height="25"
+                patternUnits="userSpaceOnUse"
+              >
+                <circle cx="12.5" cy="12.5" r="2" fill="currentColor" />
+                <circle cx="6.25" cy="6.25" r="1" fill="currentColor" />
+                <circle cx="18.75" cy="18.75" r="1" fill="currentColor" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#eventPattern)" />
+          </svg>
+        </div>
+
+        <!-- Main Icon -->
+        <div class="relative z-10 text-center">
+          <div
+            class="w-16 h-16 mx-auto mb-2 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg"
+          >
+            <svg
+              class="w-10 h-10 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              ></path>
+            </svg>
+          </div>
+          <div
+            class="text-xs font-medium text-green-700 bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full"
+          >
+            Event
+          </div>
+        </div>
+
+        <!-- Decorative Elements -->
+        <div
+          class="absolute top-2 right-2 w-1.5 h-1.5 bg-green-400 rounded-full opacity-60"
+        ></div>
+        <div
+          class="absolute top-4 left-3 w-1 h-1 bg-teal-400 rounded-full opacity-40"
+        ></div>
+        <div
+          class="absolute bottom-3 right-4 w-1 h-1 bg-emerald-400 rounded-full opacity-50"
+        ></div>
+        <div
+          class="absolute bottom-2 left-2 w-1.5 h-1.5 bg-green-300 rounded-full opacity-30"
+        ></div>
+      </div>
+    </ng-template>
+
     <!-- Event Type Badge -->
     <div
       class="absolute top-2 right-2 bg-green-600 text-white px-2 py-1 rounded-lg text-xs font-semibold"

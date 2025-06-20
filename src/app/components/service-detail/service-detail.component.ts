@@ -16,6 +16,8 @@ export class ServiceDetailComponent implements OnInit {
   item!: Service | Product;
   isLoading = true;
   error = '';
+  mainImageError = false;
+  thumbnailErrors: { [key: number]: boolean } = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -78,5 +80,13 @@ export class ServiceDetailComponent implements OnInit {
       return new Date(date).toLocaleDateString();
     }
     return date.toLocaleDateString();
+  }
+
+  onMainImageError(event: any): void {
+    this.mainImageError = true;
+  }
+
+  onThumbnailError(event: any, index: number): void {
+    this.thumbnailErrors[index] = true;
   }
 }

@@ -151,6 +151,26 @@ export class ProductService {
     });
   }
 
+  // New method for paginated my products
+  getMyProductsPage(
+    page: number,
+    pageSize: number,
+    searchTerm?: string
+  ): Observable<PaginatedResponse<Product>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', pageSize.toString());
+
+    if (searchTerm && searchTerm.trim()) {
+      params = params.set('keyword', encodeURIComponent(searchTerm.trim()));
+    }
+
+    return this.http.get<PaginatedResponse<Product>>(`${this.apiUrl}/my`, {
+      headers: this.getHeaders(),
+      params: params,
+    });
+  }
+
   // Get filter options for products
   public getProductFilterOptions(): Observable<{
     categories: any[];

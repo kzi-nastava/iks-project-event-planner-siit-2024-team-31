@@ -14,7 +14,7 @@ export class ServiceCardComponent {
   @Input() service!: Product | Service;
 
   private defaultImageUrl = 'assets/images/default-service.svg';
-  private imageError = false;
+  imageError = false;
 
   isService(item: Product | Service): item is Service {
     return 'serviceDurationMinMinutes' in item;
