@@ -43,9 +43,21 @@ export class EditProfileFormComponent implements OnInit, OnChanges {
     if (changes['showModal'] && this.showModal) {
       this.initializeForm();
     }
+
+    // Also reinitialize if userProfileData changes while modal is open
+    if (changes['userProfileData'] && this.showModal && this.userProfileData) {
+      this.initializeForm();
+    }
   }
 
   initializeForm(): void {
+    // Clean up any existing object URLs to prevent memory leaks
+    this.newPhotos.forEach((photo) => {
+      if (typeof photo.preview === 'string') {
+        URL.revokeObjectURL(photo.preview);
+      }
+    });
+
     this.tempUser = {
       email: this.userProfileData?.email || '',
       firstName: this.userProfileData?.firstName || '',
@@ -177,6 +189,15 @@ export class EditProfileFormComponent implements OnInit, OnChanges {
   }
 
   closeModalWindow() {
+    // Clean up object URLs when closing modal
+    this.newPhotos.forEach((photo) => {
+      if (typeof photo.preview === 'string') {
+        URL.revokeObjectURL(photo.preview);
+      }
+    });
+    this.newPhotos = [];
+    this.removedPhotosIds = [];
+
     this.closeModal.emit();
   }
 
@@ -213,11 +234,21 @@ export class EditProfileFormComponent implements OnInit, OnChanges {
     this.userService.updateUserData(formData).subscribe({
       next: (response) => {
         alert('Profile updated successfully!');
+        // Clear new photos and removed photos arrays since they've been saved
+        this.newPhotos.forEach((photo) => {
+          if (typeof photo.preview === 'string') {
+            URL.revokeObjectURL(photo.preview);
+          }
+        });
+        this.newPhotos = [];
+        this.removedPhotosIds = [];
+
         this.profileUpdated.emit();
         this.closeModal.emit();
       },
       error: (error) => {
         console.error('Error updating profile:', error);
+        alert('Error updating profile. Please try again.');
       },
     });
   }

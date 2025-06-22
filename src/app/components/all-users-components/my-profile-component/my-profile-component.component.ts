@@ -8,6 +8,7 @@ import { UserMyProfileResponse } from '../../../types/dto/responses/userMyProfil
 import { Role } from '../../../types/roles';
 import { ChangePasswordComponent } from '../change-password-component/change-password-component.component';
 import { EditProfileFormComponent } from '../edit-profile-form-component/edit-profile-form-component.component';
+import { FavoritesListsComponent } from '../favorites-lists/favorites-lists.component';
 
 @Component({
   selector: 'app-my-profile-component',
@@ -17,6 +18,7 @@ import { EditProfileFormComponent } from '../edit-profile-form-component/edit-pr
     FormsModule,
     ChangePasswordComponent,
     EditProfileFormComponent,
+    FavoritesListsComponent,
   ],
   templateUrl: './my-profile-component.component.html',
 })
