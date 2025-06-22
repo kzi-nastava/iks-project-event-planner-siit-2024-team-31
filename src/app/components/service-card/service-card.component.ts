@@ -1,20 +1,29 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
 import { Product } from '../../types/models/product.model';
 import { Service } from '../../types/models/service.model';
+import { Role } from '../../types/roles';
+import { FavoriteButtonComponent } from '../all-users-components/favorite-button/favorite-button.component';
 
 @Component({
   selector: 'app-service-card',
   templateUrl: './service-card.component.html',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, FavoriteButtonComponent],
 })
 export class ServiceCardComponent {
   @Input() service!: Product | Service;
 
   private defaultImageUrl = 'assets/images/default-service.svg';
   imageError = false;
+
+  constructor(private authService: AuthService) {}
+
+  get canFavorite(): boolean {
+    return this.authService.getRole() === Role.ROLE_OD;
+  }
 
   isService(item: Product | Service): item is Service {
     return 'serviceDurationMinMinutes' in item;
