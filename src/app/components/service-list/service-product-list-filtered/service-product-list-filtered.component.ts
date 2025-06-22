@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
-  Observable,
-  Subject,
   debounceTime,
   distinctUntilChanged,
+  Observable,
+  Subject,
   switchMap,
   takeUntil,
 } from 'rxjs';
@@ -22,31 +22,31 @@ import { AdvancedFilterComponent } from '../../utils/advanced-filter/advanced-fi
 
 @Component({
   selector: 'app-service-product-list-filtered',
-  templateUrl: './service-product-list-filtered.component.html',
-  imports: [CommonModule, AdvancedFilterComponent, ServiceCardComponent],
   standalone: true,
+  imports: [CommonModule, ServiceCardComponent, AdvancedFilterComponent],
+  templateUrl: './service-product-list-filtered.component.html',
 })
 export class ServiceProductListFilteredComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private filterSubject$ = new Subject<ServiceFilters | ProductFilters>();
 
-  // Data
+  // Data properties
   items: (Product | Service)[] = [];
   loading = false;
   error: string | null = null;
 
-  // Pagination
+  // Pagination properties
   currentPage = 0;
   pageSize = 12; // 3x4 grid
   totalPages = 0;
   totalElements = 0;
   hasMore = false;
 
-  // Filter state
+  // Filter properties
   currentType: 'services' | 'products' = 'services';
   currentFilters: ServiceFilters | ProductFilters = {};
 
-  // UI State
+  // UI properties
   showTypeToggle = true;
 
   constructor(
@@ -63,6 +63,10 @@ export class ServiceProductListFilteredComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  isService(item: Product | Service): boolean {
+    return 'serviceDurationMinMinutes' in item;
   }
 
   private initializeFilters(): void {
@@ -201,13 +205,13 @@ export class ServiceProductListFilteredComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Helper methods
+  // Getters for template
   get displayedPageNumber(): number {
-    return this.currentPage + 1; // Convert from 0-based to 1-based for display
+    return this.currentPage + 1;
   }
 
   get displayedTotalPages(): number {
-    return Math.max(this.totalPages, 1);
+    return this.totalPages;
   }
 
   get paginationInfo(): string {
@@ -221,40 +225,37 @@ export class ServiceProductListFilteredComponent implements OnInit, OnDestroy {
   }
 
   get hasNextPage(): boolean {
-    return this.hasMore;
+    return this.currentPage < this.totalPages - 1;
   }
 
-  // Generate array for pagination numbers
   get visiblePages(): number[] {
-    const current = this.currentPage;
-    const total = this.totalPages;
-    const delta = 2; // Show 2 pages before and after current
+    const totalPages = this.totalPages;
+    const currentPage = this.currentPage;
+    const maxVisible = 5;
 
-    let start = Math.max(0, current - delta);
-    let end = Math.min(total - 1, current + delta);
-
-    // Adjust if we're near the beginning or end
-    if (current <= delta) {
-      end = Math.min(total - 1, 2 * delta);
-    }
-    if (current >= total - delta - 1) {
-      start = Math.max(0, total - 2 * delta - 1);
+    if (totalPages <= maxVisible) {
+      return Array.from({ length: totalPages }, (_, i) => i);
     }
 
-    const pages = [];
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
+    const start = Math.max(0, currentPage - Math.floor(maxVisible / 2));
+    const end = Math.min(totalPages, start + maxVisible);
+
+    if (end - start < maxVisible) {
+      const adjustedStart = Math.max(0, end - maxVisible);
+      return Array.from(
+        { length: end - adjustedStart },
+        (_, i) => adjustedStart + i
+      );
     }
-    return pages;
+
+    return Array.from({ length: end - start }, (_, i) => start + i);
   }
 
-  // Generate skeleton items for loading state
   get skeletonItems(): any[] {
-    return new Array(this.pageSize).fill(null);
+    return Array(this.pageSize).fill({});
   }
 
-  // TrackBy function for performance optimization
   trackByItemId(index: number, item: Product | Service): string {
-    return item.id;
+    return item.id.toString();
   }
 }
