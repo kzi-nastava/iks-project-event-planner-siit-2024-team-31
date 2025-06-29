@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../../services/auth/auth.service';
 import { FavoritesService } from '../../../services/favorites/favorites.service';
+import { TempPhotoUrlAndIdDTO } from '../../../types/dto/tempPhotoUrlAndIdDTO';
 import { Page } from '../../../types/page';
 import { Role } from '../../../types/roles';
 
@@ -15,6 +16,9 @@ interface FavoriteItem {
   category?: string;
   location?: string;
   startDate?: string;
+  // For events - new structure
+  photos?: TempPhotoUrlAndIdDTO[];
+  // For products and services - old structure
   imageUrls?: string[];
 }
 
@@ -213,5 +217,27 @@ export class FavoritesListsComponent implements OnInit, OnDestroy {
           console.error('Error removing favorite service:', error);
         },
       });
+  }
+
+  // Helper methods for photo handling
+  hasItemImages(item: any): boolean {
+    // For events - use new photos structure
+    if (item.photos !== undefined) {
+      return !!(item.photos && item.photos.length > 0);
+    }
+    // For products and services - use old imageUrls structure
+    return !!(item.imageUrls && item.imageUrls.length > 0);
+  }
+
+  getItemFirstImageUrl(item: any): string | null {
+    // For events - use new photos structure
+    if (item.photos !== undefined && item.photos.length > 0) {
+      return item.photos[0].tempPhotoUrl;
+    }
+    // For products and services - use old imageUrls structure
+    if (item.imageUrls && item.imageUrls.length > 0) {
+      return item.imageUrls[0];
+    }
+    return null;
   }
 }

@@ -28,6 +28,16 @@ export interface ProductFilters {
   sortDirection?: 'asc' | 'desc';
 }
 
+export interface EventFilters {
+  searchTerm?: string;
+  eventTypeIds?: string[];
+  fromDate?: string;
+  toDate?: string;
+  minGuests?: number;
+  maxGuests?: number;
+  city?: string;
+}
+
 export interface FilterOption {
   id: string;
   name: string;
@@ -37,5 +47,6 @@ export interface FilterOption {
 export interface FilterState {
   services: ServiceFilters;
   products: ProductFilters;
-  currentType: 'services' | 'products';
+  events: EventFilters;
+  currentType: 'services' | 'products' | 'events';
 }

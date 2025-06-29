@@ -1,74 +1,149 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {AgendaItem} from "../../../types/models/agendaItem.model";
-import {FormsModule} from "@angular/forms";
-import {DatePipe, NgForOf} from "@angular/common";
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AgendaItem } from '../../../types/models/agendaItem.model';
 
 @Component({
-	selector: 'app-agenda-creation',
-	imports: [
-		FormsModule,
-		NgForOf,
-		DatePipe
-	],
-	templateUrl: './agenda-creation.component.html',
-	styleUrls: ['./agenda-creation.component.scss']
+  selector: 'app-agenda-creation',
+  standalone: true,
+  imports: [FormsModule, CommonModule],
+  templateUrl: './agenda-creation.component.html',
+  styleUrl: './agenda-creation.component.scss',
 })
 export class AgendaCreationComponent {
+  @Input() agendaItems: AgendaItem[] = [];
+  @Input() eventStartTime!: string;
+  @Input() eventEndTime!: string;
+  @Output() onAgendaCreated = new EventEmitter<AgendaItem[]>();
+  @Output() onModalClose = new EventEmitter<void>();
 
-	@Input() startDate: string = '';
-	@Input() endDate: string = '';
+  newItem: AgendaItem = {
+    title: '',
+    description: '',
+    startTime: '',
+    endTime: '',
+    location: '',
+  };
 
-	eventStart = new Date(this.startDate);
-	eventEnd = new Date(this.endDate);
+  private mouseDownOnBackground = false;
 
-	currentAgendaItem: AgendaItem = {
-		title: '',
-		description: '',
-		startTime: '',
-		endTime: '',
-		location: ''
-	};
+  addAgendaItem() {
+    if (this.validateAgendaItem()) {
+      this.agendaItems.push({ ...this.newItem });
+      this.resetNewItem();
+    }
+  }
 
-	@Output() dataEmitter: EventEmitter<AgendaItem[]> = new EventEmitter();
+  private validateAgendaItem(): boolean {
+    if (
+      !this.newItem.title ||
+      !this.newItem.startTime ||
+      !this.newItem.endTime
+    ) {
+      alert('Please fill in all required fields');
+      return false;
+    }
 
-	@Input() agenda: AgendaItem[] = [];
+    const startTime = new Date(this.newItem.startTime);
+    const endTime = new Date(this.newItem.endTime);
 
-	addNewAgendaItem(): void {
-		if (!this.currentAgendaItem.startTime || !this.currentAgendaItem.endTime) {
-			alert('Select time limits for agenda item.');
-			return;
-		}
+    if (startTime >= endTime) {
+      alert('End time must be after start time');
+      return false;
+    }
 
-		const itemStart = new Date(this.currentAgendaItem.startTime);
-		const itemEnd = new Date(this.currentAgendaItem.endTime);
+    return true;
+  }
 
-		if (itemStart < this.eventStart || itemEnd > this.eventEnd) {
-			alert('Time limits of agenda item have to be between event time' +
-				' limits.');
-			return;
-		}
+  private resetNewItem() {
+    this.newItem = {
+      title: '',
+      description: '',
+      startTime: '',
+      endTime: '',
+      location: '',
+    };
+  }
 
-		if (itemStart >= itemEnd) {
-			alert('Start of agenda item has to be after its end.');
-			return;
-		}
+  removeAgendaItem(index: number) {
+    if (index >= 0 && index < this.agendaItems.length) {
+      this.agendaItems.splice(index, 1);
+    }
+  }
 
-		this.agenda.push({...this.currentAgendaItem});
+  saveAgenda() {
+    this.onAgendaCreated.emit(this.agendaItems);
+  }
 
-		this.currentAgendaItem = {
-			title: '',
-			description: '',
-			startTime: '',
-			endTime: '',
-			location: ''
-		};
-	}
+  closeModal() {
+    this.onModalClose.emit();
+  }
 
-	createAgenda(): void {
-		this.dataEmitter.emit(this.agenda)
-	}
+  onBackgroundMouseDown(event: MouseEvent) {
+    if (event.target === event.currentTarget) {
+      this.mouseDownOnBackground = true;
+    }
+  }
 
-	removeAgendaItem(item: AgendaItem): void {
-		this.agenda = this.agenda.filter(i => i !== item);
-	}
+  onBackgroundMouseUp(event: MouseEvent) {
+    if (event.target === event.currentTarget && this.mouseDownOnBackground) {
+      this.closeModal();
+    }
+    this.mouseDownOnBackground = false;
+  }
+
+  getTotalDuration(): string {
+    if (this.agendaItems.length === 0) return '0 hours';
+
+    let totalMinutes = 0;
+    this.agendaItems.forEach((item) => {
+      const start = new Date(item.startTime);
+      const end = new Date(item.endTime);
+      totalMinutes += (end.getTime() - start.getTime()) / (1000 * 60);
+    });
+
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    if (hours === 0) {
+      return `${minutes} minutes`;
+    } else if (minutes === 0) {
+      return `${hours} hour${hours > 1 ? 's' : ''}`;
+    } else {
+      return `${hours}h ${minutes}m`;
+    }
+  }
+
+  // Legacy methods for backward compatibility
+  addNewAgendaItem() {
+    this.addAgendaItem();
+  }
+
+  get agenda() {
+    return this.agendaItems;
+  }
+
+  set agenda(value: AgendaItem[]) {
+    this.agendaItems = value;
+  }
+
+  get startDate() {
+    return this.eventStartTime;
+  }
+
+  get endDate() {
+    return this.eventEndTime;
+  }
+
+  get currentAgendaItem() {
+    return this.newItem;
+  }
+
+  set currentAgendaItem(value: AgendaItem) {
+    this.newItem = value;
+  }
+
+  createAgenda() {
+    this.saveAgenda();
+  }
 }

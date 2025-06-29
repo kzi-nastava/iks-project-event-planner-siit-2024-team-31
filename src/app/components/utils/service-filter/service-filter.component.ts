@@ -10,6 +10,7 @@ import { ServiceCategory } from '../../../types/serviceCategory';
   selector: 'app-service-product-filter',
   imports: [CommonModule, FormsModule],
   templateUrl: './service-filter.component.html',
+  styleUrls: ['./service-filter.component.scss'],
   standalone: true,
 })
 export class ServiceFilterComponent implements OnInit {
@@ -38,6 +39,15 @@ export class ServiceFilterComponent implements OnInit {
     categorySearch: '',
     citySearch: '',
     suitabilitySearch: '',
+  };
+
+  // UI state for collapsible sections
+  expandedSections = {
+    categories: true,
+    availability: false,
+    city: false,
+    suitability: false,
+    price: false,
   };
 
   constructor(
@@ -140,6 +150,31 @@ export class ServiceFilterComponent implements OnInit {
   }
 
   applyFilters() {
+    this.filtersChange.emit(this.filters);
+  }
+
+  toggleSection(section: keyof typeof this.expandedSections): void {
+    this.expandedSections[section] = !this.expandedSections[section];
+  }
+
+  resetFilters(): void {
+    this.filters = {
+      fromDate: '',
+      toDate: '',
+      selectedCategories: [],
+      selectedCities: [],
+      selectedSuitability: [],
+      minPrice: 0,
+      maxPrice: 1000000,
+    };
+    this.filtersForFilters = {
+      categorySearch: '',
+      citySearch: '',
+      suitabilitySearch: '',
+    };
+    this.filteredCategories = [...this.categories];
+    this.filteredCities = [...this.cities];
+    this.filteredSuitability = [...this.suitabilityOptions];
     this.filtersChange.emit(this.filters);
   }
 

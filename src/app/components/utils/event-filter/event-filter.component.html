@@ -1,119 +1,207 @@
 <div
-  class="filters p-4 bg-gray-50 shadow-md rounded-lg w-full max-w-md mx-auto"
+  class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md mx-auto border border-gray-200"
 >
-  <h3 class="text-lg font-semibold mb-4">Filters</h3>
-
-  <label class="block text-sm font-medium text-gray-700 mb-1"
-    >Event type:</label
-  >
-  <input
-    type="text"
-    [(ngModel)]="filtersForFilters.eventTypeSearch"
-    placeholder="Search event type..."
-    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-2"
-    (input)="filterTypes()"
-  />
-  <div class="h-40 overflow-y-auto border border-gray-300 rounded-lg p-2">
-    <div
-      *ngFor="let type of filteredTypes"
-      class="flex items-center gap-2 mb-2"
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center">
+      <div
+        class="w-1 h-6 bg-gradient-to-b from-blue-500 to-purple-600 rounded-full mr-3"
+      ></div>
+      <h3 class="text-xl font-bold text-gray-900">Event Filters</h3>
+    </div>
+    <button
+      (click)="clearFilters()"
+      class="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
     >
+      Reset All
+    </button>
+  </div>
+
+  <!-- Search Section -->
+  <div class="mb-6">
+    <button
+      (click)="toggleSection('search')"
+      class="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+    >
+      <span class="text-sm font-semibold text-gray-700">Search</span>
+      <span class="text-gray-500">
+        {{ expandedSections.search ? "−" : "+" }}
+      </span>
+    </button>
+
+    <div *ngIf="expandedSections.search" class="mt-3">
       <input
-        type="checkbox"
-        [checked]="filters.selectedTypes.includes(type)"
-        (change)="toggleSelection(type, 'selectedTypes')"
-        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        type="text"
+        [(ngModel)]="filters.searchTerm"
+        (input)="onSearchChange()"
+        placeholder="Search by event name or description..."
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
       />
-      <span class="text-sm text-gray-700">{{ type }}</span>
+      <p class="text-xs text-gray-500 mt-1">
+        Find events by title or description keywords
+      </p>
     </div>
   </div>
 
-  <label class="block text-sm font-medium text-gray-700 mb-1 mt-1"
-    >Date period:</label
-  >
-  <div class="flex gap-2 mb-4">
-    <input
-      type="date"
-      [(ngModel)]="filters.fromDate"
-      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    />
-    <input
-      type="date"
-      [(ngModel)]="filters.toDate"
-      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    />
-  </div>
-
-  <label class="block text-sm font-medium text-gray-700 mb-1">City:</label>
-  <input
-    type="text"
-    [(ngModel)]="filtersForFilters.citySearch"
-    placeholder="Search city..."
-    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-2"
-    (input)="filterCities()"
-  />
-  <div class="h-40 overflow-y-auto border border-gray-300 rounded-lg p-2">
-    <div
-      *ngFor="let city of filteredCities"
-      class="flex items-center gap-2 mb-2"
+  <!-- Event Types Section -->
+  <div class="mb-6">
+    <button
+      (click)="toggleSection('eventTypes')"
+      class="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
     >
-      <input
-        type="checkbox"
-        [checked]="filters.selectedCities.includes(city)"
-        (change)="toggleSelection(city, 'selectedCities')"
-        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-      />
-      <span class="text-sm text-gray-700">{{ city }}</span>
+      <span class="text-sm font-semibold text-gray-700">Event Types</span>
+      <span class="text-gray-500">
+        {{ expandedSections.eventTypes ? "−" : "+" }}
+      </span>
+    </button>
+
+    <div *ngIf="expandedSections.eventTypes" class="mt-3">
+      <div
+        class="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-3"
+      >
+        <div
+          *ngFor="let type of availableEventTypes"
+          class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+        >
+          <input
+            type="checkbox"
+            [id]="'type-' + type.id"
+            [checked]="
+              filters.eventTypeIds?.includes(type.id.toString()) || false
+            "
+            (change)="toggleEventType(type.id.toString())"
+            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+          />
+          <label
+            [for]="'type-' + type.id"
+            class="text-sm text-gray-700 cursor-pointer flex-1"
+          >
+            {{ type.name }}
+          </label>
+        </div>
+      </div>
+      <div
+        *ngIf="availableEventTypes.length === 0"
+        class="text-center py-4 text-gray-500 text-sm"
+      >
+        No event types available
+      </div>
     </div>
   </div>
 
-  <label class="block text-sm font-medium text-gray-700 mb-1 mt-2"
-    >Location:</label
-  >
-  <input
-    type="text"
-    [(ngModel)]="filtersForFilters.objectSearch"
-    placeholder="Search location..."
-    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-2"
-    (input)="filterLocations()"
-  />
-  <div class="h-40 overflow-y-auto border border-gray-300 rounded-lg p-2">
-    <div
-      *ngFor="let location of filteredObject"
-      class="flex items-center gap-2 mb-2"
+  <!-- Date Range Section -->
+  <div class="mb-6">
+    <button
+      (click)="toggleSection('dateRange')"
+      class="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
     >
-      <input
-        type="checkbox"
-        [checked]="filters.selectedLocations.includes(location)"
-        (change)="toggleSelection(location, 'selectedLocations')"
-        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-      />
-      <span class="text-sm text-gray-700">{{ location }}</span>
+      <span class="text-sm font-semibold text-gray-700">Date Period</span>
+      <span class="text-gray-500">
+        {{ expandedSections.dateRange ? "−" : "+" }}
+      </span>
+    </button>
+
+    <div *ngIf="expandedSections.dateRange" class="mt-3">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1"
+            >From</label
+          >
+          <input
+            type="date"
+            [(ngModel)]="filters.fromDate"
+            (change)="onDateChange()"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+          />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">To</label>
+          <input
+            type="date"
+            [(ngModel)]="filters.toDate"
+            (change)="onDateChange()"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+          />
+        </div>
+      </div>
     </div>
   </div>
 
-  <label class="block text-sm font-medium text-gray-700 mb-1 mt-1">
-    The number of guests:
-  </label>
-  <div class="flex gap-2 mb-4">
-    <input
-      type="number"
-      [(ngModel)]="filters.minGuests"
-      placeholder="From"
-      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    />
-    <input
-      type="number"
-      [(ngModel)]="filters.maxGuests"
-      placeholder="To"
-      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    />
+  <!-- City Section -->
+  <div class="mb-6">
+    <button
+      (click)="toggleSection('city')"
+      class="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+    >
+      <span class="text-sm font-semibold text-gray-700">City</span>
+      <span class="text-gray-500">
+        {{ expandedSections.city ? "−" : "+" }}
+      </span>
+    </button>
+
+    <div *ngIf="expandedSections.city" class="mt-3">
+      <input
+        type="text"
+        [(ngModel)]="filters.city"
+        (input)="onCityChange()"
+        placeholder="Enter city name..."
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+      />
+      <p class="text-xs text-gray-500 mt-1">Search events by city location</p>
+    </div>
   </div>
 
-  <button
-    (click)="applyFilters()"
-    class="w-full bg-blue-600 text-white font-medium py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-  >
-    Apply
-  </button>
+  <!-- Number of Guests Section -->
+  <div class="mb-6">
+    <button
+      (click)="toggleSection('guests')"
+      class="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+    >
+      <span class="text-sm font-semibold text-gray-700">Number of Guests</span>
+      <span class="text-gray-500">
+        {{ expandedSections.guests ? "−" : "+" }}
+      </span>
+    </button>
+
+    <div *ngIf="expandedSections.guests" class="mt-3">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1"
+            >Min</label
+          >
+          <input
+            type="number"
+            [(ngModel)]="filters.minGuests"
+            (input)="onGuestsChange()"
+            placeholder="0"
+            min="0"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+          />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1"
+            >Max</label
+          >
+          <input
+            type="number"
+            [(ngModel)]="filters.maxGuests"
+            (input)="onGuestsChange()"
+            placeholder="1000"
+            min="0"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Button -->
+  <div class="mt-6">
+    <button
+      (click)="applyFilters()"
+      class="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 font-medium shadow-lg"
+    >
+      Apply Filters
+    </button>
+  </div>
 </div>

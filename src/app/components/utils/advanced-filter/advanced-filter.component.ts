@@ -56,6 +56,7 @@ export class AdvancedFilterComponent implements OnInit, OnDestroy, OnChanges {
     availability: false,
     timeUsage: false,
     suitability: false,
+    availabilityStatus: false,
     sorting: false,
   };
 
@@ -397,6 +398,10 @@ export class AdvancedFilterComponent implements OnInit, OnDestroy, OnChanges {
   resetAllFilters(): void {
     this.initializeFilters();
     this.resetFilters.emit();
+  }
+
+  applyFilters(): void {
+    this.emitFilters();
   }
 
   getCurrentFilters(): ServiceFilters | ProductFilters {
