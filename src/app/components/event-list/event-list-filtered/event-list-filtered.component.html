@@ -1,33 +1,179 @@
-<div class="container mx-auto mt-5 mb-5 flex">
-  <div class="w-1/4 pr-5">
-    <app-event-filter (filtersChange)="applyFilters($event)"></app-event-filter>
-  </div>
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Filter Sidebar -->
+      <div class="lg:w-1/4">
+        <div class="sticky top-8">
+          <app-event-filter
+            [initialFilters]="currentFilters"
+            (filtersChange)="applyFilters($event)"
+            (resetFilters)="onResetFilters()"
+          ></app-event-filter>
+        </div>
+      </div>
 
-  <div class="w-3/4">
-    <div class="grid grid-cols-4 gap-5 items-start">
-      <app-event-card
-        *ngFor="let event of paginatedEvents"
-        [event]="event"
-        class="bg-white shadow-md rounded-lg p-4"
-      ></app-event-card>
-    </div>
+      <!-- Events Content -->
+      <div class="lg:w-3/4">
+        <!-- Header -->
+        <div class="mb-8">
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                Discover Events
+              </h1>
+              <p class="text-gray-600">
+                <span *ngIf="!loading && hasEvents">
+                  Showing {{ events.length }} of {{ totalElements }} events
+                  <span *ngIf="showPagination"
+                    >(Page {{ currentPageDisplay }} of {{ totalPages }})</span
+                  >
+                </span>
+                <span *ngIf="loading">Loading events...</span>
+              </p>
+            </div>
+          </div>
+        </div>
 
-    <div class="flex justify-between items-center mt-5">
-      <button
-        class="p-2 bg-gray-200 rounded hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-500"
-        [disabled]="currentPage === 1"
-        (click)="prevPage()"
-      >
-        Previous
-      </button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button
-        class="p-2 bg-gray-200 rounded hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-500"
-        [disabled]="currentPage === totalPages"
-        (click)="nextPage()"
-      >
-        Next
-      </button>
+        <!-- Loading State -->
+        <div
+          *ngIf="loading"
+          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+        >
+          <div
+            *ngFor="let item of [1, 2, 3, 4, 5, 6]"
+            class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-pulse"
+          >
+            <div class="h-48 bg-gray-200 rounded-lg mb-4"></div>
+            <div class="h-4 bg-gray-200 rounded mb-2"></div>
+            <div class="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+            <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+          </div>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error && !loading" class="text-center py-16">
+          <div class="mb-6">
+            <svg
+              class="w-24 h-24 mx-auto text-red-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">
+            {{ error }}
+          </h3>
+          <button
+            (click)="loadEvents()"
+            class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg"
+          >
+            Try Again
+          </button>
+        </div>
+
+        <!-- Events Grid -->
+        <div *ngIf="!loading && !error && hasEvents">
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <app-event-card
+              *ngFor="let event of events"
+              [event]="event"
+              class="transform hover:scale-105 transition-transform duration-200"
+            ></app-event-card>
+          </div>
+
+          <!-- Pagination -->
+          <div
+            *ngIf="showPagination"
+            class="flex justify-center items-center mt-12 space-x-4"
+          >
+            <button
+              (click)="prevPage()"
+              [disabled]="currentPage === 0"
+              class="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-sm"
+            >
+              ← Previous
+            </button>
+
+            <div class="flex items-center space-x-2">
+              <!-- Page numbers for small pagination -->
+              <div *ngIf="totalPages <= 7" class="flex space-x-1">
+                <button
+                  *ngFor="let page of totalPagesArray"
+                  (click)="goToPage(page)"
+                  [class]="
+                    page === currentPage
+                      ? 'px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium'
+                      : 'px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium'
+                  "
+                >
+                  {{ page + 1 }}
+                </button>
+              </div>
+
+              <!-- Compact pagination for many pages -->
+              <div *ngIf="totalPages > 7" class="flex items-center space-x-2">
+                <span
+                  class="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium"
+                >
+                  {{ currentPageDisplay }}
+                </span>
+                <span class="text-gray-500">of</span>
+                <span
+                  class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium"
+                >
+                  {{ totalPages }}
+                </span>
+              </div>
+            </div>
+
+            <button
+              (click)="nextPage()"
+              [disabled]="currentPage === totalPages - 1"
+              class="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-sm"
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+
+        <!-- No Events State -->
+        <div *ngIf="!loading && !error && !hasEvents" class="text-center py-16">
+          <div class="mb-6">
+            <svg
+              class="w-24 h-24 mx-auto text-gray-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1"
+                d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4v10m6-10v10m-6-4h6"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">
+            No events found
+          </h3>
+          <p class="text-gray-600 mb-6">
+            Try adjusting your filters to see more events.
+          </p>
+          <button
+            (click)="onResetFilters()"
+            class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg"
+          >
+            Clear All Filters
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
