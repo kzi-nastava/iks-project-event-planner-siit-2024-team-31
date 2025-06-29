@@ -1,0 +1,195 @@
+/* Custom styles for Event Detail Component */
+
+.event-detail-container {
+  min-height: 100vh;
+}
+
+.event-image-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+.event-image {
+  transition: transform 0.3s ease;
+}
+
+.event-image:hover {
+  transform: scale(1.02);
+}
+
+.image-navigation-dots {
+  backdrop-filter: blur(10px);
+}
+
+.image-navigation-dots button {
+  transition: all 0.2s ease;
+}
+
+.image-navigation-dots button:hover {
+  transform: scale(1.1);
+}
+
+.event-badge {
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.event-status-badge {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.event-info-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.event-info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.15),
+    0 15px 15px -5px rgba(0, 0, 0, 0.06);
+}
+
+.agenda-item {
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.agenda-item:hover {
+  border-left-color: #6366f1;
+  background-color: #f8fafc;
+}
+
+.budget-item {
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.budget-item:hover {
+  border-left-color: #10b981;
+  background-color: #f0fdf4;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.modal-backdrop {
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.favorite-button {
+  transition: all 0.2s ease;
+}
+
+.favorite-button:hover {
+  transform: scale(1.05);
+}
+
+.favorite-button.active {
+  animation: heartbeat 0.6s ease-in-out;
+}
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.event-detail-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(10px);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.section-divider {
+  background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+  height: 1px;
+  margin: 2rem 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .event-detail-container {
+    padding: 1rem;
+  }
+
+  .event-info-card {
+    margin-bottom: 1rem;
+  }
+
+  .agenda-item,
+  .budget-item {
+    padding: 1rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .event-info-card {
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-effect {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
