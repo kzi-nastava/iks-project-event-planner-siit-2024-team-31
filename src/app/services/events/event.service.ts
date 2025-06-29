@@ -174,4 +174,9 @@ export class EventService {
       params,
     });
   }
+
+  // Get user events by month for calendar (requires authentication)
+  getEventsByMonth(year: number, month: number): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.apiUrl}/calendar/${year}/${month}`);
+  }
 }
