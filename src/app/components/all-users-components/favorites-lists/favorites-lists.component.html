@@ -74,22 +74,19 @@
           *ngFor="let event of favoriteEvents; trackBy: trackByEventId"
           class="group bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 overflow-hidden"
         >
-          <div
-            class="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 relative overflow-hidden"
-          >
+          <div class="relative h-48 overflow-hidden rounded-t-lg">
             <img
-              *ngIf="event.imageUrls && event.imageUrls.length > 0"
-              [src]="event.imageUrls[0]"
+              *ngIf="hasItemImages(event)"
+              [src]="getItemFirstImageUrl(event)"
               [alt]="event.name || event.title"
               class="w-full h-full object-cover"
-              loading="lazy"
             />
             <div
-              *ngIf="!event.imageUrls || event.imageUrls.length === 0"
-              class="w-full h-full flex items-center justify-center"
+              *ngIf="!hasItemImages(event)"
+              class="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center"
             >
               <svg
-                class="w-8 h-8 text-gray-400"
+                class="w-16 h-16 text-gray-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -159,14 +156,14 @@
             class="w-12 h-12 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden"
           >
             <img
-              *ngIf="event.imageUrls && event.imageUrls.length > 0"
-              [src]="event.imageUrls[0]"
+              *ngIf="hasItemImages(event)"
+              [src]="getItemFirstImageUrl(event)"
               [alt]="event.name || event.title"
               class="w-full h-full object-cover"
               loading="lazy"
             />
             <svg
-              *ngIf="!event.imageUrls || event.imageUrls.length === 0"
+              *ngIf="!hasItemImages(event)"
               class="w-5 h-5 text-gray-400"
               fill="none"
               stroke="currentColor"
@@ -308,14 +305,14 @@
               class="aspect-square bg-gradient-to-br from-green-50 to-blue-50 relative overflow-hidden"
             >
               <img
-                *ngIf="product.imageUrls && product.imageUrls.length > 0"
-                [src]="product.imageUrls[0]"
+                *ngIf="hasItemImages(product)"
+                [src]="getItemFirstImageUrl(product)"
                 [alt]="product.name || product.title"
                 class="w-full h-full object-cover"
                 loading="lazy"
               />
               <div
-                *ngIf="!product.imageUrls || product.imageUrls.length === 0"
+                *ngIf="!hasItemImages(product)"
                 class="w-full h-full flex items-center justify-center"
               >
                 <svg
@@ -377,14 +374,14 @@
               class="w-12 h-12 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden"
             >
               <img
-                *ngIf="product.imageUrls && product.imageUrls.length > 0"
-                [src]="product.imageUrls[0]"
+                *ngIf="hasItemImages(product)"
+                [src]="getItemFirstImageUrl(product)"
                 [alt]="product.name || product.title"
                 class="w-full h-full object-cover"
                 loading="lazy"
               />
               <svg
-                *ngIf="!product.imageUrls || product.imageUrls.length === 0"
+                *ngIf="!hasItemImages(product)"
                 class="w-5 h-5 text-gray-400"
                 fill="none"
                 stroke="currentColor"
@@ -527,14 +524,14 @@
               class="aspect-square bg-gradient-to-br from-purple-50 to-pink-50 relative overflow-hidden"
             >
               <img
-                *ngIf="service.imageUrls && service.imageUrls.length > 0"
-                [src]="service.imageUrls[0]"
+                *ngIf="hasItemImages(service)"
+                [src]="getItemFirstImageUrl(service)"
                 [alt]="service.name || service.title"
                 class="w-full h-full object-cover"
                 loading="lazy"
               />
               <div
-                *ngIf="!service.imageUrls || service.imageUrls.length === 0"
+                *ngIf="!hasItemImages(service)"
                 class="w-full h-full flex items-center justify-center"
               >
                 <svg
@@ -598,26 +595,30 @@
               class="w-12 h-12 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden"
             >
               <img
-                *ngIf="service.imageUrls && service.imageUrls.length > 0"
-                [src]="service.imageUrls[0]"
+                *ngIf="hasItemImages(service)"
+                [src]="getItemFirstImageUrl(service)"
                 [alt]="service.name || service.title"
                 class="w-full h-full object-cover"
                 loading="lazy"
               />
-              <svg
-                *ngIf="!service.imageUrls || service.imageUrls.length === 0"
-                class="w-5 h-5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+              <div
+                *ngIf="!hasItemImages(service)"
+                class="w-full h-full flex items-center justify-center"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h1a1 1 0 011 1v5m-4 0h4"
-                ></path>
-              </svg>
+                <svg
+                  class="w-8 h-8 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h1a1 1 0 011 1v5m-4 0h4"
+                  ></path>
+                </svg>
+              </div>
             </div>
             <div class="flex-1 min-w-0">
               <h3 class="font-medium text-gray-900 text-sm truncate">
