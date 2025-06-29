@@ -1,104 +1,70 @@
-// Advanced Filter Component Styles
+// Advanced Filter Component Styles - Minimal custom styles
 
-.filter-container {
-  @apply bg-white rounded-xl shadow-lg p-6;
+// Custom range slider styling
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
 
-  // Increase spacing between main filter sections
-  .filter-section {
-    @apply space-y-3;
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
 
-    &:not(:last-child) {
-      margin-bottom: 2rem; // Consistent spacing between all sections
-    }
-
-    &:first-child {
-      margin-top: 1.5rem; // Add top margin to first section (Search)
-    }
-  }
-
-  // Reduce spacing in checkbox lists
-  .checkbox-list {
-    @apply max-h-40 overflow-y-auto;
-
-    .checkbox-item {
-      @apply flex items-center cursor-pointer hover:bg-gray-50 rounded;
-      padding: 0.375rem 0.5rem; // Smaller padding for list items
-      margin-bottom: 0.25rem; // Smaller margin between items
-
-      .checkbox-input {
-        @apply rounded border-gray-300 text-blue-600 focus:ring-blue-500;
-        margin-right: 0.5rem; // Smaller spacing between checkbox and text
-      }
-
-      .checkbox-label {
-        @apply text-sm text-gray-700;
-      }
-
-      .checkbox-count {
-        @apply text-xs text-gray-500 ml-auto;
-      }
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     }
   }
 
-  // Section headers
-  .section-header {
-    @apply flex items-center justify-between w-full text-left font-medium text-gray-700;
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
 
-    .section-toggle {
-      @apply text-gray-500;
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     }
   }
 
-  // Section content
-  .section-content {
-    @apply space-y-3;
-    padding-top: 0.5rem; // Smaller top padding
+  &::-webkit-slider-track {
+    background: #e5e7eb;
+    border-radius: 4px;
   }
 
-  // Rating slider specific styling
-  .rating-slider-container {
-    @apply flex items-center space-x-2;
-    padding-bottom: 0.5rem; // Extra padding below rating slider
-
-    .rating-slider {
-      @apply flex-1;
-    }
-
-    .rating-value {
-      @apply text-sm text-gray-600 min-w-[3rem];
-    }
+  &::-moz-range-track {
+    background: #e5e7eb;
+    border-radius: 4px;
+    border: none;
   }
+}
 
-  // Search inputs within sections
-  .section-search {
-    @apply w-full px-3 py-2 text-sm border border-gray-300 rounded-lg;
-    @apply focus:ring-2 focus:ring-blue-500 focus:border-transparent;
-    margin-bottom: 0.5rem; // Smaller margin below search
-  }
+// Scrollbar styling for overflow containers
+.max-h-48::-webkit-scrollbar {
+  width: 6px;
+}
 
-  // Form inputs
-  .form-input {
-    @apply w-full px-3 py-2 text-sm border border-gray-300 rounded-lg;
-    @apply focus:ring-2 focus:ring-blue-500 focus:border-transparent;
-  }
+.max-h-48::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 3px;
+}
 
-  // Grid layouts
-  .input-grid {
-    @apply grid grid-cols-2 gap-3;
-  }
+.max-h-48::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
 
-  // Special spacing for availability checkbox
-  .availability-checkbox {
-    @apply flex items-center cursor-pointer;
-    padding: 0.75rem 0; // Moderate padding for standalone checkbox
-
-    .availability-input {
-      @apply rounded border-gray-300 text-blue-600 focus:ring-blue-500;
-      margin-right: 0.5rem;
-    }
-
-    .availability-label {
-      @apply text-sm text-gray-700;
-    }
+  &:hover {
+    background: #9ca3af;
   }
 }

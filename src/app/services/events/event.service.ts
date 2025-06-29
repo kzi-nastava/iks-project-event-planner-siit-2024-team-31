@@ -1,8 +1,13 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CreateEventRequest } from '../../types/dto/requests/createEventRequest';
+import { CreateEventResponse } from '../../types/dto/responses/createEventResponse';
 import { EventType } from '../../types/eventType';
+import { EventFilters } from '../../types/filter.interface';
 import { Event } from '../../types/models/event.model';
+import { Page } from '../../types/page';
 import { baseUrl } from '../baseUrl';
 
 @Injectable({
@@ -13,139 +18,160 @@ export class EventService {
 
   constructor(private http: HttpClient) {}
 
-  private events: Event[] = Array.from({ length: 50 }, (_, index) => {
-    const dateStart = new Date(
-      `2024-12-${((index % 30) + 1).toString().padStart(2, '0')}T10:00:00`
-    );
-    const dateEnd = new Date(
-      `2024-12-${((index % 30) + 1).toString().padStart(2, '0')}T12:00:00`
-    );
-
-    return {
-      id: `event-${index + 1}`,
-      name: `Event Title ${index + 1}`,
-      eventType: {
-        id: index % 5,
-        name: [
-          'Conference',
-          'Exhibition',
-          'Festival',
-          'Networking',
-          'Workshop',
-        ][index % 5],
-      },
-      description: `This is the description of Event Title ${
-        index + 1
-      }. It is a ${
-        ['Conference', 'Exhibition', 'Festival', 'Networking', 'Workshop'][
-          index % 5
-        ]
-      }.`,
-      startDate: isNaN(dateStart.getTime())
-        ? new Date().toISOString()
-        : dateStart.toISOString(),
-      endDate: isNaN(dateEnd.getTime())
-        ? new Date().toISOString()
-        : dateEnd.toISOString(),
-      imageUrls: Array.from(
-        { length: 3 },
-        (_, imgIndex) =>
-          `https://picsum.photos/300/200?random=${
-            20 + index * 3 + imgIndex + 1
-          }`
-      ),
-      location: {
-        lng: 19.8227 + index * 0.01,
-        lat: 45.2396 + index * 0.01,
-        address: `Address ${index + 1}`,
-      },
-      maxNumGuests: 50 + index * 10,
-      isPrivate: index % 2 === 0,
-      agenda: null,
-      budget: null,
-    };
-  });
-
-  getTopEvents(): Observable<Event[]> {
-    //return this.http.get<Event[]>(`${this.apiUrl}/top?city=${city}`);
-
-    //test data
-    const topEvents = this.events.slice(0, 5);
-    return of(topEvents);
-  }
-
-  getAllEvents(): Observable<Event[]> {
-    //return this.http.get<Event[]>(`${this.apiUrl}?city=${city}`);
-    //test data
-    return of(this.events);
-  }
-
+  // Public methods for event retrieval
   getEventById(id: string): Observable<Event> {
-    //return this.http.get<Event>(`${this.apiUrl}/${id}`);
-
-    //test data
-    const event = this.events.find((event) => event.id === id);
-    if (event) {
-      return of(event);
-    } else {
-      return throwError(() => new Error('Event not found'));
-    }
+    return this.http.get<Event>(`${this.apiUrl}/public/${id}`);
   }
 
-  public getEventTypes(): Observable<EventType[]> {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    };
-    return this.http.get<EventType[]>(`${this.apiUrl}/event-types`, {
-      headers,
+  searchEvents(
+    keyword?: string,
+    page: number = 0,
+    pageSize: number = 20
+  ): Observable<Page<Event>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', pageSize.toString());
+
+    if (keyword && keyword.trim()) {
+      params = params.set('keyword', keyword.trim());
+    }
+
+    return this.http.get<Page<Event>>(`${this.apiUrl}/public/search`, {
+      params,
     });
   }
 
-  //filtering
-  private filtersSource = new BehaviorSubject<any>({});
-  filters$ = this.filtersSource.asObservable();
-
-  updateFilters(filters: any) {
-    //logic for request server filter
-    this.filtersSource.next(filters);
+  getTopEvents(): Observable<Event[]> {
+    return this.http
+      .get<Page<Event>>(`${this.apiUrl}/public/top-5`)
+      .pipe(map((page) => page.content));
   }
 
+  getAllEvents(): Observable<Event[]> {
+    // Use search without keyword to get all events
+    return this.searchEvents('', 0, 1000).pipe(map((page) => page.content));
+  }
+
+  // Advanced filtering method
+  filterEvents(
+    filters: EventFilters,
+    page: number = 0,
+    pageSize: number = 20
+  ): Observable<Page<Event>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', pageSize.toString());
+
+    // Add filter parameters
+    if (filters.searchTerm && filters.searchTerm.trim()) {
+      params = params.set('keyword', filters.searchTerm.trim());
+    }
+
+    if (filters.eventTypeIds && filters.eventTypeIds.length > 0) {
+      // Convert string array to number array for API
+      const typeIds = filters.eventTypeIds.map((id) => parseInt(id, 10));
+      typeIds.forEach((id) => {
+        params = params.append('eventTypeIds', id.toString());
+      });
+    }
+
+    if (filters.city && filters.city.trim()) {
+      params = params.set('city', filters.city.trim());
+    }
+
+    if (filters.fromDate) {
+      // Convert to LocalDateTime format expected by backend
+      const fromDateTime = new Date(filters.fromDate).toISOString();
+      params = params.set('dateAfter', fromDateTime);
+    }
+
+    if (filters.toDate) {
+      // Convert to LocalDateTime format expected by backend
+      const toDateTime = new Date(filters.toDate);
+      toDateTime.setHours(23, 59, 59, 999); // End of day
+      params = params.set('dateBefore', toDateTime.toISOString());
+    }
+
+    if (filters.minGuests !== undefined && filters.minGuests > 0) {
+      params = params.set('minGuestNum', filters.minGuests.toString());
+    }
+
+    if (filters.maxGuests !== undefined && filters.maxGuests > 0) {
+      params = params.set('maxGuestNum', filters.maxGuests.toString());
+    }
+
+    return this.http.get<Page<Event>>(`${this.apiUrl}/public/filter-search`, {
+      params,
+    });
+  }
+
+  // Get filter options (price ranges, etc.)
+  getEventFilterOptions(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/public/filter-options`);
+  }
+
+  // Pagination method for compatibility
   getEventsPage(
     page: number,
     pageSize: number,
     searchTerm?: string
   ): Observable<Event[]> {
-    // For now using mock data, but this should be:
-    // let url = `${this.apiUrl}/public/search?page=${page}&pageSize=${pageSize}`;
-    // if (searchTerm && searchTerm.trim()) {
-    //   url += `&search=${encodeURIComponent(searchTerm.trim())}`;
-    // }
-    // return this.http.get<Event[]>(url);
-
-    // Mock implementation with search and pagination
-    let filteredEvents = this.events;
-    if (searchTerm && searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
-      filteredEvents = this.events.filter(
-        (event) =>
-          event.name.toLowerCase().includes(term) ||
-          event.description.toLowerCase().includes(term)
-      );
-    }
-
-    const startIndex = page * pageSize;
-    const paginatedEvents = filteredEvents.slice(
-      startIndex,
-      startIndex + pageSize
+    return this.searchEvents(searchTerm, page, pageSize).pipe(
+      map((pageResult) => pageResult.content)
     );
-    return of(paginatedEvents);
   }
 
-  searchEvents(
-    searchTerm: string,
+  // Event creation (requires authentication)
+  createEvent(
+    eventRequest: CreateEventRequest
+  ): Observable<CreateEventResponse> {
+    return this.http.post<CreateEventResponse>(`${this.apiUrl}`, eventRequest);
+  }
+
+  // Event creation with FormData (requires authentication)
+  createEventWithFormData(formData: FormData): Observable<CreateEventResponse> {
+    return this.http.post<CreateEventResponse>(`${this.apiUrl}`, formData);
+  }
+
+  // Update event (requires authentication)
+  updateEvent(eventId: string, eventData: Event): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${eventId}`, eventData);
+  }
+
+  // Send invite (requires authentication)
+  sendInvite(eventId: string, email: string): Observable<any> {
+    const params = new HttpParams().set('email', email);
+
+    return this.http.post<any>(
+      `${this.apiUrl}/${eventId}/send-invite`,
+      {},
+      { params }
+    );
+  }
+
+  // Legacy filter management (kept for compatibility)
+  private filtersSource = new BehaviorSubject<EventFilters>({});
+  filters$ = this.filtersSource.asObservable();
+
+  updateFilters(filters: EventFilters) {
+    this.filtersSource.next(filters);
+  }
+
+  public getEventTypes(): Observable<EventType[]> {
+    return this.http.get<EventType[]>(`${this.apiUrl}/event-types`);
+  }
+
+  // Get my events for organizer (requires OD role)
+  getMyEvents(
     page: number = 0,
     pageSize: number = 20
-  ): Observable<Event[]> {
-    return this.getEventsPage(page, pageSize, searchTerm);
+  ): Observable<Page<Event>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', pageSize.toString());
+
+    return this.http.get<Page<Event>>(`${this.apiUrl}/my-events/organizer`, {
+      params,
+    });
   }
 }
