@@ -1,31 +1,87 @@
 <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+  <!-- Calendar Tabs -->
+  <div *ngIf="availableTabs.length > 1" class="border-b border-gray-200">
+    <nav class="flex space-x-8 px-6 pt-6" aria-label="Calendar Tabs">
+      <button
+        *ngFor="let tab of availableTabs"
+        (click)="switchTab(tab.key)"
+        class="group relative min-w-0 flex-1 overflow-hidden py-4 px-1 text-sm font-medium text-center transition-all duration-200 border-b-2"
+        [ngClass]="getTabClasses(tab.key)"
+      >
+        <div class="flex flex-col items-center space-y-2">
+          <!-- Tab Icon -->
+          <div
+            class="flex items-center justify-center w-8 h-8 rounded-lg transition-colors duration-200"
+            [ngClass]="getTabIconClasses(tab.key)"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                [attr.d]="getTabIcon(tab.icon)"
+              ></path>
+            </svg>
+          </div>
+
+          <!-- Tab Label -->
+          <div class="flex flex-col items-center">
+            <span class="font-medium">{{ tab.label }}</span>
+            <span class="text-xs text-gray-400 mt-1 hidden sm:block">{{
+              tab.description
+            }}</span>
+          </div>
+        </div>
+
+        <!-- Active indicator -->
+        <div
+          *ngIf="currentTab === tab.key"
+          class="absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-200"
+          [ngClass]="getColorClasses().bg"
+        ></div>
+      </button>
+    </nav>
+  </div>
+
   <!-- Calendar Header -->
   <div
-    class="bg-gradient-to-r from-purple-500 to-purple-600 p-6 border-b border-gray-200"
+    class="p-6 border-b border-gray-200 bg-gradient-to-r"
+    [ngClass]="getColorClasses().gradient"
   >
     <div class="flex items-center justify-between">
-      <h2 class="text-xl font-semibold text-white flex items-center">
-        <svg
-          class="w-5 h-5 mr-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-          ></path>
-        </svg>
-        My Event Calendar
-      </h2>
+      <div class="flex flex-col">
+        <h2 class="text-xl font-semibold text-white flex items-center">
+          <svg
+            class="w-5 h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              [attr.d]="getTabIcon(getCurrentTabConfig()?.icon || 'calendar')"
+            ></path>
+          </svg>
+          {{ getCurrentTabConfig()?.label || "My Event Calendar" }}
+        </h2>
+        <p class="text-sm mt-1" [ngClass]="getColorClasses().textLight">
+          {{ getCurrentTabConfig()?.description || "Your scheduled events" }}
+        </p>
+      </div>
 
       <!-- Navigation Controls -->
       <div class="flex items-center space-x-2">
         <button
           (click)="previousMonth()"
-          class="p-2 text-white hover:bg-purple-600 rounded-lg transition-colors duration-200"
+          class="p-2 text-white rounded-lg transition-colors duration-200"
+          [ngClass]="getColorClasses().bgHover"
           title="Previous Month"
         >
           <svg
@@ -44,14 +100,16 @@
         </button>
 
         <div
-          class="text-white font-medium px-4 py-2 bg-purple-600 rounded-lg min-w-[140px] text-center"
+          class="text-white font-medium px-4 py-2 rounded-lg min-w-[140px] text-center"
+          [ngClass]="getColorClasses().bgSecondary"
         >
           {{ monthNames[currentMonth] }} {{ currentYear }}
         </div>
 
         <button
           (click)="nextMonth()"
-          class="p-2 text-white hover:bg-purple-600 rounded-lg transition-colors duration-200"
+          class="p-2 text-white rounded-lg transition-colors duration-200"
+          [ngClass]="getColorClasses().bgHover"
           title="Next Month"
         >
           <svg
@@ -71,7 +129,12 @@
 
         <button
           (click)="goToCurrentMonth()"
-          class="px-3 py-2 text-sm text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors duration-200"
+          class="px-3 py-2 text-sm text-white rounded-lg transition-colors duration-200"
+          [ngClass]="
+            getColorClasses().bgSecondary +
+            ' ' +
+            getColorClasses().bgSecondaryHover
+          "
           title="Go to Current Month"
         >
           Today
@@ -85,7 +148,8 @@
     <!-- Loading State -->
     <div *ngIf="loading" class="flex items-center justify-center py-8">
       <div
-        class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"
+        class="animate-spin rounded-full h-8 w-8 border-b-2"
+        [ngClass]="getColorClasses().spinner"
       ></div>
       <span class="ml-2 text-gray-600">Loading events...</span>
     </div>
@@ -113,8 +177,40 @@
       </div>
     </div>
 
+    <!-- Empty State -->
+    <div
+      *ngIf="!loading && !error && events.length === 0"
+      class="text-center py-12"
+    >
+      <svg
+        class="mx-auto h-12 w-12 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          [attr.d]="getTabIcon(getCurrentTabConfig()?.icon || 'calendar')"
+        ></path>
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No events found</h3>
+      <p class="mt-1 text-sm text-gray-500">
+        <span *ngIf="currentTab === 'guest'"
+          >You don't have any upcoming events as a guest.</span
+        >
+        <span *ngIf="currentTab === 'busyness'"
+          >No events with your services booked this month.</span
+        >
+        <span *ngIf="currentTab === 'organized'"
+          >You haven't organized any events this month.</span
+        >
+      </p>
+    </div>
+
     <!-- Calendar Grid -->
-    <div *ngIf="!loading" class="calendar-grid">
+    <div *ngIf="!loading && !error" class="calendar-grid">
       <!-- Day Names Header -->
       <div class="grid grid-cols-7 gap-1 mb-2">
         <div
@@ -155,7 +251,8 @@
             <!-- Event Count Badge -->
             <span
               *ngIf="calendarDay.hasEvents"
-              class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-purple-500 rounded-full"
+              class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white rounded-full"
+              [ngClass]="getColorClasses().bg"
             >
               {{ calendarDay.events.length }}
             </span>
@@ -167,14 +264,7 @@
               *ngFor="let event of calendarDay.events | slice : 0 : 2"
               (click)="onEventClick(event); $event.stopPropagation()"
               class="text-xs p-1 rounded cursor-pointer truncate transition-colors duration-200"
-              [ngClass]="{
-                'bg-gray-200 text-gray-700 hover:bg-gray-300':
-                  getEventStatusClass(event) === 'past',
-                'bg-green-200 text-green-800 hover:bg-green-300':
-                  getEventStatusClass(event) === 'ongoing',
-                'bg-purple-200 text-purple-800 hover:bg-purple-300':
-                  getEventStatusClass(event) === 'upcoming'
-              }"
+              [ngClass]="getEventClasses(getEventStatusClass(event))"
               [title]="event.name"
             >
               {{ event.name }}
@@ -184,7 +274,8 @@
             <div
               *ngIf="calendarDay.events.length > 2"
               (click)="onMoreEventsClick(calendarDay, $event)"
-              class="text-xs text-purple-600 text-center py-1 cursor-pointer hover:text-purple-800 hover:bg-purple-50 rounded transition-colors duration-200"
+              class="text-xs text-center py-1 cursor-pointer rounded transition-colors duration-200"
+              [ngClass]="getColorClasses().text + ' hover:bg-gray-50'"
             >
               +{{ calendarDay.events.length - 2 }} more
             </div>
@@ -195,7 +286,7 @@
 
     <!-- Events Legend -->
     <div
-      *ngIf="!loading"
+      *ngIf="!loading && !error && events.length > 0"
       class="mt-6 flex items-center justify-center space-x-6 text-sm"
     >
       <div class="flex items-center">
@@ -207,7 +298,10 @@
         <span class="text-gray-600">Ongoing</span>
       </div>
       <div class="flex items-center">
-        <div class="w-3 h-3 bg-purple-500 rounded mr-2"></div>
+        <div
+          class="w-3 h-3 rounded mr-2"
+          [ngClass]="getColorClasses().bg"
+        ></div>
         <span class="text-gray-600">Upcoming</span>
       </div>
     </div>
@@ -226,7 +320,8 @@
   >
     <!-- Modal Header -->
     <div
-      class="bg-gradient-to-r from-purple-500 to-purple-600 p-6 border-b border-gray-200"
+      class="p-6 border-b border-gray-200 bg-gradient-to-r"
+      [ngClass]="getColorClasses().gradient"
     >
       <div class="flex items-center justify-between">
         <div>
@@ -241,18 +336,19 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                [attr.d]="getTabIcon(getCurrentTabConfig()?.icon || 'calendar')"
               ></path>
             </svg>
-            Events for {{ selectedDate | date : "fullDate" }}
+            {{ getCurrentTabConfig()?.label }} for
+            {{ selectedDate | date : "fullDate" }}
           </h2>
-          <p class="text-purple-100 text-sm mt-1">
+          <p class="text-sm mt-1" [ngClass]="getColorClasses().textLight">
             {{ selectedDayEvents.length }} event(s) scheduled
           </p>
         </div>
         <button
           (click)="closeDayEventsModal()"
-          class="text-white hover:text-purple-200 transition-colors duration-200"
+          class="text-white hover:text-gray-200 transition-colors duration-200"
         >
           <svg
             class="w-6 h-6"
@@ -278,13 +374,7 @@
           *ngFor="let event of selectedDayEvents; trackBy: trackByEventId"
           class="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200 cursor-pointer"
           (click)="onEventClick(event)"
-          [ngClass]="{
-            'border-gray-300 bg-gray-50': getEventStatusClass(event) === 'past',
-            'border-green-300 bg-green-50':
-              getEventStatusClass(event) === 'ongoing',
-            'border-purple-300 bg-purple-50':
-              getEventStatusClass(event) === 'upcoming'
-          }"
+          [ngClass]="getModalEventBorderClasses(getEventStatusClass(event))"
         >
           <div class="flex items-start justify-between">
             <div class="flex-1">
@@ -295,14 +385,9 @@
                 </h3>
                 <span
                   class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
-                  [ngClass]="{
-                    'bg-gray-200 text-gray-700':
-                      getEventStatusClass(event) === 'past',
-                    'bg-green-200 text-green-800':
-                      getEventStatusClass(event) === 'ongoing',
-                    'bg-purple-200 text-purple-800':
-                      getEventStatusClass(event) === 'upcoming'
-                  }"
+                  [ngClass]="
+                    getEventStatusBadgeClasses(getEventStatusClass(event))
+                  "
                 >
                   {{ getEventStatusText(event) }}
                 </span>
@@ -350,7 +435,9 @@
                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                   ></path>
                 </svg>
-                <span class="text-sm">{{ event.location }}</span>
+                <span class="text-sm" [title]="event.location.address">{{
+                  getEventLocationText(event)
+                }}</span>
               </div>
 
               <!-- Event Description -->
@@ -384,14 +471,7 @@
             <div class="ml-4">
               <button
                 class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200"
-                [ngClass]="{
-                  'bg-gray-100 text-gray-600 hover:bg-gray-200':
-                    getEventStatusClass(event) === 'past',
-                  'bg-green-100 text-green-600 hover:bg-green-200':
-                    getEventStatusClass(event) === 'ongoing',
-                  'bg-purple-100 text-purple-600 hover:bg-purple-200':
-                    getEventStatusClass(event) === 'upcoming'
-                }"
+                [ngClass]="getActionButtonClasses(getEventStatusClass(event))"
               >
                 <svg
                   class="w-4 h-4 mr-1"
