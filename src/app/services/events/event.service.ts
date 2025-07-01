@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { CreateEventRequest } from '../../types/dto/requests/createEventRequest';
 import { CreateEventResponse } from '../../types/dto/responses/createEventResponse';
 import { EventType } from '../../types/eventType';
@@ -173,5 +173,39 @@ export class EventService {
     return this.http.get<Page<Event>>(`${this.apiUrl}/my-events/organizer`, {
       params,
     });
+  }
+
+  // Get user events by month for calendar (requires authentication)
+  getEventsByMonth(year: number, month: number): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.apiUrl}/calendar/${year}/${month}`);
+  }
+
+  // Get PUP service product busyness events by month (requires PUP role)
+  getServiceProductBusynessEventsByMonth(
+    year: number,
+    month: number
+  ): Observable<Event[]> {
+    return this.http.get<Event[]>(
+      `${this.apiUrl}/service-product-calendar/${year}/${month}`
+    );
+  }
+
+  // Get organizer events by month (requires OD role)
+  getOrganizerEventsByMonth(year: number, month: number): Observable<Event[]> {
+    // Try the calendar endpoint first, fallback to existing my-events if not available
+    return this.http.get<Event[]>(`${this.apiUrl}/organizer-calendar/${year}/${month}`)
+      .pipe(
+        catchError((error) => {
+          console.warn('Organizer calendar endpoint not available, using my-events fallback');
+          // Fallback to existing my-events endpoint and filter by date on frontend
+          return this.getMyEvents(0, 100).pipe(
+            map(page => page.content.filter(event => {
+              if (!event.startTime) return false;
+              const eventDate = new Date(event.startTime);
+              return eventDate.getFullYear() === year && eventDate.getMonth() === (month - 1);
+            }))
+          );
+        })
+      );
   }
 }

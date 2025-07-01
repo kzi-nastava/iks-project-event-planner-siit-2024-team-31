@@ -8,6 +8,7 @@ import { UserMyProfileResponse } from '../../../types/dto/responses/userMyProfil
 import { Role } from '../../../types/roles';
 import { ChangePasswordComponent } from '../change-password-component/change-password-component.component';
 import { EditProfileFormComponent } from '../edit-profile-form-component/edit-profile-form-component.component';
+import { EventCalendarComponent } from '../event-calendar/event-calendar.component';
 import { FavoritesListsComponent } from '../favorites-lists/favorites-lists.component';
 
 @Component({
@@ -18,6 +19,7 @@ import { FavoritesListsComponent } from '../favorites-lists/favorites-lists.comp
     FormsModule,
     ChangePasswordComponent,
     EditProfileFormComponent,
+    EventCalendarComponent,
     FavoritesListsComponent,
   ],
   templateUrl: './my-profile-component.component.html',
@@ -38,8 +40,6 @@ export class MyProfileComponent implements OnInit, OnChanges {
   deactivatePassword = '';
   isDeactivating = false;
   deactivateError = '';
-
-  //TODO: add user event calendar
 
   constructor(
     private userService: UserService,
