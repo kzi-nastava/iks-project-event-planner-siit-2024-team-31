@@ -18,6 +18,7 @@ export class AgendaCreationComponent {
   @Output() onModalClose = new EventEmitter<void>();
 
   newItem: AgendaItem = {
+    id: 0, // Temporary ID for new items
     title: '',
     description: '',
     startTime: '',
@@ -29,7 +30,9 @@ export class AgendaCreationComponent {
 
   addAgendaItem() {
     if (this.validateAgendaItem()) {
-      this.agendaItems.push({ ...this.newItem });
+      // Generate a temporary ID for new agenda items
+      const tempId = Date.now() + Math.random();
+      this.agendaItems.push({ ...this.newItem, id: tempId });
       this.resetNewItem();
     }
   }
@@ -57,6 +60,7 @@ export class AgendaCreationComponent {
 
   private resetNewItem() {
     this.newItem = {
+      id: 0, // Temporary ID for new items
       title: '',
       description: '',
       startTime: '',

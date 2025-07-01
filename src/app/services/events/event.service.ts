@@ -1,11 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { CreateEventRequest } from '../../types/dto/requests/createEventRequest';
 import { CreateEventResponse } from '../../types/dto/responses/createEventResponse';
 import { EventType } from '../../types/eventType';
 import { EventFilters } from '../../types/filter.interface';
+import { AgendaItem } from '../../types/models/agendaItem.model';
 import { Event } from '../../types/models/event.model';
 import { Page } from '../../types/page';
 import { baseUrl } from '../baseUrl';
@@ -193,19 +194,34 @@ export class EventService {
   // Get organizer events by month (requires OD role)
   getOrganizerEventsByMonth(year: number, month: number): Observable<Event[]> {
     // Try the calendar endpoint first, fallback to existing my-events if not available
-    return this.http.get<Event[]>(`${this.apiUrl}/organizer-calendar/${year}/${month}`)
+    return this.http
+      .get<Event[]>(`${this.apiUrl}/organizer-calendar/${year}/${month}`)
       .pipe(
         catchError((error) => {
-          console.warn('Organizer calendar endpoint not available, using my-events fallback');
+          console.warn(
+            'Organizer calendar endpoint not available, using my-events fallback'
+          );
           // Fallback to existing my-events endpoint and filter by date on frontend
           return this.getMyEvents(0, 100).pipe(
-            map(page => page.content.filter(event => {
-              if (!event.startTime) return false;
-              const eventDate = new Date(event.startTime);
-              return eventDate.getFullYear() === year && eventDate.getMonth() === (month - 1);
-            }))
+            map((page) =>
+              page.content.filter((event) => {
+                if (!event.startTime) return false;
+                const eventDate = new Date(event.startTime);
+                return (
+                  eventDate.getFullYear() === year &&
+                  eventDate.getMonth() === month - 1
+                );
+              })
+            )
           );
         })
       );
+  }
+
+  // Get event agenda (public endpoint)
+  getEventAgenda(eventId: string): Observable<AgendaItem[]> {
+    return this.http.get<AgendaItem[]>(
+      `${this.apiUrl}/public/${eventId}/agenda`
+    );
   }
 }
