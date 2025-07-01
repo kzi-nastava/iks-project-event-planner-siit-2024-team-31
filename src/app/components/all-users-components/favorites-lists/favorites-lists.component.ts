@@ -240,4 +240,47 @@ export class FavoritesListsComponent implements OnInit, OnDestroy {
     }
     return null;
   }
+
+  getEventLocationText(event: any): string {
+    if (!event.location) {
+      return 'No location specified';
+    }
+
+    // If location is an object with address property
+    if (typeof event.location === 'object' && event.location.address) {
+      const address = event.location.address;
+      if (address.length <= 30) {
+        return address;
+      }
+      return address.substring(0, 27) + '...';
+    }
+
+    // If location is a string
+    if (typeof event.location === 'string') {
+      if (event.location.length <= 30) {
+        return event.location;
+      }
+      return event.location.substring(0, 27) + '...';
+    }
+
+    return 'Location unavailable';
+  }
+
+  getEventLocationTitle(event: any): string {
+    if (!event.location) {
+      return 'No location specified';
+    }
+
+    // If location is an object with address property
+    if (typeof event.location === 'object' && event.location.address) {
+      return event.location.address;
+    }
+
+    // If location is a string
+    if (typeof event.location === 'string') {
+      return event.location;
+    }
+
+    return 'Location unavailable';
+  }
 }

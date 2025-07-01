@@ -131,9 +131,12 @@
               <span *ngIf="event.startDate">{{
                 event.startDate | date : "MMM d"
               }}</span>
-              <span *ngIf="event.location" class="truncate ml-2">{{
-                event.location
-              }}</span>
+              <span
+                *ngIf="event.location"
+                class="truncate ml-2"
+                [title]="getEventLocationTitle(event)"
+                >{{ getEventLocationText(event) }}</span
+              >
             </div>
           </div>
         </div>
@@ -188,9 +191,12 @@
               <span *ngIf="event.startDate">{{
                 event.startDate | date : "MMM d, y"
               }}</span>
-              <span *ngIf="event.location" class="truncate">{{
-                event.location
-              }}</span>
+              <span
+                *ngIf="event.location"
+                class="truncate"
+                [title]="getEventLocationTitle(event)"
+                >{{ getEventLocationText(event) }}</span
+              >
             </div>
           </div>
           <button
