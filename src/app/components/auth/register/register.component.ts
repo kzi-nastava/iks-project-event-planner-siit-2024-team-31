@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
+import { NotificationService } from '../../../services/notification.service';
 import { RegisterResponse } from '../../../types/dto/responses/registerResponse';
 import { Role } from '../../../types/roles';
 
@@ -13,7 +14,9 @@ import { Role } from '../../../types/roles';
   imports: [CommonModule, FormsModule, RouterModule],
 })
 export class RegisterComponent {
-  constructor(private authService: AuthService, private router: Router) {}
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private notification = inject(NotificationService);
 
   // User object with all the fields
   user = {
@@ -45,13 +48,13 @@ export class RegisterComponent {
   onSubmit() {
     // Check password confirmation
     if (this.user.password !== this.confirmPassword) {
-      alert('Passwords do not match');
+      this.notification.validationError('Passwords do not match');
       return;
     }
 
     // Role must be selected
     if (!this.user.role) {
-      alert('Please, choose a role');
+      this.notification.validationError('Please, choose a role');
       return;
     }
 
@@ -92,13 +95,14 @@ export class RegisterComponent {
         if (response.exception) {
           this.registrationError = response.exception;
         } else {
-          alert(response.message);
+          this.notification.success(response.message);
           this.router.navigate(['/login']);
         }
       },
       (error) => {
         this.isSubmitting = false;
         this.registrationError = 'Registration failed.';
+        this.notification.error('Registration failed. Please try again.');
         console.error('Error:', error);
       }
     );
