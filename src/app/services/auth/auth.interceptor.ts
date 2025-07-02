@@ -34,6 +34,19 @@ export const authInterceptor: HttpInterceptorFn = (
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
+      // Skip error handling for login and auth-related requests
+      const isAuthRequest =
+        req.url.includes('/api/auth/login') ||
+        req.url.includes('/api/auth/signup') ||
+        req.url.includes('/api/auth/send-recovery-code') ||
+        req.url.includes('/api/auth/verify-recovery-code') ||
+        req.url.includes('/api/auth/reset-password');
+
+      if (isAuthRequest) {
+        // Let the component handle auth-related errors
+        return throwError(() => error);
+      }
+
       if (error.status === 401) {
         const errorMessage = error.error?.error || '';
 
