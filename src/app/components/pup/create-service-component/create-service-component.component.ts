@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { EventTypesService } from '../../../services/event-types/event-types.service'; // Отдельный сервис для работы с типами событий
+import { NotificationService } from '../../../services/notification.service';
 import { ProductCategoriesService } from '../../../services/product-categories/product-categories.service';
 import { ProductService } from '../../../services/product/products.service';
 import { ProvidedServiceCategoriesService } from '../../../services/provided-service-categories/provided-service-categories.service';
@@ -70,14 +71,15 @@ export class CreateServiceComponent implements OnInit {
     bookingConfirmation: 'Manual' as 'Manual' | 'Auto',
   };
 
-  constructor(
-    public productService: ProductService,
-    public providedServiceService: ProvidedServiceService,
-    public productCategoryService: ProductCategoriesService,
-    public serviceCategoryService: ProvidedServiceCategoriesService,
-    public eventTypesService: EventTypesService,
-    public router: Router
-  ) {}
+  private productService = inject(ProductService);
+  private providedServiceService = inject(ProvidedServiceService);
+  private productCategoryService = inject(ProductCategoriesService);
+  private serviceCategoryService = inject(ProvidedServiceCategoriesService);
+  private eventTypesService = inject(EventTypesService);
+  public router = inject(Router); // Public for template access
+  private notification = inject(NotificationService);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.loadCategories();
@@ -358,15 +360,15 @@ export class CreateServiceComponent implements OnInit {
 
   private validateForm(): boolean {
     if (!this.serviceData.name.trim()) {
-      alert('Please enter a name');
+      this.notification.validationError('Please enter a name');
       return false;
     }
     if (!this.serviceData.category.trim()) {
-      alert('Please select a category');
+      this.notification.validationError('Please select a category');
       return false;
     }
     if (this.serviceData.price <= 0) {
-      alert('Please enter a valid price');
+      this.notification.validationError('Please enter a valid price');
       return false;
     }
     return true;
