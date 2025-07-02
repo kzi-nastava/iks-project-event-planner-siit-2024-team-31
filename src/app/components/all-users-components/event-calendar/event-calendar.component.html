@@ -373,8 +373,8 @@
         <div
           *ngFor="let event of selectedDayEvents; trackBy: trackByEventId"
           class="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200 cursor-pointer"
-          (click)="onEventClick(event)"
           [ngClass]="getModalEventBorderClasses(getEventStatusClass(event))"
+          (click)="onEventClick(event)"
         >
           <div class="flex items-start justify-between">
             <div class="flex-1">
