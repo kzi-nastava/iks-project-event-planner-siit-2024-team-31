@@ -173,3 +173,70 @@ textarea:focus {
   background-size: 800px 104px;
   animation: shimmer 1.5s linear infinite;
 }
+
+/* Material Snackbar Styles */
+.success-snackbar {
+  --mdc-snackbar-container-color: #10b981 !important;
+  --mdc-snackbar-supporting-text-color: white !important;
+  --mat-snack-bar-button-color: white !important;
+}
+
+.error-snackbar {
+  --mdc-snackbar-container-color: #ef4444 !important;
+  --mdc-snackbar-supporting-text-color: white !important;
+  --mat-snack-bar-button-color: white !important;
+}
+
+.warning-snackbar {
+  --mdc-snackbar-container-color: #f59e0b !important;
+  --mdc-snackbar-supporting-text-color: white !important;
+  --mat-snack-bar-button-color: white !important;
+}
+
+.info-snackbar {
+  --mdc-snackbar-container-color: #3b82f6 !important;
+  --mdc-snackbar-supporting-text-color: white !important;
+  --mat-snack-bar-button-color: white !important;
+}
+
+/* Global styles for snackbar */
+.mat-mdc-snack-bar-container {
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+  font-family: "Inter", sans-serif !important;
+}
+
+.mat-mdc-snack-bar-label {
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+.mat-mdc-snack-bar-action {
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  color: white !important;
+  background: transparent !important;
+  transition: text-decoration 0.2s ease !important;
+}
+
+/* Remove white background on hover and add underline */
+.mat-mdc-snack-bar-action:hover {
+  background: transparent !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 2px !important;
+}
+
+.mat-mdc-snack-bar-action:focus {
+  background: transparent !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 2px !important;
+}
+
+/* Remove ripple effect */
+.mat-mdc-snack-bar-action .mat-ripple {
+  display: none !important;
+}
