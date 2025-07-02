@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NotificationService } from '../../../services/notification.service';
 import { AgendaItem } from '../../../types/models/agendaItem.model';
 
 @Component({
@@ -11,6 +12,8 @@ import { AgendaItem } from '../../../types/models/agendaItem.model';
   styleUrl: './agenda-creation.component.scss',
 })
 export class AgendaCreationComponent {
+  private notification = inject(NotificationService);
+
   @Input() agendaItems: AgendaItem[] = [];
   @Input() eventStartTime!: string;
   @Input() eventEndTime!: string;
@@ -43,7 +46,7 @@ export class AgendaCreationComponent {
       !this.newItem.startTime ||
       !this.newItem.endTime
     ) {
-      alert('Please fill in all required fields');
+      this.notification.validationError('Please fill in all required fields');
       return false;
     }
 
@@ -51,7 +54,7 @@ export class AgendaCreationComponent {
     const endTime = new Date(this.newItem.endTime);
 
     if (startTime >= endTime) {
-      alert('End time must be after start time');
+      this.notification.validationError('End time must be after start time');
       return false;
     }
 
