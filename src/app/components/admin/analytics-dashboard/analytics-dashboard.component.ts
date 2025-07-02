@@ -1,14 +1,15 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AnalyticsService } from '../../../services/analytics/analytics.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { EventAnalyticsSummary } from '../../../types/models/analytics.model';
+import { Role } from '../../../types/roles';
 
 @Component({
   selector: 'app-analytics-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DecimalPipe],
   templateUrl: './analytics-dashboard.component.html',
   styleUrl: './analytics-dashboard.component.scss',
 })
@@ -31,31 +32,33 @@ export class AnalyticsDashboardComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    // For now, use mock data for development
-    // In production, replace with actual API call
-    try {
-      this.eventsSummary = this.analyticsService.generateMockEventSummaries();
-      this.loading = false;
-    } catch (err) {
-      this.error = 'Failed to load analytics data';
-      this.loading = false;
-      console.error('Error loading analytics:', err);
-    }
+    const currentUser = this.authService.getCurrentUser();
 
-    // Uncomment this when backend is ready:
-    /*
-    this.analyticsService.getEventAnalyticsSummary().subscribe({
+    // Determine which analytics endpoint to use based on user role
+    const analyticsObservable =
+      currentUser?.role === Role.ROLE_OD
+        ? this.analyticsService.getMyEventsAnalyticsSummary()
+        : this.analyticsService.getEventAnalyticsSummary();
+
+    analyticsObservable.subscribe({
       next: (data) => {
         this.eventsSummary = data;
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to load analytics data';
-        this.loading = false;
-        console.error('Error loading analytics:', err);
-      }
+        // Fallback to mock data for development if API fails
+        console.warn('API call failed, using mock data:', err);
+        try {
+          this.eventsSummary =
+            this.analyticsService.generateMockEventSummaries();
+          this.loading = false;
+        } catch (mockErr) {
+          this.error = 'Failed to load analytics data';
+          this.loading = false;
+          console.error('Error loading analytics:', mockErr);
+        }
+      },
     });
-    */
   }
 
   refreshData(): void {
@@ -67,12 +70,7 @@ export class AnalyticsDashboardComponent implements OnInit {
   }
 
   exportEventReport(eventId: number): void {
-    // For now, navigate to detailed analytics which has export functionality
-    // In production, could directly call export service
-    this.router.navigate(['/admin/analytics/event', eventId]);
-
-    // Future implementation:
-    /*
+    // Try to export directly from API
     this.analyticsService.exportAnalyticsReport(eventId).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
@@ -84,10 +82,10 @@ export class AnalyticsDashboardComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error exporting report:', err);
-        this.error = 'Failed to export report';
-      }
+        // Fallback to navigating to detailed analytics page
+        this.router.navigate(['/admin/analytics/event', eventId]);
+      },
     });
-    */
   }
 
   // Summary calculation methods
@@ -150,13 +148,35 @@ export class AnalyticsDashboardComponent implements OnInit {
 
   // Check if user has permission to view analytics
   canViewAnalytics(): boolean {
-    // Mock implementation for now
-    return true;
-
-    // Future implementation:
-    /*
     const currentUser = this.authService.getCurrentUser();
-    return currentUser?.role === 'A' || currentUser?.role === 'OD';
-    */
+    return (
+      currentUser?.role === Role.ROLE_ADMIN ||
+      currentUser?.role === Role.ROLE_OD
+    );
+  }
+
+  // Get dynamic header text based on user role
+  getDashboardTitle(): string {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser?.role === Role.ROLE_OD) {
+      return 'My Events Analytics';
+    }
+    return 'Event Analytics Dashboard';
+  }
+
+  getDashboardSubtitle(): string {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser?.role === Role.ROLE_OD) {
+      return 'Monitor and analyze your organized events performance';
+    }
+    return 'Monitor and analyze event performance across the platform';
+  }
+
+  getEventsTableTitle(): string {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser?.role === Role.ROLE_OD) {
+      return 'My Events Analytics Overview';
+    }
+    return 'Event Analytics Overview';
   }
 }

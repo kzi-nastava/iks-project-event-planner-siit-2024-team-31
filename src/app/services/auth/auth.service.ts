@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CurrentUser } from '../../types/currentUser';
 import { LoginResponse } from '../../types/dto/responses/loginResponse';
 import { RegisterResponse } from '../../types/dto/responses/registerResponse';
 import { Role } from '../../types/roles';
@@ -59,6 +60,17 @@ export class AuthService {
     if (Object.values(Role).includes(roleStr as Role)) {
       return roleStr as Role;
     } else return null;
+  }
+
+  getCurrentUser(): CurrentUser | null {
+    const token = this.getToken();
+    const role = this.getRole();
+
+    if (token && role) {
+      return { token, role };
+    }
+
+    return null;
   }
 
   isAuthenticated(): boolean {

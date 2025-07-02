@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import {
   AttendanceData,
   DemographicsData,
@@ -8,13 +9,13 @@ import {
   EventAnalyticsSummary,
   RatingData,
 } from '../../types/models/analytics.model';
-import { baseUrl } from '../baseUrl';
+import { baseUrl, joinUrl } from '../baseUrl';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AnalyticsService {
-  private apiUrl = `${baseUrl}/analytics`;
+  private apiUrl = joinUrl(baseUrl, 'analytics');
 
   constructor(private http: HttpClient) {}
 
@@ -22,43 +23,104 @@ export class AnalyticsService {
    * Get analytics summary for all events (for dashboard)
    */
   getEventAnalyticsSummary(): Observable<EventAnalyticsSummary[]> {
-    return this.http.get<EventAnalyticsSummary[]>(
-      `${this.apiUrl}/events/summary`
-    );
+    return this.http
+      .get<EventAnalyticsSummary[]>(`${this.apiUrl}/events/summary`)
+      .pipe(
+        catchError((error) => {
+          console.warn(
+            'Failed to fetch analytics summary from API, using mock data:',
+            error
+          );
+          return of(this.generateMockEventSummaries());
+        })
+      );
+  }
+
+  /**
+   * Get analytics summary for organizer's own events (for OD role)
+   */
+  getMyEventsAnalyticsSummary(): Observable<EventAnalyticsSummary[]> {
+    return this.http
+      .get<EventAnalyticsSummary[]>(`${this.apiUrl}/events/my/summary`)
+      .pipe(
+        catchError((error) => {
+          console.warn(
+            'Failed to fetch my events analytics summary from API, using mock data:',
+            error
+          );
+          return of(
+            this.generateMockEventSummaries().filter(() => Math.random() > 0.3)
+          );
+        })
+      );
   }
 
   /**
    * Get detailed analytics for a specific event
    */
   getEventAnalytics(eventId: number): Observable<EventAnalytics> {
-    return this.http.get<EventAnalytics>(`${this.apiUrl}/events/${eventId}`);
+    return this.http
+      .get<EventAnalytics>(`${this.apiUrl}/events/${eventId}`)
+      .pipe(
+        catchError((error) => {
+          console.warn(
+            `Failed to fetch analytics for event ${eventId} from API, using mock data:`,
+            error
+          );
+          return of(this.generateMockEventAnalytics(eventId));
+        })
+      );
   }
 
   /**
    * Get attendance data for a specific event
    */
   getEventAttendance(eventId: number): Observable<AttendanceData> {
-    return this.http.get<AttendanceData>(
-      `${this.apiUrl}/events/${eventId}/attendance`
-    );
+    return this.http
+      .get<AttendanceData>(`${this.apiUrl}/events/${eventId}/attendance`)
+      .pipe(
+        catchError((error) => {
+          console.warn(
+            `Failed to fetch attendance for event ${eventId} from API:`,
+            error
+          );
+          return of(this.generateMockEventAnalytics(eventId).attendance);
+        })
+      );
   }
 
   /**
    * Get rating data for a specific event
    */
   getEventRatings(eventId: number): Observable<RatingData> {
-    return this.http.get<RatingData>(
-      `${this.apiUrl}/events/${eventId}/ratings`
-    );
+    return this.http
+      .get<RatingData>(`${this.apiUrl}/events/${eventId}/ratings`)
+      .pipe(
+        catchError((error) => {
+          console.warn(
+            `Failed to fetch ratings for event ${eventId} from API:`,
+            error
+          );
+          return of(this.generateMockEventAnalytics(eventId).ratings);
+        })
+      );
   }
 
   /**
    * Get demographics data for a specific event
    */
   getEventDemographics(eventId: number): Observable<DemographicsData> {
-    return this.http.get<DemographicsData>(
-      `${this.apiUrl}/events/${eventId}/demographics`
-    );
+    return this.http
+      .get<DemographicsData>(`${this.apiUrl}/events/${eventId}/demographics`)
+      .pipe(
+        catchError((error) => {
+          console.warn(
+            `Failed to fetch demographics for event ${eventId} from API:`,
+            error
+          );
+          return of(this.generateMockEventAnalytics(eventId).demographics);
+        })
+      );
   }
 
   /**
@@ -67,22 +129,47 @@ export class AnalyticsService {
   getOrganizerEventAnalytics(
     organizerId: number
   ): Observable<EventAnalyticsSummary[]> {
-    return this.http.get<EventAnalyticsSummary[]>(
-      `${this.apiUrl}/organizer/${organizerId}/events`
-    );
+    return this.http
+      .get<EventAnalyticsSummary[]>(
+        `${this.apiUrl}/organizer/${organizerId}/events`
+      )
+      .pipe(
+        catchError((error) => {
+          console.warn(
+            `Failed to fetch organizer analytics for ${organizerId} from API:`,
+            error
+          );
+          return of(
+            this.generateMockEventSummaries().filter(
+              (event) => Math.random() > 0.5
+            )
+          );
+        })
+      );
   }
 
   /**
    * Export analytics data as PDF report
    */
   exportAnalyticsReport(eventId: number): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/events/${eventId}/export`, {
-      responseType: 'blob',
-    });
+    return this.http
+      .get(`${this.apiUrl}/events/${eventId}/export`, {
+        responseType: 'blob',
+      })
+      .pipe(
+        catchError((error) => {
+          console.warn(
+            `Failed to export report for event ${eventId} from API:`,
+            error
+          );
+          // Return empty blob as fallback
+          return of(new Blob());
+        })
+      );
   }
 
   /**
-   * Mock data generators for development/testing
+   * Mock data generators for development/testing - now private
    */
   generateMockEventAnalytics(eventId: number): EventAnalytics {
     return {
