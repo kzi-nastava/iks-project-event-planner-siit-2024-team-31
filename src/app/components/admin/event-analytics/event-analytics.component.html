@@ -215,19 +215,19 @@
       <div class="mt-4 grid grid-cols-3 gap-4 text-center">
         <div>
           <div class="text-2xl font-bold text-blue-600">
-            {{ analytics.attendance.registered }}
+            {{ analytics.attendance.registered || 0 }}
           </div>
           <div class="text-sm text-gray-500">Registered</div>
         </div>
         <div>
           <div class="text-2xl font-bold text-green-600">
-            {{ analytics.attendance.attended }}
+            {{ analytics.attendance.attended || 0 }}
           </div>
           <div class="text-sm text-gray-500">Attended</div>
         </div>
         <div>
           <div class="text-2xl font-bold text-red-600">
-            {{ analytics.attendance.noShow }}
+            {{ analytics.attendance.noShow || 0 }}
           </div>
           <div class="text-sm text-gray-500">No Show</div>
         </div>
@@ -245,10 +245,10 @@
       </div>
       <div class="mt-4 text-center">
         <div class="text-2xl font-bold text-yellow-600">
-          {{ analytics.ratings.averageRating | number : "1.1-1" }}/5.0
+          {{ analytics.ratings.averageRating || 0 | number : "1.1-1" }}/5.0
         </div>
         <div class="text-sm text-gray-500">
-          Average Rating ({{ analytics.ratings.totalRatings }} reviews)
+          Average Rating ({{ analytics.ratings.totalRatings || 0 }} reviews)
         </div>
       </div>
     </div>
@@ -288,7 +288,7 @@
       <div class="p-6">
         <div class="space-y-4">
           <div
-            *ngFor="let rating of analytics.ratings.ratingDistribution"
+            *ngFor="let rating of analytics.ratings.ratingDistribution || []"
             class="flex items-center"
           >
             <div class="flex items-center w-16">
@@ -334,7 +334,9 @@
       <div class="p-6">
         <div class="space-y-4">
           <div
-            *ngFor="let location of analytics.demographics.locationDistribution"
+            *ngFor="
+              let location of analytics.demographics.locationDistribution || []
+            "
             class="flex items-center justify-between"
           >
             <div class="flex items-center">

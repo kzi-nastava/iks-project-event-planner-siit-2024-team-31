@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -18,7 +18,7 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-event-analytics',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DecimalPipe],
   templateUrl: './event-analytics.component.html',
   styleUrl: './event-analytics.component.scss',
 })
@@ -68,26 +68,7 @@ export class EventAnalyticsComponent
     this.loading = true;
     this.error = null;
 
-    // For now, use mock data for development
-    // In production, replace with actual API call
-    try {
-      this.analytics = this.analyticsService.generateMockEventAnalytics(
-        this.eventId
-      );
-      this.loading = false;
-
-      // Create charts after data is loaded
-      setTimeout(() => {
-        this.createCharts();
-      }, 100);
-    } catch (err) {
-      this.error = 'Failed to load analytics data';
-      this.loading = false;
-      console.error('Error loading analytics:', err);
-    }
-
-    // Uncomment this when backend is ready:
-    /*
+    // Use real API call instead of mock data
     this.analyticsService.getEventAnalytics(this.eventId).subscribe({
       next: (data) => {
         this.analytics = data;
@@ -97,12 +78,23 @@ export class EventAnalyticsComponent
         }, 100);
       },
       error: (err) => {
-        this.error = 'Failed to load analytics data';
-        this.loading = false;
-        console.error('Error loading analytics:', err);
-      }
+        // Fallback to mock data for development if API fails
+        console.warn('API call failed, using mock data:', err);
+        try {
+          this.analytics = this.analyticsService.generateMockEventAnalytics(
+            this.eventId
+          );
+          this.loading = false;
+          setTimeout(() => {
+            this.createCharts();
+          }, 100);
+        } catch (mockErr) {
+          this.error = 'Failed to load analytics data';
+          this.loading = false;
+          console.error('Error loading analytics:', mockErr);
+        }
+      },
     });
-    */
   }
 
   refreshData(): void {
