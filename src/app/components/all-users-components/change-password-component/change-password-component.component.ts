@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NotificationService } from '../../../services/notification.service';
 import { UserService } from '../../../services/user/user.service';
 import { UpdatePasswordRequest } from '../../../types/dto/requests/updatePasswordRequest';
 import { CommonMessageResponse } from '../../../types/dto/responses/commonMessageResponse';
@@ -14,7 +15,8 @@ import { Role } from '../../../types/roles';
   imports: [CommonModule, FormsModule],
 })
 export class ChangePasswordComponent {
-  constructor(private userService: UserService) {}
+  private userService = inject(UserService);
+  private notification = inject(NotificationService);
 
   @Input() showModal = false;
   @Input() userRole: Role | null = null;
@@ -36,7 +38,7 @@ export class ChangePasswordComponent {
 
   onSubmit() {
     if (this.newPassword !== this.confirmNewPassword) {
-      alert('New passwords not match!');
+      this.notification.validationError('New passwords do not match!');
       return;
     }
 
@@ -47,13 +49,18 @@ export class ChangePasswordComponent {
 
     this.userService.updatePassword(request).subscribe({
       next: (response: CommonMessageResponse) => {
-        alert(response.message);
+        this.notification.success(response.message);
+        this.closeModalWindow();
       },
       error: (error: HttpErrorResponse) => {
         if (error.status === 401) {
-          alert('Error: ' + (error.error?.error || 'Access is denied.'));
+          this.notification.authError(
+            error.error?.error || 'Access is denied.'
+          );
         } else {
-          alert('Error: ' + (error.error?.error || 'Something went wrong.'));
+          this.notification.error(
+            error.error?.error || 'Something went wrong.'
+          );
         }
       },
     });

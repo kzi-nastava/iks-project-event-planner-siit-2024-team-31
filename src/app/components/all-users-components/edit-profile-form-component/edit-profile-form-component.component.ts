@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnInit,
@@ -11,6 +12,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AuthService } from '../../../services/auth/auth.service';
+import { NotificationService } from '../../../services/notification.service';
 import { UserService } from '../../../services/user/user.service';
 import { UpdateUserDataRequest } from '../../../types/dto/requests/updateUserDataRequest';
 import { UserMyProfileResponse } from '../../../types/dto/responses/userMyProfileResponse';
@@ -19,16 +21,14 @@ import { Role } from '../../../types/roles';
 @Component({
   selector: 'app-edit-profile-form-component',
   imports: [CommonModule, FormsModule],
-  providers: [UserService, AuthService],
   templateUrl: './edit-profile-form-component.component.html',
   standalone: true,
 })
 export class EditProfileFormComponent implements OnInit, OnChanges {
-  constructor(
-    private userService: UserService,
-    private authService: AuthService,
-    private sanitizer: DomSanitizer
-  ) {}
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
+  private sanitizer = inject(DomSanitizer);
+  private notification = inject(NotificationService);
 
   tempUser: UserMyProfileResponse | null = null;
   role: Role | null = null;
@@ -233,7 +233,7 @@ export class EditProfileFormComponent implements OnInit, OnChanges {
 
     this.userService.updateUserData(formData).subscribe({
       next: (response) => {
-        alert('Profile updated successfully!');
+        this.notification.success('Profile updated successfully!');
         // Clear new photos and removed photos arrays since they've been saved
         this.newPhotos.forEach((photo) => {
           if (typeof photo.preview === 'string') {
@@ -248,7 +248,7 @@ export class EditProfileFormComponent implements OnInit, OnChanges {
       },
       error: (error) => {
         console.error('Error updating profile:', error);
-        alert('Error updating profile. Please try again.');
+        this.notification.error('Error updating profile. Please try again.');
       },
     });
   }

@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { EventTypesService } from '../../../services/event-types/event-types.service';
+import { NotificationService } from '../../../services/notification.service';
 import { ProductCategoriesService } from '../../../services/product-categories/product-categories.service';
 import { EventTypeFullDTO } from '../../../types/dto/eventTypeFullDTO';
 import { ProductCategory } from '../../../types/productCategory';
@@ -16,6 +17,11 @@ import { ProductCategory } from '../../../types/productCategory';
   imports: [FormsModule, CommonModule, MatButtonModule, MatTooltipModule],
 })
 export class EventTypePageComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private eventTypesService = inject(EventTypesService);
+  private productCategoriesService = inject(ProductCategoriesService);
+  private notification = inject(NotificationService);
+
   eventType!: EventTypeFullDTO;
   isLoading = true;
   errorMessage = '';
@@ -32,12 +38,6 @@ export class EventTypePageComponent implements OnInit {
   currentPageEdit = 1;
   itemsPerPageEdit = 5;
   totalPagesEdit = 0;
-
-  constructor(
-    private route: ActivatedRoute,
-    private eventTypesService: EventTypesService,
-    private productCategoriesService: ProductCategoriesService
-  ) {}
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -152,7 +152,7 @@ export class EventTypePageComponent implements OnInit {
         .switchEventTypeStatus(this.eventType.id, newStatus)
         .subscribe({
           next: (response) => {
-            alert(
+            this.notification.success(
               `Event type ${
                 newStatus ? 'activated' : 'deactivated'
               } successfully`
@@ -161,7 +161,7 @@ export class EventTypePageComponent implements OnInit {
           },
           error: (err) => {
             console.error('Status change error:', err);
-            alert('Error changing status');
+            this.notification.error('Error changing status');
           },
         });
     }
@@ -187,13 +187,13 @@ export class EventTypePageComponent implements OnInit {
       .updateEventType(this.eventType.id, updatedEventType)
       .subscribe({
         next: (response) => {
-          alert('Event type updated successfully');
+          this.notification.success('Event type updated successfully');
           this.showEditForm = false;
           this.loadEventType(this.eventType.id);
         },
         error: (err) => {
           console.error('Update error:', err);
-          alert('Error updating event type');
+          this.notification.error('Error updating event type');
         },
       });
   }

@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../services/auth/auth.service';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -13,6 +14,10 @@ import { AuthService } from '../../../services/auth/auth.service';
   styleUrl: './forgot-password.component.scss',
 })
 export class ForgotPasswordComponent {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private notification = inject(NotificationService);
+
   email = '';
   recoveryCode = '';
   newPassword = '';
@@ -28,7 +33,7 @@ export class ForgotPasswordComponent {
   isVerifyingCode = false;
   isResettingPassword = false;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor() {
     this.resetStates();
   }
 
@@ -160,7 +165,7 @@ export class ForgotPasswordComponent {
       )
       .subscribe({
         next: () => {
-          alert('Password reset successfully');
+          this.notification.success('Password reset successfully');
           this.router.navigate(['/login']);
         },
         error: (error) => {

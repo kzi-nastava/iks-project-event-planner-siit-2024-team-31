@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { EventTypesService } from '../../../services/event-types/event-types.service';
+import { NotificationService } from '../../../services/notification.service';
 import { ProductCategoriesService } from '../../../services/product-categories/product-categories.service';
 import { EventTypeDTO } from '../../../types/dto/eventTypeDTO';
 import { EventTypeFullDTO } from '../../../types/dto/eventTypeFullDTO';
@@ -26,6 +27,10 @@ import { EventTypeCardComponent } from '../event-type-card/event-type-card.compo
   templateUrl: './event-types-management.component.html',
 })
 export class EventTypesManagementComponent implements OnInit {
+  private eventTypesService = inject(EventTypesService);
+  private productCategoriesService = inject(ProductCategoriesService);
+  private notification = inject(NotificationService);
+
   eventTypes: EventTypeDTO[] = [];
   currentPage = 1;
   totalPages = 0;
@@ -34,10 +39,7 @@ export class EventTypesManagementComponent implements OnInit {
 
   showCreateForm = false;
 
-  constructor(
-    private eventTypesService: EventTypesService,
-    private productCategoriesService: ProductCategoriesService
-  ) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.searchEventTypes();
@@ -170,13 +172,17 @@ export class EventTypesManagementComponent implements OnInit {
 
     this.eventTypesService.createEventType(newEventType).subscribe({
       next: (response) => {
-        alert('Event type created successfully: ' + response.message);
+        this.notification.success(
+          'Event type created successfully: ' + response.message
+        );
         this.showCreateForm = false;
         this.searchEventTypes();
       },
       error: (err) => {
         console.error('Error creating event type:', err);
-        alert('Error creating event type. Check the console for details.');
+        this.notification.error(
+          'Error creating event type. Check the console for details.'
+        );
       },
     });
   }

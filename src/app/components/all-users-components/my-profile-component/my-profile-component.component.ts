@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnChanges, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
+import { NotificationService } from '../../../services/notification.service';
 import { UserService } from '../../../services/user/user.service';
 import { UserMyProfileResponse } from '../../../types/dto/responses/userMyProfileResponse';
 import { Role } from '../../../types/roles';
@@ -25,6 +26,11 @@ import { FavoritesListsComponent } from '../favorites-lists/favorites-lists.comp
   templateUrl: './my-profile-component.component.html',
 })
 export class MyProfileComponent implements OnInit, OnChanges {
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private notification = inject(NotificationService);
+
   userProfile: UserMyProfileResponse | null = null;
   userRole: Role | null = null;
   notificationsEnabled = false;
@@ -41,11 +47,7 @@ export class MyProfileComponent implements OnInit, OnChanges {
   isDeactivating = false;
   deactivateError = '';
 
-  constructor(
-    private userService: UserService,
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.userRole = this.authService.getRole();
@@ -142,9 +144,7 @@ export class MyProfileComponent implements OnInit, OnChanges {
     this.authService.deactivateAccount(this.deactivatePassword).subscribe({
       next: () => {
         // Successful deactivation
-        alert(
-          'Your account has been successfully deactivated. You will be logged out.'
-        );
+        this.notification.success('Your account has been successfully deactivated. You will be logged out.');
         this.authService.logout();
         this.router.navigate(['/auth/login']);
       },

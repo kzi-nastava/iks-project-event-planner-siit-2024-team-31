@@ -1,8 +1,9 @@
 import { DatePipe, NgForOf, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EventTypesService } from '../../../services/event-types/event-types.service';
 import { EventService } from '../../../services/events/event.service';
+import { NotificationService } from '../../../services/notification.service';
 import { CreateEventResponse } from '../../../types/dto/responses/createEventResponse';
 import { EventType } from '../../../types/eventType';
 import { AgendaItem } from '../../../types/models/agendaItem.model';
@@ -16,6 +17,10 @@ import { AgendaCreationComponent } from '../agenda-creation/agenda-creation.comp
   imports: [FormsModule, NgIf, NgForOf, AgendaCreationComponent, DatePipe],
 })
 export class CreateEventComponent {
+  private eventTypesService = inject(EventTypesService);
+  private eventService = inject(EventService);
+  private notification = inject(NotificationService);
+
   eventData: Event = {
     id: '-1',
     name: '',
@@ -66,10 +71,7 @@ export class CreateEventComponent {
   // Logic to prevent accidental closing of modal windows
   private mouseDownOnBackground = false;
 
-  constructor(
-    public eventTypesService: EventTypesService,
-    private eventService: EventService
-  ) {
+  constructor() {
     this.loadEventTypes();
   }
 
@@ -277,15 +279,17 @@ export class CreateEventComponent {
   }
 
   async searchLocation(): Promise<void> {
-    if (!this.mapSearchQuery.trim()) return;
+    if (!this.mapSearchQuery.trim()) {
+      return;
+    }
 
+    // Import Leaflet for this method
     const L = (await import('leaflet')).default;
 
-    fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-        this.mapSearchQuery
-      )}`
-    )
+    const query = encodeURIComponent(this.mapSearchQuery);
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`;
+
+    fetch(url)
       .then((response) => response.json())
       .then((data) => {
         if (data && data.length > 0) {
@@ -293,10 +297,10 @@ export class CreateEventComponent {
           const lat = parseFloat(result.lat);
           const lng = parseFloat(result.lon);
 
-          // Move map to location
+          // Move map to the found location
           this.locationMap.setView([lat, lng], 15);
 
-          // Clear existing markers
+          // Remove existing markers
           this.locationMap.eachLayer((layer: any) => {
             if (layer instanceof L.Marker) {
               this.locationMap.removeLayer(layer);
@@ -308,12 +312,14 @@ export class CreateEventComponent {
           this.selectedLocation = { lat, lng, address: result.display_name };
           marker.bindPopup(result.display_name).openPopup();
         } else {
-          alert('Location not found. Please try a different search term.');
+          this.notification.warning(
+            'Location not found. Please try a different search term.'
+          );
         }
       })
       .catch((error) => {
         console.error('Search failed:', error);
-        alert('Search failed. Please try again.');
+        this.notification.error('Search failed. Please try again.');
       });
   }
 
@@ -459,11 +465,12 @@ export class CreateEventComponent {
     this.eventService.createEventWithFormData(formData).subscribe({
       next: (response: CreateEventResponse) => {
         console.log('Event created successfully:', response);
+        this.notification.success('Event created successfully!');
         this.resetForm();
       },
       error: (err: any) => {
         console.error('Error creating event:', err);
-        alert('Error creating event. Please try again.');
+        this.notification.error('Error creating event. Please try again.');
       },
     });
   }
@@ -491,44 +498,50 @@ export class CreateEventComponent {
 
   private validateForm(): boolean {
     if (!this.eventData.name.trim()) {
-      alert('Please enter an event name.');
+      this.notification.validationError('Please enter an event name.');
       return false;
     }
 
     if (!this.eventData.description.trim()) {
-      alert('Please enter an event description.');
+      this.notification.validationError('Please enter an event description.');
       return false;
     }
 
     if (!this.eventData.eventType.name?.trim()) {
-      alert('Please select or enter an event type.');
+      this.notification.validationError(
+        'Please select or enter an event type.'
+      );
       return false;
     }
 
     if (!this.eventData.maxNumGuests || this.eventData.maxNumGuests < 1) {
-      alert('Please enter a valid number of maximum guests.');
+      this.notification.validationError(
+        'Please enter a valid number of maximum guests.'
+      );
       return false;
     }
 
     if (!this.eventData.startTime) {
-      alert('Please select a start date and time.');
+      this.notification.validationError('Please select a start date and time.');
       return false;
     }
 
     if (!this.eventData.endTime) {
-      alert('Please select an end date and time.');
+      this.notification.validationError('Please select an end date and time.');
       return false;
     }
 
     if (
       new Date(this.eventData.startTime) >= new Date(this.eventData.endTime)
     ) {
-      alert('End time must be after start time.');
+      this.notification.validationError('End time must be after start time.');
       return false;
     }
 
     if (!this.eventData.location) {
-      alert('Please select a location for the event.');
+      this.notification.validationError(
+        'Please select a location for the event.'
+      );
       return false;
     }
 
