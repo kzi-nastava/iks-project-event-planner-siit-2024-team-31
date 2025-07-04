@@ -5,8 +5,8 @@ export interface CreateServiceRequest {
   peculiarities: string;
   price: number;
   discount: number;
-  photos: string[];
-  suitableEventTypes: number[]; //ids of event types
+  photos: File[];
+  suitableEventTypes: number[]; // ids of event types
   isVisible: boolean;
   isAvailable: boolean;
   serviceDurationMin: number;
