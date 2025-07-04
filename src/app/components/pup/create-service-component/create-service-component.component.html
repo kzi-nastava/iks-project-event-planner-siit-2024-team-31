@@ -839,6 +839,389 @@
         </div>
       </div>
 
+      <!-- Step 4: Service Configuration (Only for Services) -->
+      <div *ngIf="isCreatingService" class="mb-12">
+        <div class="flex items-center gap-3 mb-8">
+          <div
+            class="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full font-bold"
+          >
+            4
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900">
+            Service Configuration
+          </h2>
+        </div>
+
+        <div
+          class="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50 p-8"
+        >
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- No Time Selection Required -->
+            <div class="lg:col-span-2">
+              <div
+                class="flex items-center gap-4 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200"
+              >
+                <div class="flex items-center gap-3">
+                  <input
+                    id="noTimeSelectionRequired"
+                    name="noTimeSelectionRequired"
+                    type="checkbox"
+                    [(ngModel)]="serviceData.noTimeSelectionRequired"
+                    (change)="onNoTimeSelectionChange($event)"
+                    class="w-6 h-6 text-purple-600 bg-white border-2 border-gray-300 rounded-lg focus:ring-purple-500 focus:ring-2"
+                  />
+                  <label
+                    for="noTimeSelectionRequired"
+                    class="text-lg font-semibold text-gray-900"
+                  >
+                    No Time Selection Required
+                  </label>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm text-gray-600">
+                    Check this if your service doesn't require specific time
+                    slots (e.g., consultation, planning services)
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Service Duration Min -->
+            <div>
+              <label
+                for="serviceDurationMin"
+                class="block text-sm font-bold text-gray-700 mb-3"
+              >
+                <div class="flex items-center gap-2">
+                  <svg
+                    class="w-5 h-5 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  Minimum Duration (minutes)
+                </div>
+              </label>
+              <input
+                id="serviceDurationMin"
+                name="serviceDurationMin"
+                type="number"
+                [(ngModel)]="serviceData.serviceDurationMin"
+                [disabled]="disableMinField"
+                min="0"
+                class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                placeholder="60"
+              />
+            </div>
+
+            <!-- Service Duration Max -->
+            <div>
+              <label
+                for="serviceDurationMax"
+                class="block text-sm font-bold text-gray-700 mb-3"
+              >
+                <div class="flex items-center gap-2">
+                  <svg
+                    class="w-5 h-5 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  Maximum Duration (minutes)
+                </div>
+              </label>
+              <input
+                id="serviceDurationMax"
+                name="serviceDurationMax"
+                type="number"
+                [(ngModel)]="serviceData.serviceDurationMax"
+                [disabled]="disableMaxField"
+                min="0"
+                class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                placeholder="120"
+              />
+            </div>
+
+            <!-- Manual Time Selection -->
+            <div class="lg:col-span-2">
+              <div
+                class="flex items-center gap-4 p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-200"
+              >
+                <div class="flex items-center gap-3">
+                  <input
+                    id="manualTimeSelection"
+                    name="manualTimeSelection"
+                    type="checkbox"
+                    [(ngModel)]="serviceData.manualTimeSelection"
+                    (change)="onManualTimeSelectionChange($event)"
+                    [disabled]="serviceData.noTimeSelectionRequired"
+                    class="w-6 h-6 text-purple-600 bg-white border-2 border-gray-300 rounded-lg focus:ring-purple-500 focus:ring-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  />
+                  <label
+                    for="manualTimeSelection"
+                    class="text-lg font-semibold text-gray-900"
+                  >
+                    Manual Time Selection
+                  </label>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm text-gray-600">
+                    Allow customers to choose custom time durations within your
+                    range
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Booking Decline Deadline -->
+            <div>
+              <label
+                for="bookingDeclineDeadline"
+                class="block text-sm font-bold text-gray-700 mb-3"
+              >
+                <div class="flex items-center gap-2">
+                  <svg
+                    class="w-5 h-5 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 7V3a4 4 0 118 0v4M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"
+                    ></path>
+                  </svg>
+                  Booking Decline Deadline (hours)
+                </div>
+              </label>
+              <input
+                id="bookingDeclineDeadline"
+                name="bookingDeclineDeadline"
+                type="number"
+                [(ngModel)]="serviceData.bookingDeclineDeadline"
+                [disabled]="disableBookingDeadline"
+                min="0"
+                class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                placeholder="24"
+              />
+            </div>
+
+            <!-- Booking Confirmation -->
+            <div>
+              <label
+                for="bookingConfirmation"
+                class="block text-sm font-bold text-gray-700 mb-3"
+              >
+                <div class="flex items-center gap-2">
+                  <svg
+                    class="w-5 h-5 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  Booking Confirmation
+                </div>
+              </label>
+              <select
+                id="bookingConfirmation"
+                name="bookingConfirmation"
+                [(ngModel)]="serviceData.bookingConfirmation"
+                class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm"
+              >
+                <option value="Manual">Manual Confirmation</option>
+                <option value="Auto">Automatic Confirmation</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5: Availability Settings -->
+      <div class="mb-12">
+        <div class="flex items-center gap-3 mb-8">
+          <div
+            class="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full font-bold"
+          >
+            {{ isCreatingService ? "5" : "4" }}
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900">
+            Availability & Visibility
+          </h2>
+        </div>
+
+        <div
+          class="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50 p-8"
+        >
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Visibility Toggle -->
+            <div class="lg:col-span-1">
+              <div
+                class="flex items-center gap-4 p-6 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200"
+              >
+                <div class="flex items-center gap-3">
+                  <input
+                    id="isVisible"
+                    name="isVisible"
+                    type="checkbox"
+                    [(ngModel)]="serviceData.isVisible"
+                    class="w-6 h-6 text-purple-600 bg-white border-2 border-gray-300 rounded-lg focus:ring-purple-500 focus:ring-2"
+                  />
+                  <label
+                    for="isVisible"
+                    class="text-lg font-semibold text-gray-900"
+                  >
+                    Visible to Public
+                  </label>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm text-gray-600">
+                    Make this
+                    {{ isCreatingService ? "service" : "product" }} visible in
+                    search results
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Availability Toggle -->
+            <div class="lg:col-span-1">
+              <div
+                class="flex items-center gap-4 p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-200"
+              >
+                <div class="flex items-center gap-3">
+                  <input
+                    id="isAvailable"
+                    name="isAvailable"
+                    type="checkbox"
+                    [(ngModel)]="serviceData.isAvailable"
+                    class="w-6 h-6 text-purple-600 bg-white border-2 border-gray-300 rounded-lg focus:ring-purple-500 focus:ring-2"
+                  />
+                  <label
+                    for="isAvailable"
+                    class="text-lg font-semibold text-gray-900"
+                  >
+                    Available for Booking
+                  </label>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm text-gray-600">
+                    Allow customers to book this
+                    {{ isCreatingService ? "service" : "product" }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Suitable Event Types -->
+            <div class="lg:col-span-2">
+              <label class="block text-sm font-bold text-gray-700 mb-3">
+                <div class="flex items-center gap-2">
+                  <svg
+                    class="w-5 h-5 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                    ></path>
+                  </svg>
+                  Suitable Event Types
+                  <span class="text-red-500">*</span>
+                </div>
+              </label>
+
+              <div class="space-y-4">
+                <!-- Selected Event Types -->
+                <div
+                  *ngIf="serviceData.suitableEventTypes.length > 0"
+                  class="flex flex-wrap gap-2"
+                >
+                  <div
+                    *ngFor="
+                      let eventType of serviceData.suitableEventTypes;
+                      let i = index
+                    "
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-800 rounded-xl font-medium"
+                  >
+                    <span>{{ eventType.name }}</span>
+                    <button
+                      type="button"
+                      (click)="removeSuitableEventType(i)"
+                      class="text-purple-600 hover:text-purple-800 transition-colors duration-200"
+                    >
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Add Event Types Button -->
+                <button
+                  type="button"
+                  (click)="openEventTypePopup()"
+                  class="w-full px-6 py-4 border-2 border-dashed border-purple-300 text-purple-600 rounded-2xl hover:border-purple-500 hover:bg-purple-50 transition-all duration-300 font-semibold"
+                >
+                  <div class="flex items-center justify-center gap-2">
+                    <svg
+                      class="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      ></path>
+                    </svg>
+                    Add Event Types
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Modern Category Selection Modal -->
       <div
         *ngIf="showCategoryModal"
@@ -988,8 +1371,223 @@
         </div>
       </div>
 
-      <!-- Continue with other sections... -->
-      <!-- For brevity, I'll add the remaining sections in the next part -->
+      <!-- Modern Event Types Selection Modal -->
+      <div
+        *ngIf="showEventTypeModal"
+        class="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50"
+      >
+        <div
+          class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl w-full max-w-lg mx-4 max-h-[80vh] overflow-hidden"
+        >
+          <!-- Modal Header -->
+          <div
+            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8"
+          >
+            <div class="flex items-center gap-4">
+              <div class="p-3 bg-white/20 rounded-2xl">
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3a4 4 0 118 0v4M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"
+                  ></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-2xl font-bold">Choose Event Types</h3>
+                <p class="text-purple-100">
+                  Select suitable event types for your
+                  {{ isCreatingService ? "service" : "product" }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal Content -->
+          <div class="p-8">
+            <!-- Search Input -->
+            <div class="mb-6">
+              <div class="relative">
+                <svg
+                  class="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  ></path>
+                </svg>
+                <input
+                  type="text"
+                  name="eventTypesQuery"
+                  [(ngModel)]="eventTypesQuery"
+                  (ngModelChange)="onEventTypesQueryChange()"
+                  class="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300"
+                  placeholder="Search event types..."
+                />
+              </div>
+            </div>
+
+            <!-- Event Types List -->
+            <div
+              class="max-h-64 overflow-auto border-2 border-gray-100 rounded-2xl mb-6"
+            >
+              <div
+                *ngFor="let eventType of paginatedEventTypes"
+                class="px-6 py-4 hover:bg-purple-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-all duration-200 group"
+                (click)="toggleEventType(eventType)"
+              >
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center">
+                    <input
+                      type="checkbox"
+                      [checked]="isEventTypeSelected(eventType)"
+                      class="w-5 h-5 text-purple-600 bg-white border-2 border-gray-300 rounded focus:ring-purple-500 focus:ring-2"
+                      readonly
+                    />
+                  </div>
+                  <div class="flex-1">
+                    <span
+                      class="text-gray-900 font-medium group-hover:text-purple-900"
+                      [class.text-purple-600]="isEventTypeSelected(eventType)"
+                    >
+                      {{ eventType.name }}
+                    </span>
+                  </div>
+                  <div
+                    *ngIf="isEventTypeSelected(eventType)"
+                    class="text-purple-600"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div
+                *ngIf="paginatedEventTypes.length === 0"
+                class="px-6 py-12 text-center text-gray-500"
+              >
+                <svg
+                  class="w-16 h-16 mx-auto mb-4 text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3a4 4 0 118 0v4M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"
+                  ></path>
+                </svg>
+                <p class="text-lg font-medium">No event types found</p>
+                <p class="text-sm">Try a different search term</p>
+              </div>
+            </div>
+
+            <!-- Selected Event Types Preview -->
+            <div *ngIf="serviceData.suitableEventTypes.length > 0" class="mb-6">
+              <label class="block text-sm font-bold text-gray-700 mb-3">
+                Selected Event Types ({{
+                  serviceData.suitableEventTypes.length
+                }})
+              </label>
+              <div class="flex flex-wrap gap-2">
+                <div
+                  *ngFor="
+                    let eventType of serviceData.suitableEventTypes;
+                    let i = index
+                  "
+                  class="inline-flex items-center gap-2 px-3 py-2 bg-purple-100 text-purple-800 rounded-lg text-sm font-medium"
+                >
+                  <span>{{ eventType.name }}</span>
+                  <button
+                    type="button"
+                    (click)="removeSuitableEventType(i)"
+                    class="text-purple-600 hover:text-purple-800 transition-colors duration-200"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-between items-center mb-8">
+              <button
+                type="button"
+                (click)="previousEventTypePage()"
+                [disabled]="currentEventTypePage === 1"
+                class="px-6 py-3 border-2 border-gray-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all duration-200 font-semibold"
+              >
+                Previous
+              </button>
+              <span class="text-sm font-medium text-gray-600">
+                Page {{ currentEventTypePage }} of {{ totalEventTypePages }}
+              </span>
+              <button
+                type="button"
+                (click)="nextEventTypePage()"
+                [disabled]="currentEventTypePage === totalEventTypePages"
+                class="px-6 py-3 border-2 border-gray-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all duration-200 font-semibold"
+              >
+                Next
+              </button>
+            </div>
+
+            <!-- Modal Actions -->
+            <div class="flex gap-4">
+              <button
+                type="button"
+                class="flex-1 px-6 py-4 border-2 border-gray-200 text-gray-700 rounded-2xl hover:bg-gray-50 transition-all duration-200 font-bold"
+                (click)="closeEventTypePopup()"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="flex-1 px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-bold shadow-lg"
+                (click)="confirmAddEventTypes()"
+              >
+                Confirm Selection ({{ serviceData.suitableEventTypes.length }})
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Submit Section -->
       <div class="flex flex-col sm:flex-row gap-6 justify-end">

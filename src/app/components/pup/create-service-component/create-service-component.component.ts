@@ -297,8 +297,8 @@ export class CreateServiceComponent implements OnInit {
     formData.append('isAvailable', this.serviceData.isAvailable.toString());
 
     // Add suitable event types
-    this.serviceData.suitableEventTypes.forEach((eventType, index) => {
-      formData.append(`suitableEventTypes[${index}]`, eventType.id.toString());
+    this.serviceData.suitableEventTypes.forEach((eventType) => {
+      formData.append('suitableEventTypes', eventType.id.toString());
     });
 
     // Add photos
@@ -347,6 +347,11 @@ export class CreateServiceComponent implements OnInit {
           } created successfully:`,
           response
         );
+        this.notification.success(
+          `${
+            this.isCreatingService ? 'Service' : 'Product'
+          } created successfully!`
+        );
         this.router.navigate(['/pup/my-products-services']);
       },
       error: (error) => {
@@ -354,6 +359,23 @@ export class CreateServiceComponent implements OnInit {
           `Error creating ${this.isCreatingService ? 'service' : 'product'}:`,
           error
         );
+        let errorMessage = `Error creating ${
+          this.isCreatingService ? 'service' : 'product'
+        }`;
+
+        if (error.status === 400) {
+          errorMessage = 'Invalid data provided. Please check all fields.';
+        } else if (error.status === 401) {
+          errorMessage = 'You are not authorized to perform this action.';
+        } else if (error.status === 403) {
+          errorMessage = 'You do not have permission to create this item.';
+        } else if (error.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
+        } else if (error.error?.message) {
+          errorMessage = error.error.message;
+        }
+
+        this.notification.error(errorMessage);
       },
     });
   }
@@ -371,6 +393,49 @@ export class CreateServiceComponent implements OnInit {
       this.notification.validationError('Please enter a valid price');
       return false;
     }
+    if (!this.serviceData.description.trim()) {
+      this.notification.validationError('Please enter a description');
+      return false;
+    }
+    if (this.serviceData.suitableEventTypes.length === 0) {
+      this.notification.validationError(
+        'Please select at least one suitable event type'
+      );
+      return false;
+    }
+    if (this.serviceData.discount < 0 || this.serviceData.discount > 100) {
+      this.notification.validationError('Discount must be between 0 and 100');
+      return false;
+    }
+
+    // Service-specific validation
+    if (this.isCreatingService) {
+      if (!this.serviceData.noTimeSelectionRequired) {
+        if (this.serviceData.serviceDurationMin <= 0) {
+          this.notification.validationError(
+            'Service duration minimum must be greater than 0'
+          );
+          return false;
+        }
+        if (
+          this.serviceData.serviceDurationMax > 0 &&
+          this.serviceData.serviceDurationMax <
+            this.serviceData.serviceDurationMin
+        ) {
+          this.notification.validationError(
+            'Service duration maximum must be greater than minimum'
+          );
+          return false;
+        }
+        if (this.serviceData.bookingDeclineDeadline < 0) {
+          this.notification.validationError(
+            'Booking decline deadline must be 0 or greater'
+          );
+          return false;
+        }
+      }
+    }
+
     return true;
   }
 
@@ -381,6 +446,7 @@ export class CreateServiceComponent implements OnInit {
     this.serviceData.suitableEventTypes.splice(index, 1);
   }
 
+  // This method is used by the modal checkbox interactions
   toggleEventTypeSelection(type: EventType, event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.checked) {
