@@ -77,7 +77,7 @@ export class ServiceProductListFilteredComponent implements OnInit, OnDestroy {
         minPrice: 0,
         maxPrice: 10000,
         minRating: 0,
-        isAvailable: true,
+        available: true,
         sortBy: 'name',
         sortDirection: 'asc',
       } as ServiceFilters;
@@ -88,7 +88,7 @@ export class ServiceProductListFilteredComponent implements OnInit, OnDestroy {
         minPrice: 0,
         maxPrice: 10000,
         minRating: 0,
-        isAvailable: true,
+        available: true,
         sortBy: 'name',
         sortDirection: 'asc',
       } as ProductFilters;

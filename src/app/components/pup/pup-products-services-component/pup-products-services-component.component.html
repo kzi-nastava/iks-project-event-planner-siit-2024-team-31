@@ -275,11 +275,12 @@
       *ngIf="!isLoading && showProducts"
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
     >
-      <app-service-card
+      <app-service-card-edit
         *ngFor="let product of products"
         [service]="product"
+        (onDelete)="onDeleteItem($event)"
         class="transform transition-all duration-300 hover:scale-105"
-      ></app-service-card>
+      ></app-service-card-edit>
     </div>
 
     <!-- Services Grid -->
@@ -287,11 +288,12 @@
       *ngIf="!isLoading && !showProducts"
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
     >
-      <app-service-card
+      <app-service-card-edit
         *ngFor="let service of services"
         [service]="service"
+        (onDelete)="onDeleteItem($event)"
         class="transform transition-all duration-300 hover:scale-105"
-      ></app-service-card>
+      ></app-service-card-edit>
     </div>
 
     <!-- Empty State -->

@@ -6,13 +6,13 @@
         <h1 class="text-3xl font-bold mb-2">{{ item.name }}</h1>
         <span
           [class]="
-            item.isAvailable
+            item.available
               ? 'bg-green-100 text-green-800'
               : 'bg-red-100 text-red-800'
           "
           class="px-3 py-1 rounded-full text-sm font-medium"
         >
-          {{ item.isAvailable ? "Available" : "Unavailable" }}
+          {{ item.available ? "Available" : "Unavailable" }}
         </span>
       </div>
       <div class="text-right">
@@ -32,10 +32,10 @@
       <div class="w-full h-96 rounded-lg shadow-lg overflow-hidden">
         <img
           *ngIf="
-            item.imageUrls && item.imageUrls.length > 0 && !mainImageError;
+            item.photos && item.photos.length > 0 && !mainImageError;
             else defaultMainImage
           "
-          [src]="item.imageUrls[0]"
+          [src]="item.photos[0].tempPhotoUrl"
           [alt]="item.name"
           class="w-full h-full object-cover"
           (error)="onMainImageError($event)"
@@ -196,15 +196,15 @@
       <!-- Thumbnail Gallery -->
       <div
         class="flex mt-4 space-x-2"
-        *ngIf="item.imageUrls && item.imageUrls.length > 1"
+        *ngIf="item.photos && item.photos.length > 1"
       >
         <div
-          *ngFor="let image of item.imageUrls.slice(1, 4); let i = index"
+          *ngFor="let photo of item.photos.slice(1, 4); let i = index"
           class="w-24 h-24 rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
         >
           <img
             *ngIf="!thumbnailErrors[i + 1]; else defaultThumbnail"
-            [src]="image"
+            [src]="photo.tempPhotoUrl"
             [alt]="item.name"
             class="w-full h-full object-cover"
             (error)="onThumbnailError($event, i + 1)"
@@ -264,10 +264,10 @@
       <h2 class="text-xl font-semibold mb-3">Suitable For</h2>
       <div class="flex flex-wrap gap-2">
         <span
-          *ngFor="let suitable of item.suitableFor"
+          *ngFor="let eventType of item.suitableEventTypes"
           class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
         >
-          {{ suitable }}
+          {{ eventType.name }}
         </span>
       </div>
     </div>

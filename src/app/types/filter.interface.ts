@@ -9,7 +9,7 @@ export interface ServiceFilters {
   serviceDurationMinMinutes?: number;
   serviceDurationMaxMinutes?: number;
   suitableFor?: string[];
-  isAvailable?: boolean;
+  available?: boolean;
   pupId?: string;
   sortBy?: 'name' | 'price' | 'rating' | 'availableFrom';
   sortDirection?: 'asc' | 'desc';
@@ -22,7 +22,7 @@ export interface ProductFilters {
   maxPrice?: number;
   minRating?: number;
   suitableFor?: string[];
-  isAvailable?: boolean;
+  available?: boolean;
   pupId?: string;
   sortBy?: 'name' | 'price' | 'rating';
   sortDirection?: 'asc' | 'desc';

@@ -26,7 +26,7 @@ export class ServiceCardComponent {
   }
 
   isService(item: Product | Service): item is Service {
-    return 'serviceDurationMinMinutes' in item;
+    return item && 'serviceDurationMinMinutes' in item;
   }
 
   getImageUrl(): string {
@@ -34,11 +34,11 @@ export class ServiceCardComponent {
       return this.defaultImageUrl;
     }
 
-    if (!this.service.imageUrls || this.service.imageUrls.length === 0) {
+    if (!this.service?.photos || this.service.photos.length === 0) {
       return this.defaultImageUrl;
     }
 
-    return this.service.imageUrls[0];
+    return this.service.photos[0].tempPhotoUrl;
   }
 
   onImageError(event: any): void {
@@ -46,7 +46,10 @@ export class ServiceCardComponent {
     event.target.src = this.defaultImageUrl;
   }
 
-  formatPrice(price: number): string {
+  formatPrice(price: number | null | undefined): string {
+    if (price === null || price === undefined) {
+      return 'N/A';
+    }
     return new Intl.NumberFormat('sr-RS', {
       style: 'currency',
       currency: 'RSD',

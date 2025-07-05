@@ -61,8 +61,8 @@ export class CreateServiceComponent implements OnInit {
     price: 0,
     discount: 0,
     suitableEventTypes: [] as EventType[],
-    isVisible: false,
-    isAvailable: false,
+    visible: false,
+    available: false,
     serviceDurationMin: 0,
     serviceDurationMax: 0,
     bookingDeclineDeadline: 0,
@@ -293,8 +293,8 @@ export class CreateServiceComponent implements OnInit {
     formData.append('peculiarities', this.serviceData.peculiarities);
     formData.append('price', this.serviceData.price.toString());
     formData.append('discount', this.serviceData.discount.toString());
-    formData.append('isVisible', this.serviceData.isVisible.toString());
-    formData.append('isAvailable', this.serviceData.isAvailable.toString());
+    formData.append('isVisible', this.serviceData.visible.toString());
+    formData.append('isAvailable', this.serviceData.available.toString());
 
     // Add suitable event types
     this.serviceData.suitableEventTypes.forEach((eventType) => {

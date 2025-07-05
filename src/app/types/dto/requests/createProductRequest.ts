@@ -7,6 +7,6 @@ export interface CreateProductRequest {
   discount: number;
   photos: File[];
   suitableEventTypes: number[]; // ids of event types
-  isVisible: boolean;
-  isAvailable: boolean;
+  visible: boolean;
+  available: boolean;
 }
