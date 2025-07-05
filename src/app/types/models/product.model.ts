@@ -1,4 +1,7 @@
-import { ProductCategory } from '../productCategory'
+import { TempPhotoUrlAndIdDTO } from '../dto/tempPhotoUrlAndIdDTO';
+import { EventType } from '../eventType';
+import { ProductCategory } from '../productCategory';
+import { Status } from '../status';
 
 export interface Product {
   id: string;
@@ -7,9 +10,12 @@ export interface Product {
   description: string;
   peculiarities: string;
   price: number;
+  discount: number;
   category: ProductCategory;
-  isAvailable: boolean;
-  imageUrls: string[];
+  available: boolean;
+  photos: TempPhotoUrlAndIdDTO[];
   rating: number;
-  suitableFor: string[];
+  suitableEventTypes: EventType[];
+  status: Status;
+  visible: boolean;
 }
