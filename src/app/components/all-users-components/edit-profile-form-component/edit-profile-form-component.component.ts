@@ -5,14 +5,17 @@ import {
   inject,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { NotificationService } from '../../../services/notification.service';
+import { PhotoFile, PhotoService } from '../../../services/photo.service';
 import { UserService } from '../../../services/user/user.service';
 import { UpdateUserDataRequest } from '../../../types/dto/requests/updateUserDataRequest';
 import { UserMyProfileResponse } from '../../../types/dto/responses/userMyProfileResponse';
@@ -24,39 +27,48 @@ import { Role } from '../../../types/roles';
   templateUrl: './edit-profile-form-component.component.html',
   standalone: true,
 })
-export class EditProfileFormComponent implements OnInit, OnChanges {
+export class EditProfileFormComponent implements OnInit, OnChanges, OnDestroy {
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private sanitizer = inject(DomSanitizer);
   private notification = inject(NotificationService);
+  private photoService = inject(PhotoService);
+  private router = inject(Router);
 
   tempUser: UserMyProfileResponse | null = null;
   role: Role | null = null;
   removedPhotosIds: number[] = [];
-  newPhotos: { file: File; preview: SafeUrl }[] = [];
+  newPhotos: PhotoFile[] = [];
+
+  @Input() userProfileData: UserMyProfileResponse | null = null;
+  @Input() showModal = false;
+  @Output() closeModal = new EventEmitter<void>();
+  @Output() profileUpdated = new EventEmitter<void>();
+
+  // Make Role enum available to template
+  protected readonly Role = Role;
 
   ngOnInit(): void {
     this.role = this.authService.getRole();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['showModal'] && this.showModal) {
-      this.initializeForm();
-    }
-
-    // Also reinitialize if userProfileData changes while modal is open
-    if (changes['userProfileData'] && this.showModal && this.userProfileData) {
+    if (changes['userProfileData'] && !changes['userProfileData'].firstChange) {
       this.initializeForm();
     }
   }
 
+  ngOnDestroy(): void {
+    this.cleanup();
+  }
+
+  private cleanup(): void {
+    this.photoService.cleanupPreviews(this.newPhotos);
+  }
+
   initializeForm(): void {
-    // Clean up any existing object URLs to prevent memory leaks
-    this.newPhotos.forEach((photo) => {
-      if (typeof photo.preview === 'string') {
-        URL.revokeObjectURL(photo.preview);
-      }
-    });
+    this.cleanup();
+    this.newPhotos = [];
 
     this.tempUser = {
       email: this.userProfileData?.email || '',
@@ -76,12 +88,7 @@ export class EditProfileFormComponent implements OnInit, OnChanges {
       message: this.userProfileData?.message || '',
     };
     this.removedPhotosIds = [];
-    this.newPhotos = [];
   }
-
-  @Input() userProfileData: UserMyProfileResponse | null = null;
-  @Input() showModal = false;
-  @Output() closeModal = new EventEmitter<void>();
 
   removePhoto(id: number): void {
     if (this.tempUser?.tempPhotoUrlAndIdDTOList) {
@@ -93,13 +100,30 @@ export class EditProfileFormComponent implements OnInit, OnChanges {
     }
   }
 
-  // New unified file selection method
-  onFileSelected(event: Event): void {
+  removeNewPhoto(index: number): void {
+    this.newPhotos.splice(index, 1);
+  }
+
+  async onFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
-    if (input.files) {
-      // For USER role, replace existing avatar
-      if (this.role === Role.ROLE_USER) {
-        // Remove existing avatar if present
+    if (!input.files?.length) return;
+
+    const files = Array.from(input.files);
+    const config = {
+      maxFiles: this.role === Role.ROLE_USER ? 1 : 10,
+      aspectRatio: this.role === Role.ROLE_USER ? 1 : undefined, // Square aspect ratio for user avatars
+      minWidth: this.role === Role.ROLE_USER ? 200 : 800, // Higher resolution for business photos
+      minHeight: this.role === Role.ROLE_USER ? 200 : 600,
+    };
+
+    try {
+      const validatedPhotos = await this.photoService.validateAndProcessPhotos(
+        files,
+        config
+      );
+
+      if (this.role === Role.ROLE_USER && validatedPhotos.length > 0) {
+        // For users, replace existing avatar
         if (this.tempUser?.tempPhotoUrlAndIdDTOList?.length) {
           const currentAvatar = this.tempUser.tempPhotoUrlAndIdDTOList[0];
           if (currentAvatar.photoId) {
@@ -107,98 +131,19 @@ export class EditProfileFormComponent implements OnInit, OnChanges {
           }
           this.tempUser.tempPhotoUrlAndIdDTOList = [];
         }
-        // Clear existing new photos
-        this.newPhotos = [];
-
-        // Add new avatar
-        if (input.files.length > 0) {
-          const file = input.files[0];
-          const preview = this.sanitizer.bypassSecurityTrustUrl(
-            URL.createObjectURL(file)
-          );
-          this.newPhotos.push({ file, preview });
-        }
+        this.cleanup(); // Clean up existing previews
+        this.newPhotos = [validatedPhotos[0]]; // Only keep the first photo
       } else {
-        // For OD and PUP roles, add multiple photos
-        for (const file of Array.from(input.files)) {
-          const preview = this.sanitizer.bypassSecurityTrustUrl(
-            URL.createObjectURL(file)
-          );
-          this.newPhotos.push({ file, preview });
-        }
+        // For business accounts, add all validated photos
+        this.newPhotos.push(...validatedPhotos);
       }
+    } catch (error) {
+      console.error('Error processing photos:', error);
+      this.notification.error('Failed to process photos. Please try again.');
     }
+
     // Reset input value to allow selecting the same file again
     input.value = '';
-  }
-
-  onPhotoUpload(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      for (const file of Array.from(input.files)) {
-        const preview = this.sanitizer.bypassSecurityTrustUrl(
-          URL.createObjectURL(file)
-        );
-        this.newPhotos.push({ file, preview });
-      }
-    }
-  }
-
-  onAvatarUpload(event: Event): void {
-    const input = event.target as HTMLInputElement;
-
-    if (input.files?.length) {
-      if (
-        this.role === Role.ROLE_USER &&
-        this.tempUser?.tempPhotoUrlAndIdDTOList?.length
-      ) {
-        const currentAvatar = this.tempUser.tempPhotoUrlAndIdDTOList[0];
-        if (currentAvatar.photoId) {
-          this.removedPhotosIds.push(currentAvatar.photoId);
-        }
-      }
-
-      this.newPhotos = [];
-
-      const file = input.files[0];
-      const preview = this.sanitizer.bypassSecurityTrustUrl(
-        URL.createObjectURL(file)
-      );
-      this.newPhotos.push({ file, preview });
-    }
-  }
-
-  // Remove new photo by index
-  removeNewPhoto(index: number): void {
-    if (index >= 0 && index < this.newPhotos.length) {
-      // Revoke the object URL to free memory
-      const photoToRemove = this.newPhotos[index];
-      if (typeof photoToRemove.preview === 'string') {
-        URL.revokeObjectURL(photoToRemove.preview);
-      }
-      this.newPhotos.splice(index, 1);
-    }
-  }
-
-  // Legacy method for backward compatibility
-  removeNewPhotoByFile(file: File): void {
-    const index = this.newPhotos.findIndex((photo) => photo.file === file);
-    if (index !== -1) {
-      this.removeNewPhoto(index);
-    }
-  }
-
-  closeModalWindow() {
-    // Clean up object URLs when closing modal
-    this.newPhotos.forEach((photo) => {
-      if (typeof photo.preview === 'string') {
-        URL.revokeObjectURL(photo.preview);
-      }
-    });
-    this.newPhotos = [];
-    this.removedPhotosIds = [];
-
-    this.closeModal.emit();
   }
 
   onSubmit() {
@@ -234,15 +179,9 @@ export class EditProfileFormComponent implements OnInit, OnChanges {
     this.userService.updateUserData(formData).subscribe({
       next: (response) => {
         this.notification.success('Profile updated successfully!');
-        // Clear new photos and removed photos arrays since they've been saved
-        this.newPhotos.forEach((photo) => {
-          if (typeof photo.preview === 'string') {
-            URL.revokeObjectURL(photo.preview);
-          }
-        });
+        this.cleanup();
         this.newPhotos = [];
         this.removedPhotosIds = [];
-
         this.profileUpdated.emit();
         this.closeModal.emit();
       },
@@ -253,6 +192,11 @@ export class EditProfileFormComponent implements OnInit, OnChanges {
     });
   }
 
-  @Output() profileUpdated = new EventEmitter<void>();
-  protected readonly Role = Role;
+  closeModalWindow(): void {
+    // Close the modal window
+    const modal = document.querySelector('.modal') as HTMLElement;
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
 }
