@@ -2,17 +2,18 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { ServiceCardComponent } from '../../../components/service-card/service-card.component';
+import { NotificationService } from '../../../services/notification.service';
 import { ProductService } from '../../../services/product/products.service';
 import { ProvidedServiceService } from '../../../services/provided-service/provided-service.service';
 import { Product } from '../../../types/models/product.model';
 import { Service } from '../../../types/models/service.model';
 import { PaginatedResponse } from '../../../types/pagination.interface';
+import { ServiceCardEditComponent } from '../service-card-edit/service-card-edit.component';
 
 @Component({
   selector: 'app-pup-products-services-component',
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule, ServiceCardComponent],
+  imports: [RouterModule, CommonModule, FormsModule, ServiceCardEditComponent],
   templateUrl: './pup-products-services-component.component.html',
 })
 export class PupProductsServicesComponent implements OnInit {
@@ -36,7 +37,8 @@ export class PupProductsServicesComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
-    private serviceService: ProvidedServiceService
+    private serviceService: ProvidedServiceService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -168,7 +170,7 @@ export class PupProductsServicesComponent implements OnInit {
 
   getAvailableCount(): number {
     const items = this.showProducts ? this.products : this.services;
-    return items.filter((item) => item.isAvailable).length;
+    return items.filter((item) => item.available).length;
   }
 
   getTotalCount(): number {
@@ -179,18 +181,46 @@ export class PupProductsServicesComponent implements OnInit {
     return this.showProducts ? this.products : this.services;
   }
 
-  // Pagination helper methods
-  getPageNumbers(): number[] {
-    const pages: number[] = [];
-    const startPage = Math.max(0, this.currentPage - 2);
-    const endPage = Math.min(this.totalPages - 1, this.currentPage + 2);
+  onDeleteItem(item: Product | Service): void {
+    const itemType = this.isService(item) ? 'service' : 'product';
+    const confirmed = confirm(
+      `Are you sure you want to delete this ${itemType}?`
+    );
 
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
+    if (!confirmed) {
+      return;
     }
 
-    return pages;
+    if (this.isService(item)) {
+      this.serviceService.deleteService(item.id).subscribe({
+        next: () => {
+          this.notificationService.success('Service deleted successfully');
+          this.loadData();
+        },
+        error: (error) => {
+          console.error('Error deleting service:', error);
+          this.notificationService.error('Error deleting service');
+        },
+      });
+    } else {
+      this.productService.deleteProduct(item.id).subscribe({
+        next: () => {
+          this.notificationService.success('Product deleted successfully');
+          this.loadData();
+        },
+        error: (error: any) => {
+          console.error('Error deleting product:', error);
+          this.notificationService.error('Error deleting product');
+        },
+      });
+    }
   }
+
+  private isService(item: Product | Service): item is Service {
+    return 'serviceDurationMinMinutes' in item;
+  }
+
+  // Pagination helper methods
 
   hasNextPage(): boolean {
     return this.currentPage < this.totalPages - 1;
@@ -198,5 +228,23 @@ export class PupProductsServicesComponent implements OnInit {
 
   hasPreviousPage(): boolean {
     return this.currentPage > 0;
+  }
+
+  getPageNumbers(): number[] {
+    const maxPagesToShow = 5;
+    const startPage = Math.max(
+      0,
+      this.currentPage - Math.floor(maxPagesToShow / 2)
+    );
+    const endPage = Math.min(
+      this.totalPages - 1,
+      startPage + maxPagesToShow - 1
+    );
+
+    const pages: number[] = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
   }
 }

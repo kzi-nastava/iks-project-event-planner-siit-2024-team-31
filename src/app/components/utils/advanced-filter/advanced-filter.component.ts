@@ -117,7 +117,7 @@ export class AdvancedFilterComponent implements OnInit, OnDestroy, OnChanges {
         serviceDurationMinMinutes: undefined,
         serviceDurationMaxMinutes: undefined,
         suitableFor: [],
-        isAvailable: true,
+        available: true,
         sortBy: 'name',
         sortDirection: 'asc',
       };
@@ -129,7 +129,7 @@ export class AdvancedFilterComponent implements OnInit, OnDestroy, OnChanges {
         maxPrice: 10000,
         minRating: 0,
         suitableFor: [],
-        isAvailable: true,
+        available: true,
         sortBy: 'name',
         sortDirection: 'asc',
       };
@@ -392,6 +392,8 @@ export class AdvancedFilterComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onAvailabilityChange(): void {
+    const filters = this.getCurrentFilters();
+    filters.available = !filters.available;
     this.emitFilters();
   }
 
