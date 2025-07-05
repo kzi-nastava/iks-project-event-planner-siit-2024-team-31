@@ -106,8 +106,8 @@ export class ProductService {
       });
     }
 
-    if (filters.isAvailable !== undefined) {
-      params = params.set('isAvailable', filters.isAvailable.toString());
+    if (filters.available !== undefined) {
+      params = params.set('available', filters.available.toString());
     }
 
     if (filters.pupId) {
@@ -142,7 +142,23 @@ export class ProductService {
   }
 
   getProductById(id: string): Observable<Product> {
-    return this.http.get<Product>(`${this.apiUrl}/public/${id}`);
+    return this.http
+      .get<any>(`${this.apiUrl}/${id}`, {
+        headers: this.getHeaders(),
+      })
+      .pipe(map((product: any) => this.mapServerProductToClient(product)));
+  }
+
+  private mapServerProductToClient(serverProduct: any): Product {
+    return {
+      ...serverProduct,
+      available:
+        serverProduct.isAvailable !== undefined
+          ? serverProduct.isAvailable
+          : true,
+      visible:
+        serverProduct.isVisible !== undefined ? serverProduct.isVisible : true,
+    };
   }
 
   getMyProducts(): Observable<Product[]> {
@@ -179,5 +195,19 @@ export class ProductService {
     ratingRange: { min: number; max: number };
   }> {
     return this.http.get<any>(`${this.apiUrl}/public/filter-options`);
+  }
+
+  // Update product
+  public updateProduct(id: string, formData: FormData): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, formData, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  // Delete product
+  public deleteProduct(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`, {
+      headers: this.getHeaders(),
+    });
   }
 }

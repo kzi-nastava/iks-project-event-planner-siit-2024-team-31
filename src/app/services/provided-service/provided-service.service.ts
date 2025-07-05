@@ -126,8 +126,8 @@ export class ProvidedServiceService {
       });
     }
 
-    if (filters.isAvailable !== undefined) {
-      params = params.set('isAvailable', filters.isAvailable.toString());
+    if (filters.available !== undefined) {
+      params = params.set('available', filters.available.toString());
     }
 
     if (filters.pupId) {
@@ -193,11 +193,39 @@ export class ProvidedServiceService {
   }
 
   public getServiceById(id: string): Observable<Service> {
-    return this.http.get<Service>(`${this.apiUrl}/public/${id}`);
+    return this.http
+      .get<any>(`${this.apiUrl}/${id}`, {
+        headers: this.getHeaders(),
+      })
+      .pipe(map((service: any) => this.mapServerServiceToClient(service)));
+  }
+
+  private mapServerServiceToClient(serverService: any): Service {
+    return {
+      ...serverService,
+      available:
+        serverService.isAvailable !== undefined
+          ? serverService.isAvailable
+          : true,
+      visible:
+        serverService.isVisible !== undefined ? serverService.isVisible : true,
+    };
   }
 
   public createNewService(request: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}`, request, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  public updateService(id: string, request: FormData): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, request, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  public deleteService(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`, {
       headers: this.getHeaders(),
     });
   }
