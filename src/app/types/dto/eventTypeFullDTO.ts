@@ -6,9 +6,9 @@ export interface EventTypeFullDTO {
   description: string;
   status: {
     id: number;
-	version: number;
+    version: number;
     name: string;
-	description: string;
+    description: string;
   };
   recommendedProductCategories: ProductCategory[];
 }
