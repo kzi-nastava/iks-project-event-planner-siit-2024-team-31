@@ -142,23 +142,9 @@ export class ProductService {
   }
 
   getProductById(id: string): Observable<Product> {
-    return this.http
-      .get<any>(`${this.apiUrl}/${id}`, {
-        headers: this.getHeaders(),
-      })
-      .pipe(map((product: any) => this.mapServerProductToClient(product)));
-  }
-
-  private mapServerProductToClient(serverProduct: any): Product {
-    return {
-      ...serverProduct,
-      available:
-        serverProduct.isAvailable !== undefined
-          ? serverProduct.isAvailable
-          : true,
-      visible:
-        serverProduct.isVisible !== undefined ? serverProduct.isVisible : true,
-    };
+    return this.http.get<any>(`${this.apiUrl}/${id}`, {
+      headers: this.getHeaders(),
+    });
   }
 
   getMyProducts(): Observable<Product[]> {
