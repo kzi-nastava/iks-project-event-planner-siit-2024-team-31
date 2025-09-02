@@ -130,7 +130,6 @@ export class EditProductComponent implements OnInit, OnDestroy {
     // Reset form state
     this.photoPreviews = [];
     this.filesForUpload = [];
-    this.existingImageUrls = [];
     this.removedPhotosIds = [];
     this.newPhotos = [];
 
@@ -150,12 +149,25 @@ export class EditProductComponent implements OnInit, OnDestroy {
     this.productService.getProductById(this.productId).subscribe({
       next: (product) => {
         this.productData = {
-          ...product,
+          id: product.id,
+          pupId: product.pupId,
+          name: product.name,
+          description: product.description,
+          peculiarities: product.peculiarities,
+          price: product.price,
+          discount: product.discount,
+          category: product.category,
+          available: product.available,
           photos: product.photos || [],
+          rating: product.rating,
+          suitableEventTypes: product.suitableEventTypes || [],
+          status: product.status,
+          visible: product.visible,
         };
         this.existingImageUrls =
           this.productData.photos.map((p) => p.tempPhotoUrl) || [];
-        this.photoPreviews = [...this.existingImageUrls];
+        this.photoPreviews = [];
+        console.log('Product data after assignment:', this.productData);
       },
       error: (error) => {
         this.notification.error('Failed to load product');
