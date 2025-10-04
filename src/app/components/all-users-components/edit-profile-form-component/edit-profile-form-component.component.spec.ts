@@ -1,18 +1,19 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { EditProfileFormComponent } from './edit-profile-form-component.component';
 
-import { EditProfileFormComponentComponent } from './edit-profile-form-component.component';
-
-describe('EditProfileFormComponentComponent', () => {
-  let component: EditProfileFormComponentComponent;
-  let fixture: ComponentFixture<EditProfileFormComponentComponent>;
+describe('EditProfileFormComponent', () => {
+  let component: EditProfileFormComponent;
+  let fixture: ComponentFixture<EditProfileFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditProfileFormComponentComponent]
-    })
-    .compileComponents();
+      imports: [EditProfileFormComponent, HttpClientTestingModule],
+      schemas: [NO_ERRORS_SCHEMA],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(EditProfileFormComponentComponent);
+    fixture = TestBed.createComponent(EditProfileFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

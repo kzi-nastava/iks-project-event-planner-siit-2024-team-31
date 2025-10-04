@@ -1,18 +1,21 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { OdEventsComponent } from './od-events-component.component';
 
-import { OdEventsComponentComponent } from './od-events-component.component';
-
-describe('OdEventsComponentComponent', () => {
-  let component: OdEventsComponentComponent;
-  let fixture: ComponentFixture<OdEventsComponentComponent>;
+describe('OdEventsComponent', () => {
+  let component: OdEventsComponent;
+  let fixture: ComponentFixture<OdEventsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OdEventsComponentComponent]
-    })
-    .compileComponents();
+      imports: [OdEventsComponent, HttpClientTestingModule],
+      providers: [provideRouter([])],
+      schemas: [NO_ERRORS_SCHEMA],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(OdEventsComponentComponent);
+    fixture = TestBed.createComponent(OdEventsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

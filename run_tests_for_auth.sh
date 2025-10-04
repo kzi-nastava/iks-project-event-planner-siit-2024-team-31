@@ -1,0 +1,1 @@
+npm test -- --include='**/auth.service.spec.ts' --include='**/register.component.spec.ts';  

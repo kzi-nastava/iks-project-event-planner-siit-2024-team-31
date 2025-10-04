@@ -1,3 +1,5 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ServiceProductListFilteredComponent } from './service-product-list-filtered.component';
@@ -8,7 +10,8 @@ describe('ServiceProductListFilteredComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ServiceProductListFilteredComponent],
+      imports: [ServiceProductListFilteredComponent, HttpClientTestingModule],
+      schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ServiceProductListFilteredComponent);

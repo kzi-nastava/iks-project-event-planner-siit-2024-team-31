@@ -1,3 +1,5 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FavoriteButtonComponent } from './favorite-button.component';
@@ -8,7 +10,8 @@ describe('FavoriteButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FavoriteButtonComponent],
+      imports: [FavoriteButtonComponent, HttpClientTestingModule],
+      schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FavoriteButtonComponent);

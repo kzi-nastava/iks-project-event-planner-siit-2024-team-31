@@ -1,18 +1,21 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { PupProductsServicesComponent } from './pup-products-services-component.component';
 
-import { PupProductsServicesComponentComponent } from './pup-products-services-component.component';
-
-describe('PupProductsServicesComponentComponent', () => {
-  let component: PupProductsServicesComponentComponent;
-  let fixture: ComponentFixture<PupProductsServicesComponentComponent>;
+describe('PupProductsServicesComponent', () => {
+  let component: PupProductsServicesComponent;
+  let fixture: ComponentFixture<PupProductsServicesComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PupProductsServicesComponentComponent]
-    })
-    .compileComponents();
+      imports: [PupProductsServicesComponent, HttpClientTestingModule],
+      providers: [provideRouter([])],
+      schemas: [NO_ERRORS_SCHEMA],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(PupProductsServicesComponentComponent);
+    fixture = TestBed.createComponent(PupProductsServicesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

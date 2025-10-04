@@ -1,18 +1,19 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CreateEventComponent } from './create-event-component.component';
 
-import { CreateEventComponentComponent } from './create-event-component.component';
-
-describe('CreateEventComponentComponent', () => {
-  let component: CreateEventComponentComponent;
-  let fixture: ComponentFixture<CreateEventComponentComponent>;
+describe('CreateEventComponent', () => {
+  let component: CreateEventComponent;
+  let fixture: ComponentFixture<CreateEventComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateEventComponentComponent]
-    })
-    .compileComponents();
+      imports: [CreateEventComponent, HttpClientTestingModule],
+      schemas: [NO_ERRORS_SCHEMA],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(CreateEventComponentComponent);
+    fixture = TestBed.createComponent(CreateEventComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

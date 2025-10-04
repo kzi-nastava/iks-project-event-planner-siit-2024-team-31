@@ -1,18 +1,19 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CreateServiceComponent } from './create-service-component.component';
 
-import { CreateServiceComponentComponent } from './create-service-component.component';
-
-describe('CreateServiceComponentComponent', () => {
-  let component: CreateServiceComponentComponent;
-  let fixture: ComponentFixture<CreateServiceComponentComponent>;
+describe('CreateServiceComponent', () => {
+  let component: CreateServiceComponent;
+  let fixture: ComponentFixture<CreateServiceComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateServiceComponentComponent]
-    })
-    .compileComponents();
+      imports: [CreateServiceComponent, HttpClientTestingModule],
+      schemas: [NO_ERRORS_SCHEMA],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(CreateServiceComponentComponent);
+    fixture = TestBed.createComponent(CreateServiceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

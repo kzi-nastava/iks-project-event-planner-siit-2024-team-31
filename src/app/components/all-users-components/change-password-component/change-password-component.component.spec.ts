@@ -1,18 +1,19 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ChangePasswordComponent } from './change-password-component.component';
 
-import { ChangePasswordComponentComponent } from './change-password-component.component';
-
-describe('ChangePasswordComponentComponent', () => {
-  let component: ChangePasswordComponentComponent;
-  let fixture: ComponentFixture<ChangePasswordComponentComponent>;
+describe('ChangePasswordComponent', () => {
+  let component: ChangePasswordComponent;
+  let fixture: ComponentFixture<ChangePasswordComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ChangePasswordComponentComponent]
-    })
-    .compileComponents();
+      imports: [ChangePasswordComponent, HttpClientTestingModule],
+      schemas: [NO_ERRORS_SCHEMA],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(ChangePasswordComponentComponent);
+    fixture = TestBed.createComponent(ChangePasswordComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
