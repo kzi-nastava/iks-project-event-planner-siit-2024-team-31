@@ -14,7 +14,11 @@
       </div>
     </div>
 
-    <form (ngSubmit)="onSubmit()" class="space-y-8">
+    <form
+      (ngSubmit)="onSubmit()"
+      class="space-y-8"
+      data-testid="create-event-form"
+    >
       <!-- Section 1: Basic Information -->
       <div class="space-y-6">
         <div class="flex items-center mb-6">
@@ -39,6 +43,7 @@
               [(ngModel)]="eventData.name"
               name="eventName"
               placeholder="Enter your event name"
+              data-testid="event-name-input"
               required
             />
           </div>
@@ -63,6 +68,7 @@
                 type="button"
                 (click)="openEventTypeSelection()"
                 class="absolute right-3 top-1/2 transform -translate-y-1/2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 text-sm font-medium"
+                data-testid="select-event-type-button"
               >
                 Select Type
               </button>
@@ -84,6 +90,7 @@
             [(ngModel)]="eventData.description"
             name="description"
             placeholder="Describe your event in detail..."
+            data-testid="event-description-input"
             required
           ></textarea>
         </div>
@@ -104,6 +111,7 @@
               [(ngModel)]="eventData.maxNumGuests"
               name="maxGuests"
               placeholder="Enter max number of guests"
+              data-testid="event-max-guests-input"
               required
             />
           </div>
@@ -115,6 +123,7 @@
                 class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                 [(ngModel)]="eventData.isPrivate"
                 name="isPrivate"
+                data-testid="event-is-private-checkbox"
               />
               <span class="ml-3 text-sm font-medium text-gray-700">
                 Private Event
@@ -147,6 +156,7 @@
               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
               [(ngModel)]="eventData.startTime"
               name="startTime"
+              data-testid="event-start-time-input"
               required
             />
           </div>
@@ -164,6 +174,7 @@
               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
               [(ngModel)]="eventData.endTime"
               name="endTime"
+              data-testid="event-end-time-input"
               required
             />
           </div>
@@ -199,6 +210,7 @@
               type="button"
               (click)="openMap()"
               class="absolute right-3 top-1/2 transform -translate-y-1/2 px-4 py-2 bg-gradient-to-r from-pink-500 to-red-600 text-white rounded-lg hover:from-pink-600 hover:to-red-700 transition-all duration-200 text-sm font-medium"
+              data-testid="open-map-button"
             >
               Select Location
             </button>
@@ -351,6 +363,7 @@
                 type="button"
                 (click)="openAgendaCreation()"
                 class="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium flex items-center justify-center"
+                data-testid="create-agenda-button"
               >
                 Create Agenda
               </button>
@@ -510,6 +523,7 @@
           <button
             type="submit"
             class="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            data-testid="create-event-submit-button"
           >
             Create Event
           </button>
@@ -525,10 +539,12 @@
   class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-50"
   (mousedown)="onBackgroundMouseDown($event)"
   (mouseup)="onBackgroundMouseUp($event)"
+  data-testid="event-type-modal"
 >
   <div
     class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 max-h-[80vh] overflow-hidden"
     (click)="$event.stopPropagation()"
+    data-testid="event-type-modal-content"
   >
     <!-- Modal Header -->
     <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
@@ -553,11 +569,15 @@
       </div>
 
       <!-- Event Types List -->
-      <div class="space-y-2 max-h-60 overflow-y-auto">
+      <div
+        class="space-y-2 max-h-60 overflow-y-auto"
+        data-testid="event-type-list"
+      >
         <ng-container *ngIf="paginatedEventTypes.length; else noTypes">
           <label
             class="flex items-center p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-all duration-200 border border-transparent hover:border-gray-200"
             *ngFor="let type of paginatedEventTypes"
+            [attr.data-testid]="'event-type-item-' + type.id"
           >
             <input
               type="radio"
@@ -565,6 +585,7 @@
               [checked]="isEventTypeSelected(type)"
               (change)="onSelectEventType(type)"
               class="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+              [attr.data-testid]="'event-type-radio-' + type.id"
             />
             <span class="ml-3 text-gray-900 font-medium">{{ type.name }}</span>
           </label>
@@ -624,12 +645,14 @@
           type="button"
           (click)="closeEventTypeSelection()"
           class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200"
+          data-testid="event-type-cancel-button"
         >
           Cancel
         </button>
         <button
           type="button"
           (click)="confirmEventTypeSelection()"
+          data-testid="event-type-confirm-button"
           class="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 disabled:opacity-50"
           [disabled]="!eventData.eventType.name.trim()"
         >
@@ -646,10 +669,12 @@
   class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
   (mousedown)="onBackgroundMouseDown($event)"
   (mouseup)="onBackgroundMouseUp($event)"
+  data-testid="map-modal"
 >
   <div
     class="bg-white rounded-2xl shadow-2xl w-full max-w-7xl h-[600px] flex flex-col overflow-hidden"
     (click)="$event.stopPropagation()"
+    data-testid="map-modal-content"
   >
     <!-- Header -->
     <div
@@ -675,12 +700,14 @@
               placeholder="🔍 Search for address, city, or landmark..."
               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200 pr-12"
               (keyup.enter)="searchLocation()"
+              data-testid="map-search-input"
             />
           </div>
           <button
             type="button"
             (click)="searchLocation()"
             class="px-6 py-3 bg-gradient-to-r from-pink-500 to-red-600 text-white rounded-xl hover:from-pink-600 hover:to-red-700 transition-all duration-200 font-medium whitespace-nowrap shadow-md"
+            data-testid="map-search-button"
           >
             Search
           </button>
@@ -693,6 +720,7 @@
           <div
             id="locationMap"
             class="w-full h-full rounded-xl shadow-lg border border-gray-200"
+            data-testid="location-map"
           ></div>
         </div>
       </div>
@@ -727,6 +755,7 @@
           type="button"
           (click)="closeMap()"
           class="px-6 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium"
+          data-testid="map-cancel-button"
         >
           Cancel
         </button>
@@ -735,6 +764,7 @@
           (click)="confirmLocationSelection()"
           [disabled]="!selectedLocation"
           class="px-8 py-2 bg-gradient-to-r from-pink-500 to-red-600 text-white rounded-lg hover:from-pink-600 hover:to-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-md"
+          data-testid="map-confirm-button"
         >
           Confirm Location
         </button>
